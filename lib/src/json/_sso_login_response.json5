@@ -1,0 +1,36 @@
+{
+    "code": "200",
+    "msg": "Success",
+    "error": null,
+    "rs": {
+        "grantingTicket": "ticket123",
+        "serviceTicket": "serviceTicket123",
+        "tgtExpiredTime": 1672531199,
+        "role": "admin",
+        "openid": "openid123",
+        "nickname": "nickname123",
+        "fullname": "John Doe",
+        "username": "johndoe",
+        "mobile": "1234567890",
+        "email": "johndoe@example.com",
+        "perms": "read,write,execute",
+        "isSsoLogin": "true",
+        "isCompleted": "true",
+        "openidHash": "hashed_openid123",
+        "jwt": "jwt_token_here",
+        "rt": "refresh_token_here",
+        "createTime": "2025-04-26T12:00:00Z",
+        "status": 1,
+        "source": "website",
+        "links": [
+            {
+                "rel": "self",
+                "href": "https://example.com/self"
+            },
+            {
+                "rel": "profile",
+                "href": "https://example.com/profile"
+            }
+        ]
+    }
+}

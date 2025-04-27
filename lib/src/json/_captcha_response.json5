@@ -1,0 +1,20 @@
+{
+    "code": "200",
+    "msg": "Success",
+    "rs": {
+        "type": "image",
+        "image": "https://example.com/captcha_image.jpg",
+        "encodeCaptha": "encoded_string_here",
+        "codeType": 1,
+        "links": [
+            {
+                "rel": "self",
+                "href": "https://example.com/captcha"
+            },
+            {
+                "rel": "next",
+                "href": "https://example.com/next_step"
+            }
+        ]
+    }
+}

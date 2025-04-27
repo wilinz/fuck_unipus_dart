@@ -1,0 +1,32 @@
+name: fuck_unipus
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.7.2
+
+# Add regular dependencies here.
+dependencies:
+  cookie_jar: ^4.0.8
+  crypto: ^3.0.6
+  dio: ^5.8.0+1
+  dio_cookie_manager: ^3.2.0
+  html: ^0.15.6
+  path: ^1.9.1
+  json_annotation: ^4.9.0
+  # path: ^1.8.0
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0
+  json5_model: ^2.1.1
+  build_runner: ^2.4.13
+  json_serializable: ^6.9.5
+
+index_generator:
+  exclude:
+    - '**.g.dart'
+  # Define the paths of the folders in which to generate the index files
+  libraries:
+    - directory_path: lib

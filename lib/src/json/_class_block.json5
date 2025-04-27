@@ -1,0 +1,22 @@
+{
+    "class_name": "Advanced Programming",
+    "date_range": "2025-05-01 to 2025-06-30",
+    "start_date": "2025-05-01",
+    "end_date": "2025-06-30",
+    "courses": [
+        {
+            "course_name": "Rust Programming Basics",
+            "status": "active",
+            "image": "https://example.com/images/rust.jpg",
+            "course_url": "https://example.com/courses/rust-basics",
+            "tutorial_id": "rust_tutorial_101"
+        },
+        {
+            "course_name": "Advanced Dart Techniques",
+            "status": "upcoming",
+            "image": "https://example.com/images/dart.jpg",
+            "course_url": "https://example.com/courses/dart-advanced",
+            "tutorial_id": "dart_tutorial_202"
+        }
+    ]
+}

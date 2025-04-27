@@ -1,0 +1,6 @@
+{
+    "name": "John Doe",
+    "token": "sample_token_12345",
+    "openid": "openid_12345",
+    "websocket_url": "wss://example.com/socket"
+}

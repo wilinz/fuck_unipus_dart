@@ -1,9 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:equatable/equatable.dart';
+import 'package:autoequal/autoequal.dart';
 
 part 'session_info.g.dart';
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class SessionInfo {
+class SessionInfo with EquatableMixin {
 
   SessionInfo(
       {required this.name,
@@ -12,16 +17,16 @@ class SessionInfo {
       required this.websocketUrl});
 
   @JsonKey(name: "name", defaultValue: "")
-  String name;
+  final String name;
 
   @JsonKey(name: "token", defaultValue: "")
-  String token;
+  final String token;
 
   @JsonKey(name: "openid", defaultValue: "")
-  String openid;
+  final String openid;
 
   @JsonKey(name: "websocket_url", defaultValue: "")
-  String websocketUrl;
+  final String websocketUrl;
 
 
   factory SessionInfo.fromJson(Map<String, dynamic> json) => _$SessionInfoFromJson(json);
@@ -29,6 +34,9 @@ class SessionInfo {
   Map<String, dynamic> toJson() => _$SessionInfoToJson(this);
   
   factory SessionInfo.emptyInstance() => SessionInfo(name: "", token: "", openid: "", websocketUrl: "");
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
 

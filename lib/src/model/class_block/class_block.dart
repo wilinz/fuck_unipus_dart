@@ -1,9 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:equatable/equatable.dart';
+import 'package:autoequal/autoequal.dart';
 
 part 'class_block.g.dart';
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class ClassBlock {
+class ClassBlock with EquatableMixin {
 
   ClassBlock(
       {required this.className,
@@ -13,19 +18,19 @@ class ClassBlock {
       required this.courses});
 
   @JsonKey(name: "class_name", defaultValue: "")
-  String className;
+  final String className;
 
   @JsonKey(name: "date_range", defaultValue: "")
-  String dateRange;
+  final String dateRange;
 
   @JsonKey(name: "start_date", defaultValue: "")
-  String startDate;
+  final String startDate;
 
   @JsonKey(name: "end_date", defaultValue: "")
-  String endDate;
+  final String endDate;
 
   @JsonKey(name: "courses", defaultValue: [])
-  List<Course> courses;
+  final List<CoursesItem> courses;
 
 
   factory ClassBlock.fromJson(Map<String, dynamic> json) => _$ClassBlockFromJson(json);
@@ -33,39 +38,47 @@ class ClassBlock {
   Map<String, dynamic> toJson() => _$ClassBlockToJson(this);
   
   factory ClassBlock.emptyInstance() => ClassBlock(className: "", dateRange: "", startDate: "", endDate: "", courses: []);
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Course {
+class CoursesItem with EquatableMixin {
 
-  Course(
-      {required this.courseName,
+  CoursesItem(
+      {this.courseName,
       required this.status,
       required this.image,
-      required this.courseUrl,
-      required this.tutorialId});
+      this.courseUrl,
+      this.tutorialId});
 
-  @JsonKey(name: "course_name", defaultValue: "")
-  String courseName;
+  @JsonKey(name: "course_name")
+  final String? courseName;
 
   @JsonKey(name: "status", defaultValue: "")
-  String status;
+  final String status;
 
   @JsonKey(name: "image", defaultValue: "")
-  String image;
+  final String image;
 
-  @JsonKey(name: "course_url", defaultValue: "")
-  String courseUrl;
+  @JsonKey(name: "course_url")
+  final String? courseUrl;
 
-  @JsonKey(name: "tutorial_id", defaultValue: "")
-  String tutorialId;
+  @JsonKey(name: "tutorial_id")
+  final String? tutorialId;
 
 
-  factory Course.fromJson(Map<String, dynamic> json) => _$CourseFromJson(json);
+  factory CoursesItem.fromJson(Map<String, dynamic> json) => _$CoursesItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$CourseToJson(this);
+  Map<String, dynamic> toJson() => _$CoursesItemToJson(this);
   
-  factory Course.emptyInstance() => Course(courseName: "", status: "", image: "", courseUrl: "", tutorialId: "");
+  factory CoursesItem.emptyInstance() => CoursesItem(status: "", image: "");
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
 

@@ -1,9 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:equatable/equatable.dart';
+import 'package:autoequal/autoequal.dart';
 
 part 'captcha_response.g.dart';
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class CaptchaResponse {
+class CaptchaResponse with EquatableMixin {
 
   CaptchaResponse(
       {required this.code,
@@ -11,13 +16,13 @@ class CaptchaResponse {
       required this.rs});
 
   @JsonKey(name: "code", defaultValue: "")
-  String code;
+  final String code;
 
   @JsonKey(name: "msg", defaultValue: "")
-  String msg;
+  final String msg;
 
   @JsonKey(name: "rs", defaultValue: Rs.emptyInstance)
-  Rs rs;
+  final Rs rs;
 
 
   factory CaptchaResponse.fromJson(Map<String, dynamic> json) => _$CaptchaResponseFromJson(json);
@@ -25,31 +30,41 @@ class CaptchaResponse {
   Map<String, dynamic> toJson() => _$CaptchaResponseToJson(this);
   
   factory CaptchaResponse.emptyInstance() => CaptchaResponse(code: "", msg: "", rs: Rs.emptyInstance());
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Links {
+class LinksItem with EquatableMixin {
 
-  Links(
+  LinksItem(
       {required this.rel,
       required this.href});
 
   @JsonKey(name: "rel", defaultValue: "")
-  String rel;
+  final String rel;
 
   @JsonKey(name: "href", defaultValue: "")
-  String href;
+  final String href;
 
 
-  factory Links.fromJson(Map<String, dynamic> json) => _$LinksFromJson(json);
+  factory LinksItem.fromJson(Map<String, dynamic> json) => _$LinksItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$LinksToJson(this);
+  Map<String, dynamic> toJson() => _$LinksItemToJson(this);
   
-  factory Links.emptyInstance() => Links(rel: "", href: "");
+  factory LinksItem.emptyInstance() => LinksItem(rel: "", href: "");
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Rs {
+class Rs with EquatableMixin {
 
   Rs(
       {required this.type,
@@ -59,19 +74,19 @@ class Rs {
       required this.links});
 
   @JsonKey(name: "type", defaultValue: "")
-  String type;
+  final String type;
 
   @JsonKey(name: "image", defaultValue: "")
-  String image;
+  final String image;
 
   @JsonKey(name: "encodeCaptha", defaultValue: "")
-  String encodeCaptha;
+  final String encodeCaptha;
 
   @JsonKey(name: "codeType", defaultValue: 0)
-  int codeType;
+  final int codeType;
 
   @JsonKey(name: "links", defaultValue: [])
-  List<Links> links;
+  final List<LinksItem> links;
 
 
   factory Rs.fromJson(Map<String, dynamic> json) => _$RsFromJson(json);
@@ -79,6 +94,9 @@ class Rs {
   Map<String, dynamic> toJson() => _$RsToJson(this);
   
   factory Rs.emptyInstance() => Rs(type: "", image: "", encodeCaptha: "", codeType: 0, links: []);
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
 

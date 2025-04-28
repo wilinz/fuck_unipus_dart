@@ -1,9 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:equatable/equatable.dart';
+import 'package:autoequal/autoequal.dart';
 
 part 'sso_login_response.g.dart';
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class SsoLoginResponse {
+class SsoLoginResponse with EquatableMixin {
 
   SsoLoginResponse(
       {required this.code,
@@ -12,16 +17,16 @@ class SsoLoginResponse {
       required this.rs});
 
   @JsonKey(name: "code", defaultValue: "")
-  String code;
+  final String code;
 
   @JsonKey(name: "msg", defaultValue: "")
-  String msg;
+  final String msg;
 
   @JsonKey(name: "error")
-  dynamic error;
+  final dynamic error;
 
   @JsonKey(name: "rs", defaultValue: Rs.emptyInstance)
-  Rs rs;
+  final Rs rs;
 
 
   factory SsoLoginResponse.fromJson(Map<String, dynamic> json) => _$SsoLoginResponseFromJson(json);
@@ -29,31 +34,41 @@ class SsoLoginResponse {
   Map<String, dynamic> toJson() => _$SsoLoginResponseToJson(this);
   
   factory SsoLoginResponse.emptyInstance() => SsoLoginResponse(code: "", msg: "", rs: Rs.emptyInstance());
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Links {
+class LinksItem with EquatableMixin {
 
-  Links(
+  LinksItem(
       {required this.rel,
       required this.href});
 
   @JsonKey(name: "rel", defaultValue: "")
-  String rel;
+  final String rel;
 
   @JsonKey(name: "href", defaultValue: "")
-  String href;
+  final String href;
 
 
-  factory Links.fromJson(Map<String, dynamic> json) => _$LinksFromJson(json);
+  factory LinksItem.fromJson(Map<String, dynamic> json) => _$LinksItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$LinksToJson(this);
+  Map<String, dynamic> toJson() => _$LinksItemToJson(this);
   
-  factory Links.emptyInstance() => Links(rel: "", href: "");
+  factory LinksItem.emptyInstance() => LinksItem(rel: "", href: "");
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
+@CopyWith()
+@Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Rs {
+class Rs with EquatableMixin {
 
   Rs(
       {required this.grantingTicket,
@@ -78,64 +93,64 @@ class Rs {
       required this.links});
 
   @JsonKey(name: "grantingTicket", defaultValue: "")
-  String grantingTicket;
+  final String grantingTicket;
 
   @JsonKey(name: "serviceTicket", defaultValue: "")
-  String serviceTicket;
+  final String serviceTicket;
 
   @JsonKey(name: "tgtExpiredTime", defaultValue: 0)
-  int tgtExpiredTime;
+  final int tgtExpiredTime;
 
   @JsonKey(name: "role", defaultValue: "")
-  String role;
+  final String role;
 
   @JsonKey(name: "openid", defaultValue: "")
-  String openid;
+  final String openid;
 
   @JsonKey(name: "nickname", defaultValue: "")
-  String nickname;
+  final String nickname;
 
   @JsonKey(name: "fullname", defaultValue: "")
-  String fullname;
+  final String fullname;
 
   @JsonKey(name: "username", defaultValue: "")
-  String username;
+  final String username;
 
   @JsonKey(name: "mobile", defaultValue: "")
-  String mobile;
+  final String mobile;
 
   @JsonKey(name: "email", defaultValue: "")
-  String email;
+  final String email;
 
   @JsonKey(name: "perms", defaultValue: "")
-  String perms;
+  final String perms;
 
   @JsonKey(name: "isSsoLogin", defaultValue: "")
-  String isSsoLogin;
+  final String isSsoLogin;
 
   @JsonKey(name: "isCompleted", defaultValue: "")
-  String isCompleted;
+  final String isCompleted;
 
   @JsonKey(name: "openidHash", defaultValue: "")
-  String openidHash;
+  final String openidHash;
 
   @JsonKey(name: "jwt", defaultValue: "")
-  String jwt;
+  final String jwt;
 
   @JsonKey(name: "rt", defaultValue: "")
-  String rt;
+  final String rt;
 
   @JsonKey(name: "createTime", defaultValue: "")
-  String createTime;
+  final String createTime;
 
   @JsonKey(name: "status", defaultValue: 0)
-  int status;
+  final int status;
 
   @JsonKey(name: "source", defaultValue: "")
-  String source;
+  final String source;
 
   @JsonKey(name: "links", defaultValue: [])
-  List<Links> links;
+  final List<LinksItem> links;
 
 
   factory Rs.fromJson(Map<String, dynamic> json) => _$RsFromJson(json);
@@ -143,6 +158,9 @@ class Rs {
   Map<String, dynamic> toJson() => _$RsToJson(this);
   
   factory Rs.emptyInstance() => Rs(grantingTicket: "", serviceTicket: "", tgtExpiredTime: 0, role: "", openid: "", nickname: "", fullname: "", username: "", mobile: "", email: "", perms: "", isSsoLogin: "", isCompleted: "", openidHash: "", jwt: "", rt: "", createTime: "", status: 0, source: "", links: []);
+  
+  @override
+  List<Object?> get props => _$props;
 }
 
 

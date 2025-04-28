@@ -5,7 +5,9 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:html/parser.dart';
 import 'package:path/path.dart';
 
@@ -24,7 +26,10 @@ class Unipus {
   late CookieJar _cookieJar;
   static const String unipusService = "https://u.unipus.cn/user/comm/login";
 
-  static Future<Unipus> newInstance({required String cookieDir, String cookieSubDir = "default"}) async {
+  static Future<Unipus> newInstance({
+    required String cookieDir,
+    String cookieSubDir = "default",
+  }) async {
     final unipus = Unipus._();
     await unipus._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
     return unipus;
@@ -46,10 +51,21 @@ class Unipus {
         baseUrl: 'https://u.unipus.cn',
         headers: _buildDefaultHeaders(),
         validateStatus: (status) => status! < 500,
+        followRedirects: false,
       ),
     );
 
     _cookieJar = PersistCookieJar(storage: FileStorage(directory));
+
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient();
+      client.findProxy = (uri) {
+        return "PROXY 127.0.0.1:9000";
+      };
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
 
     dio.interceptors.addAll([
       CookieManager(_cookieJar),
@@ -65,6 +81,7 @@ class Unipus {
           return handler.next(response);
         },
       ),
+      RedirectInterceptor(() => dio),
     ]);
   }
 

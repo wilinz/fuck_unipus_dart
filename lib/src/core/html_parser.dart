@@ -17,7 +17,7 @@ List<ClassBlock> parseCoursesToJson(String htmlContent) {
             .replaceAll('\n', '')
             .trim() ?? '';
 
-        List<Course> courseList = [];
+        List<CoursesItem> courseList = [];
         var courseItems = classBlock.querySelectorAll('.my_course_item');
 
         for (var item in courseItems) {
@@ -27,7 +27,7 @@ List<ClassBlock> parseCoursesToJson(String htmlContent) {
             var courseUrl = item.querySelector('.hideurl')?.text.trim() ?? '';
             var tutorialId = item.attributes['tutorialid'] ?? '';
 
-            courseList.add(Course(
+            courseList.add(CoursesItem(
                 courseName: courseName,
                 status: status,
                 image: imageUrl,

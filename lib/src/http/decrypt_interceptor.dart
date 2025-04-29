@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import '../core/decrypt.dart';
 
-class DecryptInterceptor extends Interceptor {
+class UnipusDecryptInterceptor extends Interceptor {
 
   bool isUnipusEncryptedResponse(String url, String? contentType) {
     return url.startsWith("https://ucontent.unipus.cn/course/api/v3/content/course-v1") &&

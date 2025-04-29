@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:fuck_unipus/src/core/base_client.dart';
 import 'package:html/parser.dart';
 
 import '../http/decrypt_interceptor.dart';
-import '../model/captcha_response/captcha_response.dart';
-import '../model/class_block/class_block.dart';
-import '../model/session_info/session_info.dart';
 import 'html_parser.dart';
 
 class Unipus extends BaseClient {
   static const String unipusService = "https://u.unipus.cn/user/comm/login";
+  UnipusSessionInfo? sessionInfo;
 
   static Future<Unipus> newInstance({
     required String cookieDir,
@@ -28,7 +28,16 @@ class Unipus extends BaseClient {
     required String cookieSubDir,
   }) async {
     await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
-    dio.interceptors.add(UnipusDecryptInterceptor());
+    final tokenInterceptor = InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        if (sessionInfo?.token != null) {
+          options.headers['x-annotator-auth-token'] = sessionInfo!.token;
+        }
+        return handler.next(options);
+      },
+    );
+
+    dio.interceptors.addAll([tokenInterceptor, UnipusDecryptInterceptor()]);
   }
 
   Future<List<ClassBlock>> getCourses() async {
@@ -169,16 +178,16 @@ class Unipus extends BaseClient {
     return isAuthorized;
   }
 
-  SessionInfo _extractSessionInfo(String html) {
+  UnipusSessionInfo _extractSessionInfo(String html) {
     final document = parse(html);
     final name =
         document
             .querySelector('div.content_left_top_info_welcome label')
             ?.text
             .trim() ??
-            '';
+        '';
 
-    return SessionInfo(
+    return UnipusSessionInfo(
       name: name,
       token: _extractJsVariable(html, 'token'),
       openid: _extractJsVariable(html, 'openId'),
@@ -190,5 +199,4 @@ class Unipus extends BaseClient {
     final regex = RegExp('$variable:.*?"(.+?)"');
     return regex.firstMatch(html)?.group(1) ?? '';
   }
-
 }

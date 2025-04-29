@@ -5,13 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
-import 'package:html/parser.dart';
 import 'package:path/path.dart';
 
 import '../../fuck_unipus.dart';
-import '../model/captcha_response/captcha_response.dart';
-import '../model/session_info/session_info.dart';
-import '../model/sso_login_response/sso_login_response.dart';
 
 typedef CaptchaHandler =
 Future<String> Function(CaptchaResponse captchaResponse);
@@ -19,9 +15,8 @@ Future<String> Function(CaptchaResponse captchaResponse);
 abstract class BaseClient {
   late Dio dio;
   late CookieJar cookieJar;
-  SessionInfo? sessionInfo;
-  abstract String baseUrl;
-  abstract String service;
+  String get baseUrl;
+  String get service;
 
   Future<void> initDio({
     required String cookieDir,
@@ -54,17 +49,7 @@ abstract class BaseClient {
       return client;
     };
 
-    final tokenInterceptor = InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        if (sessionInfo?.token != null) {
-          options.headers['x-annotator-auth-token'] = sessionInfo!.token;
-        }
-        return handler.next(options);
-      },
-    );
-
     dio.interceptors.addAll([
-      tokenInterceptor,
       CookieManager(cookieJar),
       RedirectInterceptor(() => dio),
     ]);

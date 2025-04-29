@@ -10,11 +10,11 @@ extension _$SsoLoginResponseAutoequal on SsoLoginResponse {
   List<Object?> get _$props => [code, msg, error, rs];
 }
 
-extension _$LinksItemAutoequal on LinksItem {
+extension _$SsoLoginLinksItemAutoequal on SsoLoginLinksItem {
   List<Object?> get _$props => [rel, href];
 }
 
-extension _$RsAutoequal on Rs {
+extension _$SsoLoginResultAutoequal on SsoLoginResult {
   List<Object?> get _$props => [
     grantingTicket,
     serviceTicket,
@@ -50,7 +50,7 @@ abstract class _$SsoLoginResponseCWProxy {
 
   SsoLoginResponse error(dynamic error);
 
-  SsoLoginResponse rs(Rs rs);
+  SsoLoginResponse rs(SsoLoginResult rs);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SsoLoginResponse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -58,7 +58,12 @@ abstract class _$SsoLoginResponseCWProxy {
   /// ```dart
   /// SsoLoginResponse(...).copyWith(id: 12, name: "My name")
   /// ````
-  SsoLoginResponse call({String code, String msg, dynamic error, Rs rs});
+  SsoLoginResponse call({
+    String code,
+    String msg,
+    dynamic error,
+    SsoLoginResult rs,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSsoLoginResponse.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSsoLoginResponse.copyWith.fieldName(...)`
@@ -77,7 +82,7 @@ class _$SsoLoginResponseCWProxyImpl implements _$SsoLoginResponseCWProxy {
   SsoLoginResponse error(dynamic error) => this(error: error);
 
   @override
-  SsoLoginResponse rs(Rs rs) => this(rs: rs);
+  SsoLoginResponse rs(SsoLoginResult rs) => this(rs: rs);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SsoLoginResponse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -112,7 +117,7 @@ class _$SsoLoginResponseCWProxyImpl implements _$SsoLoginResponseCWProxy {
           rs == const $CopyWithPlaceholder()
               ? _value.rs
               // ignore: cast_nullable_to_non_nullable
-              : rs as Rs,
+              : rs as SsoLoginResult,
     );
   }
 }
@@ -123,44 +128,44 @@ extension $SsoLoginResponseCopyWith on SsoLoginResponse {
   _$SsoLoginResponseCWProxy get copyWith => _$SsoLoginResponseCWProxyImpl(this);
 }
 
-abstract class _$LinksItemCWProxy {
-  LinksItem rel(String rel);
+abstract class _$SsoLoginLinksItemCWProxy {
+  SsoLoginLinksItem rel(String rel);
 
-  LinksItem href(String href);
+  SsoLoginLinksItem href(String href);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SsoLoginLinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// LinksItem(...).copyWith(id: 12, name: "My name")
+  /// SsoLoginLinksItem(...).copyWith(id: 12, name: "My name")
   /// ````
-  LinksItem call({String rel, String href});
+  SsoLoginLinksItem call({String rel, String href});
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfLinksItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfLinksItem.copyWith.fieldName(...)`
-class _$LinksItemCWProxyImpl implements _$LinksItemCWProxy {
-  const _$LinksItemCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSsoLoginLinksItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSsoLoginLinksItem.copyWith.fieldName(...)`
+class _$SsoLoginLinksItemCWProxyImpl implements _$SsoLoginLinksItemCWProxy {
+  const _$SsoLoginLinksItemCWProxyImpl(this._value);
 
-  final LinksItem _value;
-
-  @override
-  LinksItem rel(String rel) => this(rel: rel);
+  final SsoLoginLinksItem _value;
 
   @override
-  LinksItem href(String href) => this(href: href);
+  SsoLoginLinksItem rel(String rel) => this(rel: rel);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  SsoLoginLinksItem href(String href) => this(href: href);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SsoLoginLinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// LinksItem(...).copyWith(id: 12, name: "My name")
+  /// SsoLoginLinksItem(...).copyWith(id: 12, name: "My name")
   /// ````
-  LinksItem call({
+  SsoLoginLinksItem call({
     Object? rel = const $CopyWithPlaceholder(),
     Object? href = const $CopyWithPlaceholder(),
   }) {
-    return LinksItem(
+    return SsoLoginLinksItem(
       rel:
           rel == const $CopyWithPlaceholder()
               ? _value.rel
@@ -175,60 +180,61 @@ class _$LinksItemCWProxyImpl implements _$LinksItemCWProxy {
   }
 }
 
-extension $LinksItemCopyWith on LinksItem {
-  /// Returns a callable class that can be used as follows: `instanceOfLinksItem.copyWith(...)` or like so:`instanceOfLinksItem.copyWith.fieldName(...)`.
+extension $SsoLoginLinksItemCopyWith on SsoLoginLinksItem {
+  /// Returns a callable class that can be used as follows: `instanceOfSsoLoginLinksItem.copyWith(...)` or like so:`instanceOfSsoLoginLinksItem.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$LinksItemCWProxy get copyWith => _$LinksItemCWProxyImpl(this);
+  _$SsoLoginLinksItemCWProxy get copyWith =>
+      _$SsoLoginLinksItemCWProxyImpl(this);
 }
 
-abstract class _$RsCWProxy {
-  Rs grantingTicket(String grantingTicket);
+abstract class _$SsoLoginResultCWProxy {
+  SsoLoginResult grantingTicket(String grantingTicket);
 
-  Rs serviceTicket(String serviceTicket);
+  SsoLoginResult serviceTicket(String serviceTicket);
 
-  Rs tgtExpiredTime(int tgtExpiredTime);
+  SsoLoginResult tgtExpiredTime(int tgtExpiredTime);
 
-  Rs role(String role);
+  SsoLoginResult role(String role);
 
-  Rs openid(String openid);
+  SsoLoginResult openid(String openid);
 
-  Rs nickname(String nickname);
+  SsoLoginResult nickname(String nickname);
 
-  Rs fullname(String fullname);
+  SsoLoginResult fullname(String fullname);
 
-  Rs username(String username);
+  SsoLoginResult username(String username);
 
-  Rs mobile(String mobile);
+  SsoLoginResult mobile(String mobile);
 
-  Rs email(String email);
+  SsoLoginResult email(String email);
 
-  Rs perms(String perms);
+  SsoLoginResult perms(String perms);
 
-  Rs isSsoLogin(String isSsoLogin);
+  SsoLoginResult isSsoLogin(String isSsoLogin);
 
-  Rs isCompleted(String isCompleted);
+  SsoLoginResult isCompleted(String isCompleted);
 
-  Rs openidHash(String openidHash);
+  SsoLoginResult openidHash(String openidHash);
 
-  Rs jwt(String jwt);
+  SsoLoginResult jwt(String jwt);
 
-  Rs rt(String rt);
+  SsoLoginResult rt(String rt);
 
-  Rs createTime(String createTime);
+  SsoLoginResult createTime(String createTime);
 
-  Rs status(int status);
+  SsoLoginResult status(int status);
 
-  Rs source(String source);
+  SsoLoginResult source(String source);
 
-  Rs links(List<LinksItem> links);
+  SsoLoginResult links(List<SsoLoginLinksItem> links);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Rs(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SsoLoginResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// Rs(...).copyWith(id: 12, name: "My name")
+  /// SsoLoginResult(...).copyWith(id: 12, name: "My name")
   /// ````
-  Rs call({
+  SsoLoginResult call({
     String grantingTicket,
     String serviceTicket,
     int tgtExpiredTime,
@@ -248,85 +254,88 @@ abstract class _$RsCWProxy {
     String createTime,
     int status,
     String source,
-    List<LinksItem> links,
+    List<SsoLoginLinksItem> links,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRs.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRs.copyWith.fieldName(...)`
-class _$RsCWProxyImpl implements _$RsCWProxy {
-  const _$RsCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSsoLoginResult.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSsoLoginResult.copyWith.fieldName(...)`
+class _$SsoLoginResultCWProxyImpl implements _$SsoLoginResultCWProxy {
+  const _$SsoLoginResultCWProxyImpl(this._value);
 
-  final Rs _value;
+  final SsoLoginResult _value;
 
   @override
-  Rs grantingTicket(String grantingTicket) =>
+  SsoLoginResult grantingTicket(String grantingTicket) =>
       this(grantingTicket: grantingTicket);
 
   @override
-  Rs serviceTicket(String serviceTicket) => this(serviceTicket: serviceTicket);
+  SsoLoginResult serviceTicket(String serviceTicket) =>
+      this(serviceTicket: serviceTicket);
 
   @override
-  Rs tgtExpiredTime(int tgtExpiredTime) => this(tgtExpiredTime: tgtExpiredTime);
+  SsoLoginResult tgtExpiredTime(int tgtExpiredTime) =>
+      this(tgtExpiredTime: tgtExpiredTime);
 
   @override
-  Rs role(String role) => this(role: role);
+  SsoLoginResult role(String role) => this(role: role);
 
   @override
-  Rs openid(String openid) => this(openid: openid);
+  SsoLoginResult openid(String openid) => this(openid: openid);
 
   @override
-  Rs nickname(String nickname) => this(nickname: nickname);
+  SsoLoginResult nickname(String nickname) => this(nickname: nickname);
 
   @override
-  Rs fullname(String fullname) => this(fullname: fullname);
+  SsoLoginResult fullname(String fullname) => this(fullname: fullname);
 
   @override
-  Rs username(String username) => this(username: username);
+  SsoLoginResult username(String username) => this(username: username);
 
   @override
-  Rs mobile(String mobile) => this(mobile: mobile);
+  SsoLoginResult mobile(String mobile) => this(mobile: mobile);
 
   @override
-  Rs email(String email) => this(email: email);
+  SsoLoginResult email(String email) => this(email: email);
 
   @override
-  Rs perms(String perms) => this(perms: perms);
+  SsoLoginResult perms(String perms) => this(perms: perms);
 
   @override
-  Rs isSsoLogin(String isSsoLogin) => this(isSsoLogin: isSsoLogin);
+  SsoLoginResult isSsoLogin(String isSsoLogin) => this(isSsoLogin: isSsoLogin);
 
   @override
-  Rs isCompleted(String isCompleted) => this(isCompleted: isCompleted);
+  SsoLoginResult isCompleted(String isCompleted) =>
+      this(isCompleted: isCompleted);
 
   @override
-  Rs openidHash(String openidHash) => this(openidHash: openidHash);
+  SsoLoginResult openidHash(String openidHash) => this(openidHash: openidHash);
 
   @override
-  Rs jwt(String jwt) => this(jwt: jwt);
+  SsoLoginResult jwt(String jwt) => this(jwt: jwt);
 
   @override
-  Rs rt(String rt) => this(rt: rt);
+  SsoLoginResult rt(String rt) => this(rt: rt);
 
   @override
-  Rs createTime(String createTime) => this(createTime: createTime);
+  SsoLoginResult createTime(String createTime) => this(createTime: createTime);
 
   @override
-  Rs status(int status) => this(status: status);
+  SsoLoginResult status(int status) => this(status: status);
 
   @override
-  Rs source(String source) => this(source: source);
+  SsoLoginResult source(String source) => this(source: source);
 
   @override
-  Rs links(List<LinksItem> links) => this(links: links);
+  SsoLoginResult links(List<SsoLoginLinksItem> links) => this(links: links);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Rs(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SsoLoginResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// Rs(...).copyWith(id: 12, name: "My name")
+  /// SsoLoginResult(...).copyWith(id: 12, name: "My name")
   /// ````
-  Rs call({
+  SsoLoginResult call({
     Object? grantingTicket = const $CopyWithPlaceholder(),
     Object? serviceTicket = const $CopyWithPlaceholder(),
     Object? tgtExpiredTime = const $CopyWithPlaceholder(),
@@ -348,7 +357,7 @@ class _$RsCWProxyImpl implements _$RsCWProxy {
     Object? source = const $CopyWithPlaceholder(),
     Object? links = const $CopyWithPlaceholder(),
   }) {
-    return Rs(
+    return SsoLoginResult(
       grantingTicket:
           grantingTicket == const $CopyWithPlaceholder()
               ? _value.grantingTicket
@@ -448,15 +457,15 @@ class _$RsCWProxyImpl implements _$RsCWProxy {
           links == const $CopyWithPlaceholder()
               ? _value.links
               // ignore: cast_nullable_to_non_nullable
-              : links as List<LinksItem>,
+              : links as List<SsoLoginLinksItem>,
     );
   }
 }
 
-extension $RsCopyWith on Rs {
-  /// Returns a callable class that can be used as follows: `instanceOfRs.copyWith(...)` or like so:`instanceOfRs.copyWith.fieldName(...)`.
+extension $SsoLoginResultCopyWith on SsoLoginResult {
+  /// Returns a callable class that can be used as follows: `instanceOfSsoLoginResult.copyWith(...)` or like so:`instanceOfSsoLoginResult.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$RsCWProxy get copyWith => _$RsCWProxyImpl(this);
+  _$SsoLoginResultCWProxy get copyWith => _$SsoLoginResultCWProxyImpl(this);
 }
 
 // **************************************************************************
@@ -470,8 +479,8 @@ SsoLoginResponse _$SsoLoginResponseFromJson(Map<String, dynamic> json) =>
       error: json['error'],
       rs:
           json['rs'] == null
-              ? Rs.emptyInstance()
-              : Rs.fromJson(json['rs'] as Map<String, dynamic>),
+              ? SsoLoginResult.emptyInstance()
+              : SsoLoginResult.fromJson(json['rs'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SsoLoginResponseToJson(SsoLoginResponse instance) =>
@@ -482,62 +491,65 @@ Map<String, dynamic> _$SsoLoginResponseToJson(SsoLoginResponse instance) =>
       'rs': instance.rs.toJson(),
     };
 
-LinksItem _$LinksItemFromJson(Map<String, dynamic> json) => LinksItem(
-  rel: json['rel'] as String? ?? '',
-  href: json['href'] as String? ?? '',
-);
+SsoLoginLinksItem _$SsoLoginLinksItemFromJson(Map<String, dynamic> json) =>
+    SsoLoginLinksItem(
+      rel: json['rel'] as String? ?? '',
+      href: json['href'] as String? ?? '',
+    );
 
-Map<String, dynamic> _$LinksItemToJson(LinksItem instance) => <String, dynamic>{
-  'rel': instance.rel,
-  'href': instance.href,
-};
+Map<String, dynamic> _$SsoLoginLinksItemToJson(SsoLoginLinksItem instance) =>
+    <String, dynamic>{'rel': instance.rel, 'href': instance.href};
 
-Rs _$RsFromJson(Map<String, dynamic> json) => Rs(
-  grantingTicket: json['grantingTicket'] as String? ?? '',
-  serviceTicket: json['serviceTicket'] as String? ?? '',
-  tgtExpiredTime: (json['tgtExpiredTime'] as num?)?.toInt() ?? 0,
-  role: json['role'] as String? ?? '',
-  openid: json['openid'] as String? ?? '',
-  nickname: json['nickname'] as String? ?? '',
-  fullname: json['fullname'] as String? ?? '',
-  username: json['username'] as String? ?? '',
-  mobile: json['mobile'] as String? ?? '',
-  email: json['email'] as String? ?? '',
-  perms: json['perms'] as String? ?? '',
-  isSsoLogin: json['isSsoLogin'] as String? ?? '',
-  isCompleted: json['isCompleted'] as String? ?? '',
-  openidHash: json['openidHash'] as String? ?? '',
-  jwt: json['jwt'] as String? ?? '',
-  rt: json['rt'] as String? ?? '',
-  createTime: json['createTime'] as String? ?? '',
-  status: (json['status'] as num?)?.toInt() ?? 0,
-  source: json['source'] as String? ?? '',
-  links:
-      (json['links'] as List<dynamic>?)
-          ?.map((e) => LinksItem.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      [],
-);
+SsoLoginResult _$SsoLoginResultFromJson(Map<String, dynamic> json) =>
+    SsoLoginResult(
+      grantingTicket: json['grantingTicket'] as String? ?? '',
+      serviceTicket: json['serviceTicket'] as String? ?? '',
+      tgtExpiredTime: (json['tgtExpiredTime'] as num?)?.toInt() ?? 0,
+      role: json['role'] as String? ?? '',
+      openid: json['openid'] as String? ?? '',
+      nickname: json['nickname'] as String? ?? '',
+      fullname: json['fullname'] as String? ?? '',
+      username: json['username'] as String? ?? '',
+      mobile: json['mobile'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      perms: json['perms'] as String? ?? '',
+      isSsoLogin: json['isSsoLogin'] as String? ?? '',
+      isCompleted: json['isCompleted'] as String? ?? '',
+      openidHash: json['openidHash'] as String? ?? '',
+      jwt: json['jwt'] as String? ?? '',
+      rt: json['rt'] as String? ?? '',
+      createTime: json['createTime'] as String? ?? '',
+      status: (json['status'] as num?)?.toInt() ?? 0,
+      source: json['source'] as String? ?? '',
+      links:
+          (json['links'] as List<dynamic>?)
+              ?.map(
+                (e) => SsoLoginLinksItem.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          [],
+    );
 
-Map<String, dynamic> _$RsToJson(Rs instance) => <String, dynamic>{
-  'grantingTicket': instance.grantingTicket,
-  'serviceTicket': instance.serviceTicket,
-  'tgtExpiredTime': instance.tgtExpiredTime,
-  'role': instance.role,
-  'openid': instance.openid,
-  'nickname': instance.nickname,
-  'fullname': instance.fullname,
-  'username': instance.username,
-  'mobile': instance.mobile,
-  'email': instance.email,
-  'perms': instance.perms,
-  'isSsoLogin': instance.isSsoLogin,
-  'isCompleted': instance.isCompleted,
-  'openidHash': instance.openidHash,
-  'jwt': instance.jwt,
-  'rt': instance.rt,
-  'createTime': instance.createTime,
-  'status': instance.status,
-  'source': instance.source,
-  'links': instance.links.map((e) => e.toJson()).toList(),
-};
+Map<String, dynamic> _$SsoLoginResultToJson(SsoLoginResult instance) =>
+    <String, dynamic>{
+      'grantingTicket': instance.grantingTicket,
+      'serviceTicket': instance.serviceTicket,
+      'tgtExpiredTime': instance.tgtExpiredTime,
+      'role': instance.role,
+      'openid': instance.openid,
+      'nickname': instance.nickname,
+      'fullname': instance.fullname,
+      'username': instance.username,
+      'mobile': instance.mobile,
+      'email': instance.email,
+      'perms': instance.perms,
+      'isSsoLogin': instance.isSsoLogin,
+      'isCompleted': instance.isCompleted,
+      'openidHash': instance.openidHash,
+      'jwt': instance.jwt,
+      'rt': instance.rt,
+      'createTime': instance.createTime,
+      'status': instance.status,
+      'source': instance.source,
+      'links': instance.links.map((e) => e.toJson()).toList(),
+    };

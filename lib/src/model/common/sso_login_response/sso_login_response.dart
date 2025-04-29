@@ -25,15 +25,15 @@ class SsoLoginResponse with EquatableMixin {
   @JsonKey(name: "error")
   final dynamic error;
 
-  @JsonKey(name: "rs", defaultValue: Rs.emptyInstance)
-  final Rs rs;
+  @JsonKey(name: "rs", defaultValue: SsoLoginResult.emptyInstance)
+  final SsoLoginResult rs;
 
 
   factory SsoLoginResponse.fromJson(Map<String, dynamic> json) => _$SsoLoginResponseFromJson(json);
   
   Map<String, dynamic> toJson() => _$SsoLoginResponseToJson(this);
   
-  factory SsoLoginResponse.emptyInstance() => SsoLoginResponse(code: "", msg: "", rs: Rs.emptyInstance());
+  factory SsoLoginResponse.emptyInstance() => SsoLoginResponse(code: "", msg: "", rs: SsoLoginResult.emptyInstance());
   
   @override
   List<Object?> get props => _$props;
@@ -42,9 +42,9 @@ class SsoLoginResponse with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class LinksItem with EquatableMixin {
+class SsoLoginLinksItem with EquatableMixin {
 
-  LinksItem(
+  SsoLoginLinksItem(
       {required this.rel,
       required this.href});
 
@@ -55,11 +55,11 @@ class LinksItem with EquatableMixin {
   final String href;
 
 
-  factory LinksItem.fromJson(Map<String, dynamic> json) => _$LinksItemFromJson(json);
+  factory SsoLoginLinksItem.fromJson(Map<String, dynamic> json) => _$SsoLoginLinksItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$LinksItemToJson(this);
+  Map<String, dynamic> toJson() => _$SsoLoginLinksItemToJson(this);
   
-  factory LinksItem.emptyInstance() => LinksItem(rel: "", href: "");
+  factory SsoLoginLinksItem.emptyInstance() => SsoLoginLinksItem(rel: "", href: "");
   
   @override
   List<Object?> get props => _$props;
@@ -68,9 +68,9 @@ class LinksItem with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Rs with EquatableMixin {
+class SsoLoginResult with EquatableMixin {
 
-  Rs(
+  SsoLoginResult(
       {required this.grantingTicket,
       required this.serviceTicket,
       required this.tgtExpiredTime,
@@ -150,14 +150,14 @@ class Rs with EquatableMixin {
   final String source;
 
   @JsonKey(name: "links", defaultValue: [])
-  final List<LinksItem> links;
+  final List<SsoLoginLinksItem> links;
 
 
-  factory Rs.fromJson(Map<String, dynamic> json) => _$RsFromJson(json);
+  factory SsoLoginResult.fromJson(Map<String, dynamic> json) => _$SsoLoginResultFromJson(json);
   
-  Map<String, dynamic> toJson() => _$RsToJson(this);
+  Map<String, dynamic> toJson() => _$SsoLoginResultToJson(this);
   
-  factory Rs.emptyInstance() => Rs(grantingTicket: "", serviceTicket: "", tgtExpiredTime: 0, role: "", openid: "", nickname: "", fullname: "", username: "", mobile: "", email: "", perms: "", isSsoLogin: "", isCompleted: "", openidHash: "", jwt: "", rt: "", createTime: "", status: 0, source: "", links: []);
+  factory SsoLoginResult.emptyInstance() => SsoLoginResult(grantingTicket: "", serviceTicket: "", tgtExpiredTime: 0, role: "", openid: "", nickname: "", fullname: "", username: "", mobile: "", email: "", perms: "", isSsoLogin: "", isCompleted: "", openidHash: "", jwt: "", rt: "", createTime: "", status: 0, source: "", links: []);
   
   @override
   List<Object?> get props => _$props;

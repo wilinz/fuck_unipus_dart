@@ -1,27 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:fuck_unipus/src/core/base_client.dart';
+import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart';
 
-import '../http/decrypt_interceptor.dart';
-import '../model/captcha_response/captcha_response.dart';
-import '../model/class_block/class_block.dart';
-import '../model/session_info/session_info.dart';
-import 'html_parser.dart';
 
-class Itests extends BaseClient {
-  static const String unipusService = "https://u.unipus.cn/user/comm/login";
+class Itest extends BaseClient {
+  final timestamp = DateTime.now().millisecondsSinceEpoch;
 
-  static Future<Itests> newInstance({
+  String get itestsService =>
+      "https://itestcloud.unipus.cn/utest/itest/login?_rp=/itest?x=$timestamp";
+
+  static Future<Itest> newInstance({
     required String cookieDir,
     String cookieSubDir = "default",
   }) async {
-    final unipus = Itests._();
+    final unipus = Itest._();
     await unipus._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
     return unipus;
   }
 
-  Itests._();
+  Itest._();
 
   Future<void> _init({
     required String cookieDir,
@@ -32,37 +29,32 @@ class Itests extends BaseClient {
   }
 
   @override
-  String baseUrl = "https://u.unipus.cn";
+  String get baseUrl => "https://itestcloud.unipus.cn/";
 
   @override
-  String service = unipusService;
+  String get service => itestsService;
 
   @override
   Future<bool> checkLoginAndSetupSession() async {
-    final response = await dio.get('/user/student');
-    final isAuthorized = response.data.contains('我的班课');
+    final response = await dio.get('/utest/itest/s/exam');
+    final isAuthorized = response.data.contains('我的班级');
 
     if (isAuthorized) {
-      sessionInfo = _extractSessionInfo(response.data);
+      _extractSessionInfo(response.data);
     }
     return isAuthorized;
   }
 
-  SessionInfo _extractSessionInfo(String html) {
+  _extractSessionInfo(String html) {
     final document = parse(html);
     final name =
         document
             .querySelector('div.content_left_top_info_welcome label')
             ?.text
             .trim() ??
-            '';
+        '';
 
-    return SessionInfo(
-      name: name,
-      token: _extractJsVariable(html, 'token'),
-      openid: _extractJsVariable(html, 'openId'),
-      websocketUrl: _extractJsVariable(html, 'wsURL'),
-    );
+
   }
 
   String _extractJsVariable(String html, String variable) {
@@ -70,4 +62,13 @@ class Itests extends BaseClient {
     return regex.firstMatch(html)?.group(1) ?? '';
   }
 
+  Future<ItestExamListResponse> getExamList(
+    String tutorialId,
+    String leaf,
+  ) async {
+    final url = 'utest/itest-mobile-api/student/exam/list';
+    final response = await dio.get(url);
+    final data = ItestExamListResponse.fromJson(response.data);
+    return data;
+  }
 }

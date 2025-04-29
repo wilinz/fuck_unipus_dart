@@ -10,11 +10,11 @@ extension _$CaptchaResponseAutoequal on CaptchaResponse {
   List<Object?> get _$props => [code, msg, rs];
 }
 
-extension _$LinksItemAutoequal on LinksItem {
+extension _$CaptchaLinksItemAutoequal on CaptchaLinksItem {
   List<Object?> get _$props => [rel, href];
 }
 
-extension _$RsAutoequal on Rs {
+extension _$CaptchaResultAutoequal on CaptchaResult {
   List<Object?> get _$props => [type, image, encodeCaptha, codeType, links];
 }
 
@@ -27,7 +27,7 @@ abstract class _$CaptchaResponseCWProxy {
 
   CaptchaResponse msg(String msg);
 
-  CaptchaResponse rs(Rs rs);
+  CaptchaResponse rs(CaptchaResult rs);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CaptchaResponse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -35,7 +35,7 @@ abstract class _$CaptchaResponseCWProxy {
   /// ```dart
   /// CaptchaResponse(...).copyWith(id: 12, name: "My name")
   /// ````
-  CaptchaResponse call({String code, String msg, Rs rs});
+  CaptchaResponse call({String code, String msg, CaptchaResult rs});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCaptchaResponse.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCaptchaResponse.copyWith.fieldName(...)`
@@ -51,7 +51,7 @@ class _$CaptchaResponseCWProxyImpl implements _$CaptchaResponseCWProxy {
   CaptchaResponse msg(String msg) => this(msg: msg);
 
   @override
-  CaptchaResponse rs(Rs rs) => this(rs: rs);
+  CaptchaResponse rs(CaptchaResult rs) => this(rs: rs);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CaptchaResponse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -80,7 +80,7 @@ class _$CaptchaResponseCWProxyImpl implements _$CaptchaResponseCWProxy {
           rs == const $CopyWithPlaceholder()
               ? _value.rs
               // ignore: cast_nullable_to_non_nullable
-              : rs as Rs,
+              : rs as CaptchaResult,
     );
   }
 }
@@ -91,44 +91,44 @@ extension $CaptchaResponseCopyWith on CaptchaResponse {
   _$CaptchaResponseCWProxy get copyWith => _$CaptchaResponseCWProxyImpl(this);
 }
 
-abstract class _$LinksItemCWProxy {
-  LinksItem rel(String rel);
+abstract class _$CaptchaLinksItemCWProxy {
+  CaptchaLinksItem rel(String rel);
 
-  LinksItem href(String href);
+  CaptchaLinksItem href(String href);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CaptchaLinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// LinksItem(...).copyWith(id: 12, name: "My name")
+  /// CaptchaLinksItem(...).copyWith(id: 12, name: "My name")
   /// ````
-  LinksItem call({String rel, String href});
+  CaptchaLinksItem call({String rel, String href});
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfLinksItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfLinksItem.copyWith.fieldName(...)`
-class _$LinksItemCWProxyImpl implements _$LinksItemCWProxy {
-  const _$LinksItemCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCaptchaLinksItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCaptchaLinksItem.copyWith.fieldName(...)`
+class _$CaptchaLinksItemCWProxyImpl implements _$CaptchaLinksItemCWProxy {
+  const _$CaptchaLinksItemCWProxyImpl(this._value);
 
-  final LinksItem _value;
-
-  @override
-  LinksItem rel(String rel) => this(rel: rel);
+  final CaptchaLinksItem _value;
 
   @override
-  LinksItem href(String href) => this(href: href);
+  CaptchaLinksItem rel(String rel) => this(rel: rel);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `LinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  CaptchaLinksItem href(String href) => this(href: href);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CaptchaLinksItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// LinksItem(...).copyWith(id: 12, name: "My name")
+  /// CaptchaLinksItem(...).copyWith(id: 12, name: "My name")
   /// ````
-  LinksItem call({
+  CaptchaLinksItem call({
     Object? rel = const $CopyWithPlaceholder(),
     Object? href = const $CopyWithPlaceholder(),
   }) {
-    return LinksItem(
+    return CaptchaLinksItem(
       rel:
           rel == const $CopyWithPlaceholder()
               ? _value.rel
@@ -143,74 +143,75 @@ class _$LinksItemCWProxyImpl implements _$LinksItemCWProxy {
   }
 }
 
-extension $LinksItemCopyWith on LinksItem {
-  /// Returns a callable class that can be used as follows: `instanceOfLinksItem.copyWith(...)` or like so:`instanceOfLinksItem.copyWith.fieldName(...)`.
+extension $CaptchaLinksItemCopyWith on CaptchaLinksItem {
+  /// Returns a callable class that can be used as follows: `instanceOfCaptchaLinksItem.copyWith(...)` or like so:`instanceOfCaptchaLinksItem.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$LinksItemCWProxy get copyWith => _$LinksItemCWProxyImpl(this);
+  _$CaptchaLinksItemCWProxy get copyWith => _$CaptchaLinksItemCWProxyImpl(this);
 }
 
-abstract class _$RsCWProxy {
-  Rs type(String type);
+abstract class _$CaptchaResultCWProxy {
+  CaptchaResult type(String type);
 
-  Rs image(String image);
+  CaptchaResult image(String image);
 
-  Rs encodeCaptha(String encodeCaptha);
+  CaptchaResult encodeCaptha(String encodeCaptha);
 
-  Rs codeType(int codeType);
+  CaptchaResult codeType(int codeType);
 
-  Rs links(List<LinksItem> links);
+  CaptchaResult links(List<CaptchaLinksItem> links);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Rs(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CaptchaResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// Rs(...).copyWith(id: 12, name: "My name")
+  /// CaptchaResult(...).copyWith(id: 12, name: "My name")
   /// ````
-  Rs call({
+  CaptchaResult call({
     String type,
     String image,
     String encodeCaptha,
     int codeType,
-    List<LinksItem> links,
+    List<CaptchaLinksItem> links,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRs.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRs.copyWith.fieldName(...)`
-class _$RsCWProxyImpl implements _$RsCWProxy {
-  const _$RsCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCaptchaResult.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCaptchaResult.copyWith.fieldName(...)`
+class _$CaptchaResultCWProxyImpl implements _$CaptchaResultCWProxy {
+  const _$CaptchaResultCWProxyImpl(this._value);
 
-  final Rs _value;
-
-  @override
-  Rs type(String type) => this(type: type);
+  final CaptchaResult _value;
 
   @override
-  Rs image(String image) => this(image: image);
+  CaptchaResult type(String type) => this(type: type);
 
   @override
-  Rs encodeCaptha(String encodeCaptha) => this(encodeCaptha: encodeCaptha);
+  CaptchaResult image(String image) => this(image: image);
 
   @override
-  Rs codeType(int codeType) => this(codeType: codeType);
+  CaptchaResult encodeCaptha(String encodeCaptha) =>
+      this(encodeCaptha: encodeCaptha);
 
   @override
-  Rs links(List<LinksItem> links) => this(links: links);
+  CaptchaResult codeType(int codeType) => this(codeType: codeType);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Rs(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  CaptchaResult links(List<CaptchaLinksItem> links) => this(links: links);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CaptchaResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// Rs(...).copyWith(id: 12, name: "My name")
+  /// CaptchaResult(...).copyWith(id: 12, name: "My name")
   /// ````
-  Rs call({
+  CaptchaResult call({
     Object? type = const $CopyWithPlaceholder(),
     Object? image = const $CopyWithPlaceholder(),
     Object? encodeCaptha = const $CopyWithPlaceholder(),
     Object? codeType = const $CopyWithPlaceholder(),
     Object? links = const $CopyWithPlaceholder(),
   }) {
-    return Rs(
+    return CaptchaResult(
       type:
           type == const $CopyWithPlaceholder()
               ? _value.type
@@ -235,15 +236,15 @@ class _$RsCWProxyImpl implements _$RsCWProxy {
           links == const $CopyWithPlaceholder()
               ? _value.links
               // ignore: cast_nullable_to_non_nullable
-              : links as List<LinksItem>,
+              : links as List<CaptchaLinksItem>,
     );
   }
 }
 
-extension $RsCopyWith on Rs {
-  /// Returns a callable class that can be used as follows: `instanceOfRs.copyWith(...)` or like so:`instanceOfRs.copyWith.fieldName(...)`.
+extension $CaptchaResultCopyWith on CaptchaResult {
+  /// Returns a callable class that can be used as follows: `instanceOfCaptchaResult.copyWith(...)` or like so:`instanceOfCaptchaResult.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$RsCWProxy get copyWith => _$RsCWProxyImpl(this);
+  _$CaptchaResultCWProxy get copyWith => _$CaptchaResultCWProxyImpl(this);
 }
 
 // **************************************************************************
@@ -256,8 +257,8 @@ CaptchaResponse _$CaptchaResponseFromJson(Map<String, dynamic> json) =>
       msg: json['msg'] as String? ?? '',
       rs:
           json['rs'] == null
-              ? Rs.emptyInstance()
-              : Rs.fromJson(json['rs'] as Map<String, dynamic>),
+              ? CaptchaResult.emptyInstance()
+              : CaptchaResult.fromJson(json['rs'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CaptchaResponseToJson(CaptchaResponse instance) =>
@@ -267,32 +268,33 @@ Map<String, dynamic> _$CaptchaResponseToJson(CaptchaResponse instance) =>
       'rs': instance.rs.toJson(),
     };
 
-LinksItem _$LinksItemFromJson(Map<String, dynamic> json) => LinksItem(
-  rel: json['rel'] as String? ?? '',
-  href: json['href'] as String? ?? '',
-);
+CaptchaLinksItem _$CaptchaLinksItemFromJson(Map<String, dynamic> json) =>
+    CaptchaLinksItem(
+      rel: json['rel'] as String? ?? '',
+      href: json['href'] as String? ?? '',
+    );
 
-Map<String, dynamic> _$LinksItemToJson(LinksItem instance) => <String, dynamic>{
-  'rel': instance.rel,
-  'href': instance.href,
-};
+Map<String, dynamic> _$CaptchaLinksItemToJson(CaptchaLinksItem instance) =>
+    <String, dynamic>{'rel': instance.rel, 'href': instance.href};
 
-Rs _$RsFromJson(Map<String, dynamic> json) => Rs(
-  type: json['type'] as String? ?? '',
-  image: json['image'] as String? ?? '',
-  encodeCaptha: json['encodeCaptha'] as String? ?? '',
-  codeType: (json['codeType'] as num?)?.toInt() ?? 0,
-  links:
-      (json['links'] as List<dynamic>?)
-          ?.map((e) => LinksItem.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      [],
-);
+CaptchaResult _$CaptchaResultFromJson(Map<String, dynamic> json) =>
+    CaptchaResult(
+      type: json['type'] as String? ?? '',
+      image: json['image'] as String? ?? '',
+      encodeCaptha: json['encodeCaptha'] as String? ?? '',
+      codeType: (json['codeType'] as num?)?.toInt() ?? 0,
+      links:
+          (json['links'] as List<dynamic>?)
+              ?.map((e) => CaptchaLinksItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
 
-Map<String, dynamic> _$RsToJson(Rs instance) => <String, dynamic>{
-  'type': instance.type,
-  'image': instance.image,
-  'encodeCaptha': instance.encodeCaptha,
-  'codeType': instance.codeType,
-  'links': instance.links.map((e) => e.toJson()).toList(),
-};
+Map<String, dynamic> _$CaptchaResultToJson(CaptchaResult instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'image': instance.image,
+      'encodeCaptha': instance.encodeCaptha,
+      'codeType': instance.codeType,
+      'links': instance.links.map((e) => e.toJson()).toList(),
+    };

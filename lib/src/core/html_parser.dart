@@ -1,8 +1,6 @@
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart' as html;
 
-import '../model/class_block/class_block.dart';
-
 List<ClassBlock> parseCoursesToJson(String htmlContent) {
     var document = html.parse(htmlContent);
     var classSelector = '.class-content';

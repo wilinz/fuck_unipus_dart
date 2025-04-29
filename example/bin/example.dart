@@ -9,6 +9,38 @@ void main() async {
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
 
+  unipusMain(cookieDir: cookieDir, username: username);
+}
+
+Future<void> itestMain({
+  required String cookieDir,
+  required String username,
+}) async {
+  final itest = await Itest.newInstance(
+    cookieDir: cookieDir,
+    cookieSubDir: username,
+  );
+  final isLogin = await itest.checkLoginAndSetupSession();
+  if (!isLogin) {
+    final password = inputTrim("请输入密码：");
+    await itest.login(
+      username: username,
+      password: password,
+      service: Unipus.unipusService,
+      captchaHandler: (captchaResponse) async {
+        throw "";
+      },
+    );
+  } else {
+    print("已登录：");
+  }
+
+}
+
+Future<void> unipusMain({
+  required String cookieDir,
+  required String username,
+}) async {
   final unipus = await Unipus.newInstance(
     cookieDir: cookieDir,
     cookieSubDir: username,
@@ -19,7 +51,6 @@ void main() async {
     await unipus.login(
       username: username,
       password: password,
-      service: Unipus.unipusService,
       captchaHandler: (captchaResponse) async {
         throw "";
       },
@@ -55,7 +86,8 @@ void main() async {
   var courseProgress = await unipus.getCourseProgress(tutorialId);
 
   // 获取课程单元
-  var courseProgressUnits = courseProgress['rt']['units'] as Map<String, dynamic>;
+  var courseProgressUnits =
+      courseProgress['rt']['units'] as Map<String, dynamic>;
 
   // 处理单元中的节点
   Map<String, dynamic> leafs = {};
@@ -68,34 +100,45 @@ void main() async {
 
   // 获取课程详情
   final (_, courseDetail) = await unipus.getCourseDetail(tutorialId);
-  var units = List.from(courseDetail['units']).map((e)=>e as Map<String, dynamic>).toList();
+  var units =
+      List.from(
+        courseDetail['units'],
+      ).map((e) => e as Map<String, dynamic>).toList();
 
   // 遍历课程单元
-  await traversalCoursesToFs(units, [], unipus, tutorialId, leafs, '', Directory('courses'));
+  await traversalCoursesToFs(
+    units,
+    [],
+    unipus,
+    tutorialId,
+    leafs,
+    '',
+    Directory('courses'),
+  );
 
-  // 输入节点 id
-  stdout.write("请输入节点 id: ");
-  String? leaf = stdin.readLineSync();
-
-  if (leaf == null || leaf.isEmpty) {
-    print('Invalid leaf id');
-    return;
-  }
-
-  // 获取节点内容
-  final leafContent = await unipus.getCourseLeafContent(tutorialId, leaf);
-  print("节点内容：$leafContent");
+  // // 输入节点 id
+  // stdout.write("请输入节点 id: ");
+  // String? leaf = stdin.readLineSync();
+  //
+  // if (leaf == null || leaf.isEmpty) {
+  //   print('Invalid leaf id');
+  //   return;
+  // }
+  //
+  // // 获取节点内容
+  // final leafContent = await unipus.getCourseLeafContent(tutorialId, leaf);
+  // print("节点内容：$leafContent");
 }
 
 Future<void> traversalCoursesToFs(
-    List<Map<String, dynamic>> units,
-    List<int> prefix,
-    Unipus unipus,
-    String tutorialId,
-    Map<String, dynamic> leafsProgress,
-    String treePrefix,
-    Directory rootDir,
-    ) async {
+  List<Map<String, dynamic>> units,
+  List<int> prefix,
+  Unipus unipus,
+  String tutorialId,
+  Map<String, dynamic> leafsProgress,
+  String treePrefix,
+  Directory rootDir,
+) async {
   await rootDir.create(recursive: true);
   await traversalCoursesInner(
     units,
@@ -109,14 +152,14 @@ Future<void> traversalCoursesToFs(
 }
 
 Future<void> traversalCoursesInner(
-    List<Map<String, dynamic>> units,
-    List<int> prefix,
-    Unipus unipus,
-    String tutorialId,
-    Map<String, dynamic> leafsProgress,
-    String treePrefix,
-    Directory currentPath,
-    ) async {
+  List<Map<String, dynamic>> units,
+  List<int> prefix,
+  Unipus unipus,
+  String tutorialId,
+  Map<String, dynamic> leafsProgress,
+  String treePrefix,
+  Directory currentPath,
+) async {
   for (var i = 0; i < units.length; i++) {
     final unit = units[i];
     final isLast = i + 1 == units.length;
@@ -133,7 +176,12 @@ Future<void> traversalCoursesInner(
       final leaf = leafsProgress[url];
       pass = (leaf['state']?['pass'] ?? 0) != 0;
       required = leaf['strategies']?['required'] ?? false;
-      statusStr = pass ? "✅" : required ? "Fucking... 🕓" : "🚫";
+      statusStr =
+          pass
+              ? "✅"
+              : required
+              ? "Fucking... 🕓"
+              : "🚫";
     }
 
     final branch = isLast ? "└── " : "├── ";
@@ -144,14 +192,19 @@ Future<void> traversalCoursesInner(
     await thisPath.create();
 
     if (required) {
-      await processCourseLeaf(unipus, tutorialId, url, thisPath, treePrefix, branch);
+      await processCourseLeaf(
+        unipus,
+        tutorialId,
+        url,
+        thisPath,
+        treePrefix,
+        branch,
+      );
     }
 
     if (unit.containsKey('children')) {
       final children = List<Map<String, dynamic>>.from(unit['children']);
-      final newPrefix = isLast
-          ? "$treePrefix    "
-          : "$treePrefix│   ";
+      final newPrefix = isLast ? "$treePrefix    " : "$treePrefix│   ";
       await traversalCoursesInner(
         children,
         currentPrefix,
@@ -170,13 +223,13 @@ Future<void> traversalCoursesInner(
 }
 
 Future<void> processCourseLeaf(
-    Unipus unipus,
-    String tutorialId,
-    String url,
-    Directory thisPath,
-    String treePrefix,
-    String branch,
-    ) async {
+  Unipus unipus,
+  String tutorialId,
+  String url,
+  Directory thisPath,
+  String treePrefix,
+  String branch,
+) async {
   try {
     final content = await unipus.getCourseLeafContent(tutorialId, url);
     final summary = await unipus.getCourseSummary(tutorialId, url);

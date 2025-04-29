@@ -8,9 +8,9 @@ part 'session_info.g.dart';
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class SessionInfo with EquatableMixin {
+class UnipusSessionInfo with EquatableMixin {
 
-  SessionInfo(
+  UnipusSessionInfo(
       {required this.name,
       required this.token,
       required this.openid,
@@ -29,11 +29,11 @@ class SessionInfo with EquatableMixin {
   final String websocketUrl;
 
 
-  factory SessionInfo.fromJson(Map<String, dynamic> json) => _$SessionInfoFromJson(json);
+  factory UnipusSessionInfo.fromJson(Map<String, dynamic> json) => _$UnipusSessionInfoFromJson(json);
   
-  Map<String, dynamic> toJson() => _$SessionInfoToJson(this);
+  Map<String, dynamic> toJson() => _$UnipusSessionInfoToJson(this);
   
-  factory SessionInfo.emptyInstance() => SessionInfo(name: "", token: "", openid: "", websocketUrl: "");
+  factory UnipusSessionInfo.emptyInstance() => UnipusSessionInfo(name: "", token: "", openid: "", websocketUrl: "");
   
   @override
   List<Object?> get props => _$props;

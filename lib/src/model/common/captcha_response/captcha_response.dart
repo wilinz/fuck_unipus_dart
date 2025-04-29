@@ -21,15 +21,15 @@ class CaptchaResponse with EquatableMixin {
   @JsonKey(name: "msg", defaultValue: "")
   final String msg;
 
-  @JsonKey(name: "rs", defaultValue: Rs.emptyInstance)
-  final Rs rs;
+  @JsonKey(name: "rs", defaultValue: CaptchaResult.emptyInstance)
+  final CaptchaResult rs;
 
 
   factory CaptchaResponse.fromJson(Map<String, dynamic> json) => _$CaptchaResponseFromJson(json);
   
   Map<String, dynamic> toJson() => _$CaptchaResponseToJson(this);
   
-  factory CaptchaResponse.emptyInstance() => CaptchaResponse(code: "", msg: "", rs: Rs.emptyInstance());
+  factory CaptchaResponse.emptyInstance() => CaptchaResponse(code: "", msg: "", rs: CaptchaResult.emptyInstance());
   
   @override
   List<Object?> get props => _$props;
@@ -38,9 +38,9 @@ class CaptchaResponse with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class LinksItem with EquatableMixin {
+class CaptchaLinksItem with EquatableMixin {
 
-  LinksItem(
+  CaptchaLinksItem(
       {required this.rel,
       required this.href});
 
@@ -51,11 +51,11 @@ class LinksItem with EquatableMixin {
   final String href;
 
 
-  factory LinksItem.fromJson(Map<String, dynamic> json) => _$LinksItemFromJson(json);
+  factory CaptchaLinksItem.fromJson(Map<String, dynamic> json) => _$CaptchaLinksItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$LinksItemToJson(this);
+  Map<String, dynamic> toJson() => _$CaptchaLinksItemToJson(this);
   
-  factory LinksItem.emptyInstance() => LinksItem(rel: "", href: "");
+  factory CaptchaLinksItem.emptyInstance() => CaptchaLinksItem(rel: "", href: "");
   
   @override
   List<Object?> get props => _$props;
@@ -64,9 +64,9 @@ class LinksItem with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Rs with EquatableMixin {
+class CaptchaResult with EquatableMixin {
 
-  Rs(
+  CaptchaResult(
       {required this.type,
       required this.image,
       required this.encodeCaptha,
@@ -86,14 +86,14 @@ class Rs with EquatableMixin {
   final int codeType;
 
   @JsonKey(name: "links", defaultValue: [])
-  final List<LinksItem> links;
+  final List<CaptchaLinksItem> links;
 
 
-  factory Rs.fromJson(Map<String, dynamic> json) => _$RsFromJson(json);
+  factory CaptchaResult.fromJson(Map<String, dynamic> json) => _$CaptchaResultFromJson(json);
   
-  Map<String, dynamic> toJson() => _$RsToJson(this);
+  Map<String, dynamic> toJson() => _$CaptchaResultToJson(this);
   
-  factory Rs.emptyInstance() => Rs(type: "", image: "", encodeCaptha: "", codeType: 0, links: []);
+  factory CaptchaResult.emptyInstance() => CaptchaResult(type: "", image: "", encodeCaptha: "", codeType: 0, links: []);
   
   @override
   List<Object?> get props => _$props;

@@ -13,19 +13,21 @@ import '../model/captcha_response/captcha_response.dart';
 import '../model/session_info/session_info.dart';
 import '../model/sso_login_response/sso_login_response.dart';
 
+typedef CaptchaHandler =
+Future<String> Function(CaptchaResponse captchaResponse);
+
 abstract class BaseClient {
   late Dio dio;
   late CookieJar cookieJar;
-  late String service;
   SessionInfo? sessionInfo;
+  abstract String baseUrl;
+  abstract String service;
 
   Future<void> initDio({
-    required String service,
     required String cookieDir,
     required String cookieSubDir,
     bool useProxy = false,
   }) async {
-    this.service = service;
     final directory = join(cookieDir, cookieSubDir);
     if (!await Directory(directory).exists()) {
       await Directory(directory).create(recursive: true);
@@ -147,35 +149,5 @@ abstract class BaseClient {
     return response.statusCode == 200;
   }
 
-  Future<bool> checkLoginAndSetupSession() async {
-    final response = await dio.get('/user/student');
-    final isAuthorized = response.data.contains('我的班课');
-
-    if (isAuthorized) {
-      sessionInfo = _extractSessionInfo(response.data);
-    }
-    return isAuthorized;
-  }
-
-  SessionInfo _extractSessionInfo(String html) {
-    final document = parse(html);
-    final name =
-        document
-            .querySelector('div.content_left_top_info_welcome label')
-            ?.text
-            .trim() ??
-        '';
-
-    return SessionInfo(
-      name: name,
-      token: _extractJsVariable(html, 'token'),
-      openid: _extractJsVariable(html, 'openId'),
-      websocketUrl: _extractJsVariable(html, 'wsURL'),
-    );
-  }
-
-  String _extractJsVariable(String html, String variable) {
-    final regex = RegExp('$variable:.*?"(.+?)"');
-    return regex.firstMatch(html)?.group(1) ?? '';
-  }
+  Future<bool> checkLoginAndSetupSession();
 }

@@ -3,7 +3,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:autoequal/autoequal.dart';
 
-part 'session_info.g.dart';
+part 'unipus_session_info.g.dart';
 
 @CopyWith()
 @Autoequal()

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'session_info.dart';
+part of 'unipus_session_info.dart';
 
 // **************************************************************************
 // AutoequalGenerator

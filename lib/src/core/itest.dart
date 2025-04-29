@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart';
 
-
 class Itest extends BaseClient {
   final timestamp = DateTime.now().millisecondsSinceEpoch;
 
@@ -53,8 +52,6 @@ class Itest extends BaseClient {
             ?.text
             .trim() ??
         '';
-
-
   }
 
   String _extractJsVariable(String html, String variable) {
@@ -62,12 +59,15 @@ class Itest extends BaseClient {
     return regex.firstMatch(html)?.group(1) ?? '';
   }
 
-  Future<ItestExamListResponse> getExamList(
-    String tutorialId,
-    String leaf,
-  ) async {
+  Future<ItestExamListResponse> getExamList({
+    int curPage = 1,
+    int pageSize = 20,
+  }) async {
     final url = 'utest/itest-mobile-api/student/exam/list';
-    final response = await dio.get(url);
+    final response = await dio.post(
+      url,
+      data: {"curPage": curPage, "pageSize": pageSize},
+    );
     final data = ItestExamListResponse.fromJson(response.data);
     return data;
   }

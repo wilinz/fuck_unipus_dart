@@ -9,7 +9,8 @@ void main() async {
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
 
-  unipusMain(cookieDir: cookieDir, username: username);
+  itestMain(cookieDir: cookieDir, username: username);
+  // unipusMain(cookieDir: cookieDir, username: username);
 }
 
 Future<void> itestMain({
@@ -35,6 +36,8 @@ Future<void> itestMain({
     print("已登录：");
   }
 
+  final examList = await itest.getExamList();
+  print(examList);
 }
 
 Future<void> unipusMain({

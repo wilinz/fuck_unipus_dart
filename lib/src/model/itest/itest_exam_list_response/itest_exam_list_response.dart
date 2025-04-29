@@ -21,15 +21,15 @@ class ItestExamListResponse with EquatableMixin {
   @JsonKey(name: "msg", defaultValue: "")
   final String msg;
 
-  @JsonKey(name: "rs", defaultValue: ItestExamResult.emptyInstance)
-  final ItestExamResult rs;
+  @JsonKey(name: "rs", defaultValue: ItestExamListRs.emptyInstance)
+  final ItestExamListRs rs;
 
 
   factory ItestExamListResponse.fromJson(Map<String, dynamic> json) => _$ItestExamListResponseFromJson(json);
   
   Map<String, dynamic> toJson() => _$ItestExamListResponseToJson(this);
   
-  factory ItestExamListResponse.emptyInstance() => ItestExamListResponse(code: 0, msg: "", rs: ItestExamResult.emptyInstance());
+  factory ItestExamListResponse.emptyInstance() => ItestExamListResponse(code: 0, msg: "", rs: ItestExamListRs.emptyInstance());
   
   @override
   List<Object?> get props => _$props;
@@ -38,9 +38,9 @@ class ItestExamListResponse with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class RateObjFinal with EquatableMixin {
+class ItestExamListRateObjFinal with EquatableMixin {
 
-  RateObjFinal(
+  ItestExamListRateObjFinal(
       {required this.ratedSectionIds,
       required this.rateItems});
 
@@ -51,11 +51,11 @@ class RateObjFinal with EquatableMixin {
   final List rateItems;
 
 
-  factory RateObjFinal.fromJson(Map<String, dynamic> json) => _$RateObjFinalFromJson(json);
+  factory ItestExamListRateObjFinal.fromJson(Map<String, dynamic> json) => _$ItestExamListRateObjFinalFromJson(json);
   
-  Map<String, dynamic> toJson() => _$RateObjFinalToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamListRateObjFinalToJson(this);
   
-  factory RateObjFinal.emptyInstance() => RateObjFinal(ratedSectionIds: [], rateItems: []);
+  factory ItestExamListRateObjFinal.emptyInstance() => ItestExamListRateObjFinal(ratedSectionIds: [], rateItems: []);
   
   @override
   List<Object?> get props => _$props;
@@ -64,9 +64,9 @@ class RateObjFinal with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class CanKaoshiJudgeBean with EquatableMixin {
+class ItestExamListCanKaoshiJudgeBean with EquatableMixin {
 
-  CanKaoshiJudgeBean(
+  ItestExamListCanKaoshiJudgeBean(
       {required this.stuCanEnterKaoshi,
       required this.stuCanEnterEnroll,
       required this.stuCanCancelEnroll,
@@ -101,11 +101,11 @@ class CanKaoshiJudgeBean with EquatableMixin {
   final int examType;
 
 
-  factory CanKaoshiJudgeBean.fromJson(Map<String, dynamic> json) => _$CanKaoshiJudgeBeanFromJson(json);
+  factory ItestExamListCanKaoshiJudgeBean.fromJson(Map<String, dynamic> json) => _$ItestExamListCanKaoshiJudgeBeanFromJson(json);
   
-  Map<String, dynamic> toJson() => _$CanKaoshiJudgeBeanToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamListCanKaoshiJudgeBeanToJson(this);
   
-  factory CanKaoshiJudgeBean.emptyInstance() => CanKaoshiJudgeBean(stuCanEnterKaoshi: false, stuCanEnterEnroll: false, stuCanCancelEnroll: false, examCanCountdown: false, examType: 0);
+  factory ItestExamListCanKaoshiJudgeBean.emptyInstance() => ItestExamListCanKaoshiJudgeBean(stuCanEnterKaoshi: false, stuCanEnterEnroll: false, stuCanCancelEnroll: false, examCanCountdown: false, examType: 0);
   
   @override
   List<Object?> get props => _$props;
@@ -114,9 +114,9 @@ class CanKaoshiJudgeBean with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class CanViewKaojuanJudgeBean with EquatableMixin {
+class ItestExamListCanViewKaojuanJudgeBean with EquatableMixin {
 
-  CanViewKaojuanJudgeBean(
+  ItestExamListCanViewKaojuanJudgeBean(
       {required this.stuCanViewScore,
       required this.scoreText,
       required this.scoreReason,
@@ -143,11 +143,11 @@ class CanViewKaojuanJudgeBean with EquatableMixin {
   final int canShowPaper;
 
 
-  factory CanViewKaojuanJudgeBean.fromJson(Map<String, dynamic> json) => _$CanViewKaojuanJudgeBeanFromJson(json);
+  factory ItestExamListCanViewKaojuanJudgeBean.fromJson(Map<String, dynamic> json) => _$ItestExamListCanViewKaojuanJudgeBeanFromJson(json);
   
-  Map<String, dynamic> toJson() => _$CanViewKaojuanJudgeBeanToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamListCanViewKaojuanJudgeBeanToJson(this);
   
-  factory CanViewKaojuanJudgeBean.emptyInstance() => CanViewKaojuanJudgeBean(stuCanViewScore: false, scoreText: "", scoreReason: "", stuCanViewKaojuan: false, kaojuanReason: "", canShowPaper: 0);
+  factory ItestExamListCanViewKaojuanJudgeBean.emptyInstance() => ItestExamListCanViewKaojuanJudgeBean(stuCanViewScore: false, scoreText: "", scoreReason: "", stuCanViewKaojuan: false, kaojuanReason: "", canShowPaper: 0);
   
   @override
   List<Object?> get props => _$props;
@@ -156,9 +156,9 @@ class CanViewKaojuanJudgeBean with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class DataItem with EquatableMixin {
+class ItestExamListDataItem with EquatableMixin {
 
-  DataItem(
+  ItestExamListDataItem(
       {required this.uid,
       required this.ksdId,
       required this.finish,
@@ -483,8 +483,8 @@ class DataItem with EquatableMixin {
   @JsonKey(name: "class")
   final bool? classX;
 
-  @JsonKey(name: "rateObjFinal", defaultValue: RateObjFinal.emptyInstance)
-  final RateObjFinal rateObjFinal;
+  @JsonKey(name: "rateObjFinal", defaultValue: ItestExamListRateObjFinal.emptyInstance)
+  final ItestExamListRateObjFinal rateObjFinal;
 
   @JsonKey(name: "diagnosisExam", defaultValue: false)
   final bool diagnosisExam;
@@ -531,21 +531,21 @@ class DataItem with EquatableMixin {
   @JsonKey(name: "task", defaultValue: false)
   final bool task;
 
-  @JsonKey(name: "canKaoshiJudgeBean", defaultValue: CanKaoshiJudgeBean.emptyInstance)
-  final CanKaoshiJudgeBean canKaoshiJudgeBean;
+  @JsonKey(name: "canKaoshiJudgeBean", defaultValue: ItestExamListCanKaoshiJudgeBean.emptyInstance)
+  final ItestExamListCanKaoshiJudgeBean canKaoshiJudgeBean;
 
-  @JsonKey(name: "canViewKaojuanJudgeBean", defaultValue: CanViewKaojuanJudgeBean.emptyInstance)
-  final CanViewKaojuanJudgeBean canViewKaojuanJudgeBean;
+  @JsonKey(name: "canViewKaojuanJudgeBean", defaultValue: ItestExamListCanViewKaojuanJudgeBean.emptyInstance)
+  final ItestExamListCanViewKaojuanJudgeBean canViewKaojuanJudgeBean;
 
   @JsonKey(name: "ksText", defaultValue: "")
   final String ksText;
 
 
-  factory DataItem.fromJson(Map<String, dynamic> json) => _$DataItemFromJson(json);
+  factory ItestExamListDataItem.fromJson(Map<String, dynamic> json) => _$ItestExamListDataItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$DataItemToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamListDataItemToJson(this);
   
-  factory DataItem.emptyInstance() => DataItem(uid: 0, ksdId: 0, finish: 0, delFlag: 0, ksId: 0, ksName: "", examCodeFlag: false, restrictBeginTime: 0, restrictEndTime: 0, processStep: 0, clsId: 0, ksLimit: 0, checkTime: 0, beingOrOver: 0, examCanCountdown: false, endayFlag: 0, rateStatus: 0, kcId: 0, ksDelFlag: false, enrollDelFlag: 0, isNeiWangKs: 0, showKaoshiTimeType: 0, enrollMaxStuCount: 0, realEnrollStuCount: 0, checkContentType: 0, viewSubMacScorFlag: 0, subMacScorFlag: 0, isSupportApp: 0, ppId: 0, tplId: 0, zhiyueFlag: 0, examTypeEnum: "", current: false, totalScore: 0, examTag: 0, skill: 0, level: 0, mark: 0, type: 0, rateScore: 0, terminal: 0, terminalList: [], cetOralFlag: 0, captureFlag: 0, screenMonitoringFlag: 0, competitionFlag: 0, recordFlag: 0, rateObjFinal: RateObjFinal.emptyInstance(), diagnosisExam: false, viewScore: false, ansBeginAndEndTimeShow: "", enrollStartEndTime: "", examEnrollInfo: "", restrictBeginTimeStr: "", restrictEndTimeStr: "", beginTimeStr: "", enrollStartTimeStr: "", enrollEndTimeStr: "", ansBeginTimeStr: "", ansSubmitTimeStr: "", school: false, task: false, canKaoshiJudgeBean: CanKaoshiJudgeBean.emptyInstance(), canViewKaojuanJudgeBean: CanViewKaojuanJudgeBean.emptyInstance(), ksText: "");
+  factory ItestExamListDataItem.emptyInstance() => ItestExamListDataItem(uid: 0, ksdId: 0, finish: 0, delFlag: 0, ksId: 0, ksName: "", examCodeFlag: false, restrictBeginTime: 0, restrictEndTime: 0, processStep: 0, clsId: 0, ksLimit: 0, checkTime: 0, beingOrOver: 0, examCanCountdown: false, endayFlag: 0, rateStatus: 0, kcId: 0, ksDelFlag: false, enrollDelFlag: 0, isNeiWangKs: 0, showKaoshiTimeType: 0, enrollMaxStuCount: 0, realEnrollStuCount: 0, checkContentType: 0, viewSubMacScorFlag: 0, subMacScorFlag: 0, isSupportApp: 0, ppId: 0, tplId: 0, zhiyueFlag: 0, examTypeEnum: "", current: false, totalScore: 0, examTag: 0, skill: 0, level: 0, mark: 0, type: 0, rateScore: 0, terminal: 0, terminalList: [], cetOralFlag: 0, captureFlag: 0, screenMonitoringFlag: 0, competitionFlag: 0, recordFlag: 0, rateObjFinal: ItestExamListRateObjFinal.emptyInstance(), diagnosisExam: false, viewScore: false, ansBeginAndEndTimeShow: "", enrollStartEndTime: "", examEnrollInfo: "", restrictBeginTimeStr: "", restrictEndTimeStr: "", beginTimeStr: "", enrollStartTimeStr: "", enrollEndTimeStr: "", ansBeginTimeStr: "", ansSubmitTimeStr: "", school: false, task: false, canKaoshiJudgeBean: ItestExamListCanKaoshiJudgeBean.emptyInstance(), canViewKaojuanJudgeBean: ItestExamListCanViewKaojuanJudgeBean.emptyInstance(), ksText: "");
   
   @override
   List<Object?> get props => _$props;
@@ -554,9 +554,9 @@ class DataItem with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class Summary with EquatableMixin {
+class ItestExamListSummary with EquatableMixin {
 
-  Summary(
+  ItestExamListSummary(
       {this.diagnosisTrainUnfinishCount,
       this.classTrainUnfinishCount,
       this.mockUnfinishCount,
@@ -611,11 +611,11 @@ class Summary with EquatableMixin {
   final dynamic trainAfterDiagnosisUnFinishCount;
 
 
-  factory Summary.fromJson(Map<String, dynamic> json) => _$SummaryFromJson(json);
+  factory ItestExamListSummary.fromJson(Map<String, dynamic> json) => _$ItestExamListSummaryFromJson(json);
   
-  Map<String, dynamic> toJson() => _$SummaryToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamListSummaryToJson(this);
   
-  factory Summary.emptyInstance() => Summary(diagnosisFlag: false, examDoneCount: 0, examTodoCount: 0, diagnosisReportCount: 0, examTotalCount: 0, clsNames: [], notDoneExamFlag: false, notDoneTrainFlag: false);
+  factory ItestExamListSummary.emptyInstance() => ItestExamListSummary(diagnosisFlag: false, examDoneCount: 0, examTodoCount: 0, diagnosisReportCount: 0, examTotalCount: 0, clsNames: [], notDoneExamFlag: false, notDoneTrainFlag: false);
   
   @override
   List<Object?> get props => _$props;
@@ -624,9 +624,9 @@ class Summary with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class ItestExamResult with EquatableMixin {
+class ItestExamListRs with EquatableMixin {
 
-  ItestExamResult(
+  ItestExamListRs(
       {required this.pageSize,
       required this.totalNum,
       required this.currentPage,
@@ -648,20 +648,20 @@ class ItestExamResult with EquatableMixin {
   final int totalPage;
 
   @JsonKey(name: "data", defaultValue: [])
-  final List<DataItem> data;
+  final List<ItestExamListDataItem> data;
 
   @JsonKey(name: "pageInfo")
   final dynamic pageInfo;
 
-  @JsonKey(name: "summary", defaultValue: Summary.emptyInstance)
-  final Summary summary;
+  @JsonKey(name: "summary", defaultValue: ItestExamListSummary.emptyInstance)
+  final ItestExamListSummary summary;
 
 
-  factory ItestExamResult.fromJson(Map<String, dynamic> json) => _$ItestExamResultFromJson(json);
+  factory ItestExamListRs.fromJson(Map<String, dynamic> json) => _$ItestExamListRsFromJson(json);
   
-  Map<String, dynamic> toJson() => _$ItestExamResultToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamListRsToJson(this);
   
-  factory ItestExamResult.emptyInstance() => ItestExamResult(pageSize: 0, totalNum: 0, currentPage: 0, totalPage: 0, data: [], summary: Summary.emptyInstance());
+  factory ItestExamListRs.emptyInstance() => ItestExamListRs(pageSize: 0, totalNum: 0, currentPage: 0, totalPage: 0, data: [], summary: ItestExamListSummary.emptyInstance());
   
   @override
   List<Object?> get props => _$props;

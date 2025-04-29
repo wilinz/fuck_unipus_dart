@@ -1,10 +1,10 @@
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart' as html;
 
-List<ClassBlock> parseCoursesToJson(String htmlContent) {
+List<UnipusClassBlock> parseCoursesToJson(String htmlContent) {
     var document = html.parse(htmlContent);
     var classSelector = '.class-content';
-    List<ClassBlock> result = [];
+    List<UnipusClassBlock> result = [];
 
     var classBlocks = document.querySelectorAll(classSelector);
 
@@ -15,7 +15,7 @@ List<ClassBlock> parseCoursesToJson(String htmlContent) {
             .replaceAll('\n', '')
             .trim() ?? '';
 
-        List<CoursesItem> courseList = [];
+        List<UnipusClassBlockCoursesItem> courseList = [];
         var courseItems = classBlock.querySelectorAll('.my_course_item');
 
         for (var item in courseItems) {
@@ -25,7 +25,7 @@ List<ClassBlock> parseCoursesToJson(String htmlContent) {
             var courseUrl = item.querySelector('.hideurl')?.text.trim() ?? '';
             var tutorialId = item.attributes['tutorialid'] ?? '';
 
-            courseList.add(CoursesItem(
+            courseList.add(UnipusClassBlockCoursesItem(
                 courseName: courseName,
                 status: status,
                 image: imageUrl,
@@ -40,7 +40,7 @@ List<ClassBlock> parseCoursesToJson(String htmlContent) {
         String startDate = matches?.group(1)?.replaceAll('.', '-') ?? '';
         String endDate = matches?.group(2)?.replaceAll('.', '-') ?? '';
 
-        result.add(ClassBlock(
+        result.add(UnipusClassBlock(
             className: className,
             dateRange: classDate,
             startDate: startDate,

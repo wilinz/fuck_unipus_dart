@@ -21,15 +21,15 @@ class CaptchaResponse with EquatableMixin {
   @JsonKey(name: "msg", defaultValue: "")
   final String msg;
 
-  @JsonKey(name: "rs", defaultValue: CaptchaResult.emptyInstance)
-  final CaptchaResult rs;
+  @JsonKey(name: "rs", defaultValue: CaptchaRs.emptyInstance)
+  final CaptchaRs rs;
 
 
   factory CaptchaResponse.fromJson(Map<String, dynamic> json) => _$CaptchaResponseFromJson(json);
   
   Map<String, dynamic> toJson() => _$CaptchaResponseToJson(this);
   
-  factory CaptchaResponse.emptyInstance() => CaptchaResponse(code: "", msg: "", rs: CaptchaResult.emptyInstance());
+  factory CaptchaResponse.emptyInstance() => CaptchaResponse(code: "", msg: "", rs: CaptchaRs.emptyInstance());
   
   @override
   List<Object?> get props => _$props;
@@ -64,9 +64,9 @@ class CaptchaLinksItem with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class CaptchaResult with EquatableMixin {
+class CaptchaRs with EquatableMixin {
 
-  CaptchaResult(
+  CaptchaRs(
       {required this.type,
       required this.image,
       required this.encodeCaptha,
@@ -89,11 +89,11 @@ class CaptchaResult with EquatableMixin {
   final List<CaptchaLinksItem> links;
 
 
-  factory CaptchaResult.fromJson(Map<String, dynamic> json) => _$CaptchaResultFromJson(json);
+  factory CaptchaRs.fromJson(Map<String, dynamic> json) => _$CaptchaRsFromJson(json);
   
-  Map<String, dynamic> toJson() => _$CaptchaResultToJson(this);
+  Map<String, dynamic> toJson() => _$CaptchaRsToJson(this);
   
-  factory CaptchaResult.emptyInstance() => CaptchaResult(type: "", image: "", encodeCaptha: "", codeType: 0, links: []);
+  factory CaptchaRs.emptyInstance() => CaptchaRs(type: "", image: "", encodeCaptha: "", codeType: 0, links: []);
   
   @override
   List<Object?> get props => _$props;

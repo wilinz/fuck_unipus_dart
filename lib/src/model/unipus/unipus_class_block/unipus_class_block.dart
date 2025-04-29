@@ -3,14 +3,14 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:autoequal/autoequal.dart';
 
-part 'class_block.g.dart';
+part 'unipus_class_block.g.dart';
 
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class ClassBlock with EquatableMixin {
+class UnipusClassBlock with EquatableMixin {
 
-  ClassBlock(
+  UnipusClassBlock(
       {required this.className,
       required this.dateRange,
       required this.startDate,
@@ -30,14 +30,14 @@ class ClassBlock with EquatableMixin {
   final String endDate;
 
   @JsonKey(name: "courses", defaultValue: [])
-  final List<CoursesItem> courses;
+  final List<UnipusClassBlockCoursesItem> courses;
 
 
-  factory ClassBlock.fromJson(Map<String, dynamic> json) => _$ClassBlockFromJson(json);
+  factory UnipusClassBlock.fromJson(Map<String, dynamic> json) => _$UnipusClassBlockFromJson(json);
   
-  Map<String, dynamic> toJson() => _$ClassBlockToJson(this);
+  Map<String, dynamic> toJson() => _$UnipusClassBlockToJson(this);
   
-  factory ClassBlock.emptyInstance() => ClassBlock(className: "", dateRange: "", startDate: "", endDate: "", courses: []);
+  factory UnipusClassBlock.emptyInstance() => UnipusClassBlock(className: "", dateRange: "", startDate: "", endDate: "", courses: []);
   
   @override
   List<Object?> get props => _$props;
@@ -46,9 +46,9 @@ class ClassBlock with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class CoursesItem with EquatableMixin {
+class UnipusClassBlockCoursesItem with EquatableMixin {
 
-  CoursesItem(
+  UnipusClassBlockCoursesItem(
       {this.courseName,
       required this.status,
       required this.image,
@@ -71,11 +71,11 @@ class CoursesItem with EquatableMixin {
   final String? tutorialId;
 
 
-  factory CoursesItem.fromJson(Map<String, dynamic> json) => _$CoursesItemFromJson(json);
+  factory UnipusClassBlockCoursesItem.fromJson(Map<String, dynamic> json) => _$UnipusClassBlockCoursesItemFromJson(json);
   
-  Map<String, dynamic> toJson() => _$CoursesItemToJson(this);
+  Map<String, dynamic> toJson() => _$UnipusClassBlockCoursesItemToJson(this);
   
-  factory CoursesItem.emptyInstance() => CoursesItem(status: "", image: "");
+  factory UnipusClassBlockCoursesItem.emptyInstance() => UnipusClassBlockCoursesItem(status: "", image: "");
   
   @override
   List<Object?> get props => _$props;

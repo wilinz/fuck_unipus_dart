@@ -25,15 +25,15 @@ class SsoLoginResponse with EquatableMixin {
   @JsonKey(name: "error")
   final dynamic error;
 
-  @JsonKey(name: "rs", defaultValue: SsoLoginResult.emptyInstance)
-  final SsoLoginResult rs;
+  @JsonKey(name: "rs", defaultValue: SsoLoginRs.emptyInstance)
+  final SsoLoginRs rs;
 
 
   factory SsoLoginResponse.fromJson(Map<String, dynamic> json) => _$SsoLoginResponseFromJson(json);
   
   Map<String, dynamic> toJson() => _$SsoLoginResponseToJson(this);
   
-  factory SsoLoginResponse.emptyInstance() => SsoLoginResponse(code: "", msg: "", rs: SsoLoginResult.emptyInstance());
+  factory SsoLoginResponse.emptyInstance() => SsoLoginResponse(code: "", msg: "", rs: SsoLoginRs.emptyInstance());
   
   @override
   List<Object?> get props => _$props;
@@ -68,9 +68,9 @@ class SsoLoginLinksItem with EquatableMixin {
 @CopyWith()
 @Autoequal()
 @JsonSerializable(explicitToJson: true)
-class SsoLoginResult with EquatableMixin {
+class SsoLoginRs with EquatableMixin {
 
-  SsoLoginResult(
+  SsoLoginRs(
       {required this.grantingTicket,
       required this.serviceTicket,
       required this.tgtExpiredTime,
@@ -153,11 +153,11 @@ class SsoLoginResult with EquatableMixin {
   final List<SsoLoginLinksItem> links;
 
 
-  factory SsoLoginResult.fromJson(Map<String, dynamic> json) => _$SsoLoginResultFromJson(json);
+  factory SsoLoginRs.fromJson(Map<String, dynamic> json) => _$SsoLoginRsFromJson(json);
   
-  Map<String, dynamic> toJson() => _$SsoLoginResultToJson(this);
+  Map<String, dynamic> toJson() => _$SsoLoginRsToJson(this);
   
-  factory SsoLoginResult.emptyInstance() => SsoLoginResult(grantingTicket: "", serviceTicket: "", tgtExpiredTime: 0, role: "", openid: "", nickname: "", fullname: "", username: "", mobile: "", email: "", perms: "", isSsoLogin: "", isCompleted: "", openidHash: "", jwt: "", rt: "", createTime: "", status: 0, source: "", links: []);
+  factory SsoLoginRs.emptyInstance() => SsoLoginRs(grantingTicket: "", serviceTicket: "", tgtExpiredTime: 0, role: "", openid: "", nickname: "", fullname: "", username: "", mobile: "", email: "", perms: "", isSsoLogin: "", isCompleted: "", openidHash: "", jwt: "", rt: "", createTime: "", status: 0, source: "", links: []);
   
   @override
   List<Object?> get props => _$props;

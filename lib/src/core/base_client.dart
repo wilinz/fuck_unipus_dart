@@ -30,7 +30,7 @@ abstract class BaseClient {
 
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://u.unipus.cn',
+        baseUrl: baseUrl,
         headers: buildDefaultHeaders(),
         validateStatus: (status) => status! < 500,
         followRedirects: false,

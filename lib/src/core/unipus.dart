@@ -40,7 +40,7 @@ class Unipus extends BaseClient {
     dio.interceptors.addAll([tokenInterceptor, UnipusDecryptInterceptor()]);
   }
 
-  Future<List<ClassBlock>> getCourses() async {
+  Future<List<UnipusClassBlock>> getCourses() async {
     final response = await dio.get('/user/student?school_id=10196');
     return parseCoursesToJson(response.data);
   }

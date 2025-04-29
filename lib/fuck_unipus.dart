@@ -11,5 +11,5 @@ export 'src/http/decrypt_interceptor.dart';
 export 'src/model/common/captcha_response/captcha_response.dart';
 export 'src/model/common/sso_login_response/sso_login_response.dart';
 export 'src/model/itest/itest_exam_list_response/itest_exam_list_response.dart';
-export 'src/model/unipus/class_block/class_block.dart';
-export 'src/model/unipus/session_info/session_info.dart';
+export 'src/model/unipus/unipus_class_block/unipus_class_block.dart';
+export 'src/model/unipus/unipus_session_info/unipus_session_info.dart';

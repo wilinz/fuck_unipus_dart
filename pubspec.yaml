@@ -30,7 +30,7 @@ dev_dependencies:
   json_serializable: ^6.9.5
   autoequal_gen: ^0.9.5
   copy_with_extension_gen: ^6.0.1
-  json5_model: ^3.0.2
+  json5_model: ^4.0.0
 
 index_generator:
   exclude:

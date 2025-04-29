@@ -10,11 +10,12 @@ extension _$ItestExamListResponseAutoequal on ItestExamListResponse {
   List<Object?> get _$props => [code, msg, rs];
 }
 
-extension _$RateObjFinalAutoequal on RateObjFinal {
+extension _$ItestExamListRateObjFinalAutoequal on ItestExamListRateObjFinal {
   List<Object?> get _$props => [ratedSectionIds, rateItems];
 }
 
-extension _$CanKaoshiJudgeBeanAutoequal on CanKaoshiJudgeBean {
+extension _$ItestExamListCanKaoshiJudgeBeanAutoequal
+    on ItestExamListCanKaoshiJudgeBean {
   List<Object?> get _$props => [
     stuCanEnterKaoshi,
     stuCanEnterEnroll,
@@ -27,7 +28,8 @@ extension _$CanKaoshiJudgeBeanAutoequal on CanKaoshiJudgeBean {
   ];
 }
 
-extension _$CanViewKaojuanJudgeBeanAutoequal on CanViewKaojuanJudgeBean {
+extension _$ItestExamListCanViewKaojuanJudgeBeanAutoequal
+    on ItestExamListCanViewKaojuanJudgeBean {
   List<Object?> get _$props => [
     stuCanViewScore,
     scoreText,
@@ -38,7 +40,7 @@ extension _$CanViewKaojuanJudgeBeanAutoequal on CanViewKaojuanJudgeBean {
   ];
 }
 
-extension _$DataItemAutoequal on DataItem {
+extension _$ItestExamListDataItemAutoequal on ItestExamListDataItem {
   List<Object?> get _$props => [
     uid,
     ksdId,
@@ -138,7 +140,7 @@ extension _$DataItemAutoequal on DataItem {
   ];
 }
 
-extension _$SummaryAutoequal on Summary {
+extension _$ItestExamListSummaryAutoequal on ItestExamListSummary {
   List<Object?> get _$props => [
     diagnosisTrainUnfinishCount,
     classTrainUnfinishCount,
@@ -156,7 +158,7 @@ extension _$SummaryAutoequal on Summary {
   ];
 }
 
-extension _$ItestExamResultAutoequal on ItestExamResult {
+extension _$ItestExamListRsAutoequal on ItestExamListRs {
   List<Object?> get _$props => [
     pageSize,
     totalNum,
@@ -177,7 +179,7 @@ abstract class _$ItestExamListResponseCWProxy {
 
   ItestExamListResponse msg(String msg);
 
-  ItestExamListResponse rs(ItestExamResult rs);
+  ItestExamListResponse rs(ItestExamListRs rs);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListResponse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -185,7 +187,7 @@ abstract class _$ItestExamListResponseCWProxy {
   /// ```dart
   /// ItestExamListResponse(...).copyWith(id: 12, name: "My name")
   /// ````
-  ItestExamListResponse call({int code, String msg, ItestExamResult rs});
+  ItestExamListResponse call({int code, String msg, ItestExamListRs rs});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListResponse.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListResponse.copyWith.fieldName(...)`
@@ -202,7 +204,7 @@ class _$ItestExamListResponseCWProxyImpl
   ItestExamListResponse msg(String msg) => this(msg: msg);
 
   @override
-  ItestExamListResponse rs(ItestExamResult rs) => this(rs: rs);
+  ItestExamListResponse rs(ItestExamListRs rs) => this(rs: rs);
 
   @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListResponse(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -231,7 +233,7 @@ class _$ItestExamListResponseCWProxyImpl
           rs == const $CopyWithPlaceholder()
               ? _value.rs
               // ignore: cast_nullable_to_non_nullable
-              : rs as ItestExamResult,
+              : rs as ItestExamListRs,
     );
   }
 }
@@ -243,45 +245,50 @@ extension $ItestExamListResponseCopyWith on ItestExamListResponse {
       _$ItestExamListResponseCWProxyImpl(this);
 }
 
-abstract class _$RateObjFinalCWProxy {
-  RateObjFinal ratedSectionIds(List<dynamic> ratedSectionIds);
+abstract class _$ItestExamListRateObjFinalCWProxy {
+  ItestExamListRateObjFinal ratedSectionIds(List<dynamic> ratedSectionIds);
 
-  RateObjFinal rateItems(List<dynamic> rateItems);
+  ItestExamListRateObjFinal rateItems(List<dynamic> rateItems);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RateObjFinal(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListRateObjFinal(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// RateObjFinal(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListRateObjFinal(...).copyWith(id: 12, name: "My name")
   /// ````
-  RateObjFinal call({List<dynamic> ratedSectionIds, List<dynamic> rateItems});
+  ItestExamListRateObjFinal call({
+    List<dynamic> ratedSectionIds,
+    List<dynamic> rateItems,
+  });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRateObjFinal.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRateObjFinal.copyWith.fieldName(...)`
-class _$RateObjFinalCWProxyImpl implements _$RateObjFinalCWProxy {
-  const _$RateObjFinalCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListRateObjFinal.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListRateObjFinal.copyWith.fieldName(...)`
+class _$ItestExamListRateObjFinalCWProxyImpl
+    implements _$ItestExamListRateObjFinalCWProxy {
+  const _$ItestExamListRateObjFinalCWProxyImpl(this._value);
 
-  final RateObjFinal _value;
+  final ItestExamListRateObjFinal _value;
 
   @override
-  RateObjFinal ratedSectionIds(List<dynamic> ratedSectionIds) =>
+  ItestExamListRateObjFinal ratedSectionIds(List<dynamic> ratedSectionIds) =>
       this(ratedSectionIds: ratedSectionIds);
 
   @override
-  RateObjFinal rateItems(List<dynamic> rateItems) => this(rateItems: rateItems);
+  ItestExamListRateObjFinal rateItems(List<dynamic> rateItems) =>
+      this(rateItems: rateItems);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RateObjFinal(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListRateObjFinal(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// RateObjFinal(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListRateObjFinal(...).copyWith(id: 12, name: "My name")
   /// ````
-  RateObjFinal call({
+  ItestExamListRateObjFinal call({
     Object? ratedSectionIds = const $CopyWithPlaceholder(),
     Object? rateItems = const $CopyWithPlaceholder(),
   }) {
-    return RateObjFinal(
+    return ItestExamListRateObjFinal(
       ratedSectionIds:
           ratedSectionIds == const $CopyWithPlaceholder()
               ? _value.ratedSectionIds
@@ -296,36 +303,37 @@ class _$RateObjFinalCWProxyImpl implements _$RateObjFinalCWProxy {
   }
 }
 
-extension $RateObjFinalCopyWith on RateObjFinal {
-  /// Returns a callable class that can be used as follows: `instanceOfRateObjFinal.copyWith(...)` or like so:`instanceOfRateObjFinal.copyWith.fieldName(...)`.
+extension $ItestExamListRateObjFinalCopyWith on ItestExamListRateObjFinal {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamListRateObjFinal.copyWith(...)` or like so:`instanceOfItestExamListRateObjFinal.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$RateObjFinalCWProxy get copyWith => _$RateObjFinalCWProxyImpl(this);
+  _$ItestExamListRateObjFinalCWProxy get copyWith =>
+      _$ItestExamListRateObjFinalCWProxyImpl(this);
 }
 
-abstract class _$CanKaoshiJudgeBeanCWProxy {
-  CanKaoshiJudgeBean stuCanEnterKaoshi(bool stuCanEnterKaoshi);
+abstract class _$ItestExamListCanKaoshiJudgeBeanCWProxy {
+  ItestExamListCanKaoshiJudgeBean stuCanEnterKaoshi(bool stuCanEnterKaoshi);
 
-  CanKaoshiJudgeBean stuCanEnterEnroll(bool stuCanEnterEnroll);
+  ItestExamListCanKaoshiJudgeBean stuCanEnterEnroll(bool stuCanEnterEnroll);
 
-  CanKaoshiJudgeBean stuCanCancelEnroll(bool stuCanCancelEnroll);
+  ItestExamListCanKaoshiJudgeBean stuCanCancelEnroll(bool stuCanCancelEnroll);
 
-  CanKaoshiJudgeBean examCanCountdown(bool examCanCountdown);
+  ItestExamListCanKaoshiJudgeBean examCanCountdown(bool examCanCountdown);
 
-  CanKaoshiJudgeBean countdownSeconds(dynamic countdownSeconds);
+  ItestExamListCanKaoshiJudgeBean countdownSeconds(dynamic countdownSeconds);
 
-  CanKaoshiJudgeBean kaoshiStatusInfo(dynamic kaoshiStatusInfo);
+  ItestExamListCanKaoshiJudgeBean kaoshiStatusInfo(dynamic kaoshiStatusInfo);
 
-  CanKaoshiJudgeBean kaoshiBtnInfo(dynamic kaoshiBtnInfo);
+  ItestExamListCanKaoshiJudgeBean kaoshiBtnInfo(dynamic kaoshiBtnInfo);
 
-  CanKaoshiJudgeBean examType(int examType);
+  ItestExamListCanKaoshiJudgeBean examType(int examType);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CanKaoshiJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListCanKaoshiJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// CanKaoshiJudgeBean(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListCanKaoshiJudgeBean(...).copyWith(id: 12, name: "My name")
   /// ````
-  CanKaoshiJudgeBean call({
+  ItestExamListCanKaoshiJudgeBean call({
     bool stuCanEnterKaoshi,
     bool stuCanEnterEnroll,
     bool stuCanCancelEnroll,
@@ -337,51 +345,53 @@ abstract class _$CanKaoshiJudgeBeanCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCanKaoshiJudgeBean.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCanKaoshiJudgeBean.copyWith.fieldName(...)`
-class _$CanKaoshiJudgeBeanCWProxyImpl implements _$CanKaoshiJudgeBeanCWProxy {
-  const _$CanKaoshiJudgeBeanCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListCanKaoshiJudgeBean.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListCanKaoshiJudgeBean.copyWith.fieldName(...)`
+class _$ItestExamListCanKaoshiJudgeBeanCWProxyImpl
+    implements _$ItestExamListCanKaoshiJudgeBeanCWProxy {
+  const _$ItestExamListCanKaoshiJudgeBeanCWProxyImpl(this._value);
 
-  final CanKaoshiJudgeBean _value;
+  final ItestExamListCanKaoshiJudgeBean _value;
 
   @override
-  CanKaoshiJudgeBean stuCanEnterKaoshi(bool stuCanEnterKaoshi) =>
+  ItestExamListCanKaoshiJudgeBean stuCanEnterKaoshi(bool stuCanEnterKaoshi) =>
       this(stuCanEnterKaoshi: stuCanEnterKaoshi);
 
   @override
-  CanKaoshiJudgeBean stuCanEnterEnroll(bool stuCanEnterEnroll) =>
+  ItestExamListCanKaoshiJudgeBean stuCanEnterEnroll(bool stuCanEnterEnroll) =>
       this(stuCanEnterEnroll: stuCanEnterEnroll);
 
   @override
-  CanKaoshiJudgeBean stuCanCancelEnroll(bool stuCanCancelEnroll) =>
+  ItestExamListCanKaoshiJudgeBean stuCanCancelEnroll(bool stuCanCancelEnroll) =>
       this(stuCanCancelEnroll: stuCanCancelEnroll);
 
   @override
-  CanKaoshiJudgeBean examCanCountdown(bool examCanCountdown) =>
+  ItestExamListCanKaoshiJudgeBean examCanCountdown(bool examCanCountdown) =>
       this(examCanCountdown: examCanCountdown);
 
   @override
-  CanKaoshiJudgeBean countdownSeconds(dynamic countdownSeconds) =>
+  ItestExamListCanKaoshiJudgeBean countdownSeconds(dynamic countdownSeconds) =>
       this(countdownSeconds: countdownSeconds);
 
   @override
-  CanKaoshiJudgeBean kaoshiStatusInfo(dynamic kaoshiStatusInfo) =>
+  ItestExamListCanKaoshiJudgeBean kaoshiStatusInfo(dynamic kaoshiStatusInfo) =>
       this(kaoshiStatusInfo: kaoshiStatusInfo);
 
   @override
-  CanKaoshiJudgeBean kaoshiBtnInfo(dynamic kaoshiBtnInfo) =>
+  ItestExamListCanKaoshiJudgeBean kaoshiBtnInfo(dynamic kaoshiBtnInfo) =>
       this(kaoshiBtnInfo: kaoshiBtnInfo);
 
   @override
-  CanKaoshiJudgeBean examType(int examType) => this(examType: examType);
+  ItestExamListCanKaoshiJudgeBean examType(int examType) =>
+      this(examType: examType);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CanKaoshiJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListCanKaoshiJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// CanKaoshiJudgeBean(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListCanKaoshiJudgeBean(...).copyWith(id: 12, name: "My name")
   /// ````
-  CanKaoshiJudgeBean call({
+  ItestExamListCanKaoshiJudgeBean call({
     Object? stuCanEnterKaoshi = const $CopyWithPlaceholder(),
     Object? stuCanEnterEnroll = const $CopyWithPlaceholder(),
     Object? stuCanCancelEnroll = const $CopyWithPlaceholder(),
@@ -391,7 +401,7 @@ class _$CanKaoshiJudgeBeanCWProxyImpl implements _$CanKaoshiJudgeBeanCWProxy {
     Object? kaoshiBtnInfo = const $CopyWithPlaceholder(),
     Object? examType = const $CopyWithPlaceholder(),
   }) {
-    return CanKaoshiJudgeBean(
+    return ItestExamListCanKaoshiJudgeBean(
       stuCanEnterKaoshi:
           stuCanEnterKaoshi == const $CopyWithPlaceholder()
               ? _value.stuCanEnterKaoshi
@@ -436,33 +446,36 @@ class _$CanKaoshiJudgeBeanCWProxyImpl implements _$CanKaoshiJudgeBeanCWProxy {
   }
 }
 
-extension $CanKaoshiJudgeBeanCopyWith on CanKaoshiJudgeBean {
-  /// Returns a callable class that can be used as follows: `instanceOfCanKaoshiJudgeBean.copyWith(...)` or like so:`instanceOfCanKaoshiJudgeBean.copyWith.fieldName(...)`.
+extension $ItestExamListCanKaoshiJudgeBeanCopyWith
+    on ItestExamListCanKaoshiJudgeBean {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamListCanKaoshiJudgeBean.copyWith(...)` or like so:`instanceOfItestExamListCanKaoshiJudgeBean.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$CanKaoshiJudgeBeanCWProxy get copyWith =>
-      _$CanKaoshiJudgeBeanCWProxyImpl(this);
+  _$ItestExamListCanKaoshiJudgeBeanCWProxy get copyWith =>
+      _$ItestExamListCanKaoshiJudgeBeanCWProxyImpl(this);
 }
 
-abstract class _$CanViewKaojuanJudgeBeanCWProxy {
-  CanViewKaojuanJudgeBean stuCanViewScore(bool stuCanViewScore);
+abstract class _$ItestExamListCanViewKaojuanJudgeBeanCWProxy {
+  ItestExamListCanViewKaojuanJudgeBean stuCanViewScore(bool stuCanViewScore);
 
-  CanViewKaojuanJudgeBean scoreText(String scoreText);
+  ItestExamListCanViewKaojuanJudgeBean scoreText(String scoreText);
 
-  CanViewKaojuanJudgeBean scoreReason(String scoreReason);
+  ItestExamListCanViewKaojuanJudgeBean scoreReason(String scoreReason);
 
-  CanViewKaojuanJudgeBean stuCanViewKaojuan(bool stuCanViewKaojuan);
+  ItestExamListCanViewKaojuanJudgeBean stuCanViewKaojuan(
+    bool stuCanViewKaojuan,
+  );
 
-  CanViewKaojuanJudgeBean kaojuanReason(String kaojuanReason);
+  ItestExamListCanViewKaojuanJudgeBean kaojuanReason(String kaojuanReason);
 
-  CanViewKaojuanJudgeBean canShowPaper(int canShowPaper);
+  ItestExamListCanViewKaojuanJudgeBean canShowPaper(int canShowPaper);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CanViewKaojuanJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListCanViewKaojuanJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// CanViewKaojuanJudgeBean(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListCanViewKaojuanJudgeBean(...).copyWith(id: 12, name: "My name")
   /// ````
-  CanViewKaojuanJudgeBean call({
+  ItestExamListCanViewKaojuanJudgeBean call({
     bool stuCanViewScore,
     String scoreText,
     String scoreReason,
@@ -472,45 +485,46 @@ abstract class _$CanViewKaojuanJudgeBeanCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCanViewKaojuanJudgeBean.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCanViewKaojuanJudgeBean.copyWith.fieldName(...)`
-class _$CanViewKaojuanJudgeBeanCWProxyImpl
-    implements _$CanViewKaojuanJudgeBeanCWProxy {
-  const _$CanViewKaojuanJudgeBeanCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListCanViewKaojuanJudgeBean.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListCanViewKaojuanJudgeBean.copyWith.fieldName(...)`
+class _$ItestExamListCanViewKaojuanJudgeBeanCWProxyImpl
+    implements _$ItestExamListCanViewKaojuanJudgeBeanCWProxy {
+  const _$ItestExamListCanViewKaojuanJudgeBeanCWProxyImpl(this._value);
 
-  final CanViewKaojuanJudgeBean _value;
+  final ItestExamListCanViewKaojuanJudgeBean _value;
 
   @override
-  CanViewKaojuanJudgeBean stuCanViewScore(bool stuCanViewScore) =>
+  ItestExamListCanViewKaojuanJudgeBean stuCanViewScore(bool stuCanViewScore) =>
       this(stuCanViewScore: stuCanViewScore);
 
   @override
-  CanViewKaojuanJudgeBean scoreText(String scoreText) =>
+  ItestExamListCanViewKaojuanJudgeBean scoreText(String scoreText) =>
       this(scoreText: scoreText);
 
   @override
-  CanViewKaojuanJudgeBean scoreReason(String scoreReason) =>
+  ItestExamListCanViewKaojuanJudgeBean scoreReason(String scoreReason) =>
       this(scoreReason: scoreReason);
 
   @override
-  CanViewKaojuanJudgeBean stuCanViewKaojuan(bool stuCanViewKaojuan) =>
-      this(stuCanViewKaojuan: stuCanViewKaojuan);
+  ItestExamListCanViewKaojuanJudgeBean stuCanViewKaojuan(
+    bool stuCanViewKaojuan,
+  ) => this(stuCanViewKaojuan: stuCanViewKaojuan);
 
   @override
-  CanViewKaojuanJudgeBean kaojuanReason(String kaojuanReason) =>
+  ItestExamListCanViewKaojuanJudgeBean kaojuanReason(String kaojuanReason) =>
       this(kaojuanReason: kaojuanReason);
 
   @override
-  CanViewKaojuanJudgeBean canShowPaper(int canShowPaper) =>
+  ItestExamListCanViewKaojuanJudgeBean canShowPaper(int canShowPaper) =>
       this(canShowPaper: canShowPaper);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CanViewKaojuanJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListCanViewKaojuanJudgeBean(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// CanViewKaojuanJudgeBean(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListCanViewKaojuanJudgeBean(...).copyWith(id: 12, name: "My name")
   /// ````
-  CanViewKaojuanJudgeBean call({
+  ItestExamListCanViewKaojuanJudgeBean call({
     Object? stuCanViewScore = const $CopyWithPlaceholder(),
     Object? scoreText = const $CopyWithPlaceholder(),
     Object? scoreReason = const $CopyWithPlaceholder(),
@@ -518,7 +532,7 @@ class _$CanViewKaojuanJudgeBeanCWProxyImpl
     Object? kaojuanReason = const $CopyWithPlaceholder(),
     Object? canShowPaper = const $CopyWithPlaceholder(),
   }) {
-    return CanViewKaojuanJudgeBean(
+    return ItestExamListCanViewKaojuanJudgeBean(
       stuCanViewScore:
           stuCanViewScore == const $CopyWithPlaceholder()
               ? _value.stuCanViewScore
@@ -553,213 +567,218 @@ class _$CanViewKaojuanJudgeBeanCWProxyImpl
   }
 }
 
-extension $CanViewKaojuanJudgeBeanCopyWith on CanViewKaojuanJudgeBean {
-  /// Returns a callable class that can be used as follows: `instanceOfCanViewKaojuanJudgeBean.copyWith(...)` or like so:`instanceOfCanViewKaojuanJudgeBean.copyWith.fieldName(...)`.
+extension $ItestExamListCanViewKaojuanJudgeBeanCopyWith
+    on ItestExamListCanViewKaojuanJudgeBean {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamListCanViewKaojuanJudgeBean.copyWith(...)` or like so:`instanceOfItestExamListCanViewKaojuanJudgeBean.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$CanViewKaojuanJudgeBeanCWProxy get copyWith =>
-      _$CanViewKaojuanJudgeBeanCWProxyImpl(this);
+  _$ItestExamListCanViewKaojuanJudgeBeanCWProxy get copyWith =>
+      _$ItestExamListCanViewKaojuanJudgeBeanCWProxyImpl(this);
 }
 
-abstract class _$DataItemCWProxy {
-  DataItem uid(int uid);
+abstract class _$ItestExamListDataItemCWProxy {
+  ItestExamListDataItem uid(int uid);
 
-  DataItem ksdId(int ksdId);
+  ItestExamListDataItem ksdId(int ksdId);
 
-  DataItem finish(int finish);
+  ItestExamListDataItem finish(int finish);
 
-  DataItem delFlag(int delFlag);
+  ItestExamListDataItem delFlag(int delFlag);
 
-  DataItem ksId(int ksId);
+  ItestExamListDataItem ksId(int ksId);
 
-  DataItem ksName(String ksName);
+  ItestExamListDataItem ksName(String ksName);
 
-  DataItem examCodeFlag(bool examCodeFlag);
+  ItestExamListDataItem examCodeFlag(bool examCodeFlag);
 
-  DataItem examType(dynamic examType);
+  ItestExamListDataItem examType(dynamic examType);
 
-  DataItem restrictBeginTime(int restrictBeginTime);
+  ItestExamListDataItem restrictBeginTime(int restrictBeginTime);
 
-  DataItem restrictEndTime(int restrictEndTime);
+  ItestExamListDataItem restrictEndTime(int restrictEndTime);
 
-  DataItem beginTime(dynamic beginTime);
+  ItestExamListDataItem beginTime(dynamic beginTime);
 
-  DataItem processStep(int processStep);
+  ItestExamListDataItem processStep(int processStep);
 
-  DataItem enrollStartTime(dynamic enrollStartTime);
+  ItestExamListDataItem enrollStartTime(dynamic enrollStartTime);
 
-  DataItem enrollEndTime(dynamic enrollEndTime);
+  ItestExamListDataItem enrollEndTime(dynamic enrollEndTime);
 
-  DataItem ansBeginTime(dynamic ansBeginTime);
+  ItestExamListDataItem ansBeginTime(dynamic ansBeginTime);
 
-  DataItem clsId(int clsId);
+  ItestExamListDataItem clsId(int clsId);
 
-  DataItem ksLimit(int ksLimit);
+  ItestExamListDataItem ksLimit(int ksLimit);
 
-  DataItem checkTime(int checkTime);
+  ItestExamListDataItem checkTime(int checkTime);
 
-  DataItem beingOrOver(int beingOrOver);
+  ItestExamListDataItem beingOrOver(int beingOrOver);
 
-  DataItem countdownSeconds(dynamic countdownSeconds);
+  ItestExamListDataItem countdownSeconds(dynamic countdownSeconds);
 
-  DataItem examCanCountdown(bool examCanCountdown);
+  ItestExamListDataItem examCanCountdown(bool examCanCountdown);
 
-  DataItem endayFlag(int endayFlag);
+  ItestExamListDataItem endayFlag(int endayFlag);
 
-  DataItem realCheckTime(dynamic realCheckTime);
+  ItestExamListDataItem realCheckTime(dynamic realCheckTime);
 
-  DataItem rateStatus(int rateStatus);
+  ItestExamListDataItem rateStatus(int rateStatus);
 
-  DataItem autoRateJson(dynamic autoRateJson);
+  ItestExamListDataItem autoRateJson(dynamic autoRateJson);
 
-  DataItem rateJson(dynamic rateJson);
+  ItestExamListDataItem rateJson(dynamic rateJson);
 
-  DataItem ansSubmitTime(dynamic ansSubmitTime);
+  ItestExamListDataItem ansSubmitTime(dynamic ansSubmitTime);
 
-  DataItem kcId(int kcId);
+  ItestExamListDataItem kcId(int kcId);
 
-  DataItem ksDelFlag(bool ksDelFlag);
+  ItestExamListDataItem ksDelFlag(bool ksDelFlag);
 
-  DataItem enrollDelFlag(int enrollDelFlag);
+  ItestExamListDataItem enrollDelFlag(int enrollDelFlag);
 
-  DataItem isNeiWangKs(int isNeiWangKs);
+  ItestExamListDataItem isNeiWangKs(int isNeiWangKs);
 
-  DataItem showKaoshiTimeType(int showKaoshiTimeType);
+  ItestExamListDataItem showKaoshiTimeType(int showKaoshiTimeType);
 
-  DataItem showKaoshiTimeContent(dynamic showKaoshiTimeContent);
+  ItestExamListDataItem showKaoshiTimeContent(dynamic showKaoshiTimeContent);
 
-  DataItem enrollMaxStuCount(int enrollMaxStuCount);
+  ItestExamListDataItem enrollMaxStuCount(int enrollMaxStuCount);
 
-  DataItem realEnrollStuCount(int realEnrollStuCount);
+  ItestExamListDataItem realEnrollStuCount(int realEnrollStuCount);
 
-  DataItem kaoshiNote(dynamic kaoshiNote);
+  ItestExamListDataItem kaoshiNote(dynamic kaoshiNote);
 
-  DataItem kcName(dynamic kcName);
+  ItestExamListDataItem kcName(dynamic kcName);
 
-  DataItem checkContentType(int checkContentType);
+  ItestExamListDataItem checkContentType(int checkContentType);
 
-  DataItem viewSubMacScorFlag(int viewSubMacScorFlag);
+  ItestExamListDataItem viewSubMacScorFlag(int viewSubMacScorFlag);
 
-  DataItem subMacScorFlag(int subMacScorFlag);
+  ItestExamListDataItem subMacScorFlag(int subMacScorFlag);
 
-  DataItem guidangTime(dynamic guidangTime);
+  ItestExamListDataItem guidangTime(dynamic guidangTime);
 
-  DataItem isSupportApp(int isSupportApp);
+  ItestExamListDataItem isSupportApp(int isSupportApp);
 
-  DataItem ppId(int ppId);
+  ItestExamListDataItem ppId(int ppId);
 
-  DataItem tplId(int tplId);
+  ItestExamListDataItem tplId(int tplId);
 
-  DataItem zhiyueFlag(int zhiyueFlag);
+  ItestExamListDataItem zhiyueFlag(int zhiyueFlag);
 
-  DataItem examTypeEnum(String examTypeEnum);
+  ItestExamListDataItem examTypeEnum(String examTypeEnum);
 
-  DataItem postType(dynamic postType);
+  ItestExamListDataItem postType(dynamic postType);
 
-  DataItem taskMode(dynamic taskMode);
+  ItestExamListDataItem taskMode(dynamic taskMode);
 
-  DataItem scorePercentage(dynamic scorePercentage);
+  ItestExamListDataItem scorePercentage(dynamic scorePercentage);
 
-  DataItem finalScoreType(dynamic finalScoreType);
+  ItestExamListDataItem finalScoreType(dynamic finalScoreType);
 
-  DataItem score(dynamic score);
+  ItestExamListDataItem score(dynamic score);
 
-  DataItem answerTimes(dynamic answerTimes);
+  ItestExamListDataItem answerTimes(dynamic answerTimes);
 
-  DataItem standardScore(dynamic standardScore);
+  ItestExamListDataItem standardScore(dynamic standardScore);
 
-  DataItem current(bool current);
+  ItestExamListDataItem current(bool current);
 
-  DataItem totalScore(int totalScore);
+  ItestExamListDataItem totalScore(int totalScore);
 
-  DataItem examTag(int examTag);
+  ItestExamListDataItem examTag(int examTag);
 
-  DataItem skill(int skill);
+  ItestExamListDataItem skill(int skill);
 
-  DataItem level(int level);
+  ItestExamListDataItem level(int level);
 
-  DataItem mark(int mark);
+  ItestExamListDataItem mark(int mark);
 
-  DataItem type(int type);
+  ItestExamListDataItem type(int type);
 
-  DataItem allowEntryId(dynamic allowEntryId);
+  ItestExamListDataItem allowEntryId(dynamic allowEntryId);
 
-  DataItem rateScore(int rateScore);
+  ItestExamListDataItem rateScore(int rateScore);
 
-  DataItem ksLimitStr(dynamic ksLimitStr);
+  ItestExamListDataItem ksLimitStr(dynamic ksLimitStr);
 
-  DataItem faceRecognize(dynamic faceRecognize);
+  ItestExamListDataItem faceRecognize(dynamic faceRecognize);
 
-  DataItem terminal(int terminal);
+  ItestExamListDataItem terminal(int terminal);
 
-  DataItem terminalList(List<int> terminalList);
+  ItestExamListDataItem terminalList(List<int> terminalList);
 
-  DataItem cetOralFlag(int cetOralFlag);
+  ItestExamListDataItem cetOralFlag(int cetOralFlag);
 
-  DataItem hasFaceRecognize(dynamic hasFaceRecognize);
+  ItestExamListDataItem hasFaceRecognize(dynamic hasFaceRecognize);
 
-  DataItem hasFaceRecognizeCount(dynamic hasFaceRecognizeCount);
+  ItestExamListDataItem hasFaceRecognizeCount(dynamic hasFaceRecognizeCount);
 
-  DataItem commitment(dynamic commitment);
+  ItestExamListDataItem commitment(dynamic commitment);
 
-  DataItem rtcFlag(dynamic rtcFlag);
+  ItestExamListDataItem rtcFlag(dynamic rtcFlag);
 
-  DataItem captureFlag(int captureFlag);
+  ItestExamListDataItem captureFlag(int captureFlag);
 
-  DataItem screenMonitoringFlag(int screenMonitoringFlag);
+  ItestExamListDataItem screenMonitoringFlag(int screenMonitoringFlag);
 
-  DataItem competitionFlag(int competitionFlag);
+  ItestExamListDataItem competitionFlag(int competitionFlag);
 
-  DataItem recordFlag(int recordFlag);
+  ItestExamListDataItem recordFlag(int recordFlag);
 
-  DataItem classX(bool? classX);
+  ItestExamListDataItem classX(bool? classX);
 
-  DataItem rateObjFinal(RateObjFinal rateObjFinal);
+  ItestExamListDataItem rateObjFinal(ItestExamListRateObjFinal rateObjFinal);
 
-  DataItem diagnosisExam(bool diagnosisExam);
+  ItestExamListDataItem diagnosisExam(bool diagnosisExam);
 
-  DataItem viewScore(bool viewScore);
+  ItestExamListDataItem viewScore(bool viewScore);
 
-  DataItem kaoshiShowTimeForCurrentStu(dynamic kaoshiShowTimeForCurrentStu);
-
-  DataItem ansBeginAndEndTimeShow(String ansBeginAndEndTimeShow);
-
-  DataItem enrollStartEndTime(String enrollStartEndTime);
-
-  DataItem examEnrollInfo(String examEnrollInfo);
-
-  DataItem restrictBeginTimeStr(String restrictBeginTimeStr);
-
-  DataItem restrictEndTimeStr(String restrictEndTimeStr);
-
-  DataItem beginTimeStr(String beginTimeStr);
-
-  DataItem enrollStartTimeStr(String enrollStartTimeStr);
-
-  DataItem enrollEndTimeStr(String enrollEndTimeStr);
-
-  DataItem ansBeginTimeStr(String ansBeginTimeStr);
-
-  DataItem ansSubmitTimeStr(String ansSubmitTimeStr);
-
-  DataItem school(bool school);
-
-  DataItem task(bool task);
-
-  DataItem canKaoshiJudgeBean(CanKaoshiJudgeBean canKaoshiJudgeBean);
-
-  DataItem canViewKaojuanJudgeBean(
-    CanViewKaojuanJudgeBean canViewKaojuanJudgeBean,
+  ItestExamListDataItem kaoshiShowTimeForCurrentStu(
+    dynamic kaoshiShowTimeForCurrentStu,
   );
 
-  DataItem ksText(String ksText);
+  ItestExamListDataItem ansBeginAndEndTimeShow(String ansBeginAndEndTimeShow);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DataItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ItestExamListDataItem enrollStartEndTime(String enrollStartEndTime);
+
+  ItestExamListDataItem examEnrollInfo(String examEnrollInfo);
+
+  ItestExamListDataItem restrictBeginTimeStr(String restrictBeginTimeStr);
+
+  ItestExamListDataItem restrictEndTimeStr(String restrictEndTimeStr);
+
+  ItestExamListDataItem beginTimeStr(String beginTimeStr);
+
+  ItestExamListDataItem enrollStartTimeStr(String enrollStartTimeStr);
+
+  ItestExamListDataItem enrollEndTimeStr(String enrollEndTimeStr);
+
+  ItestExamListDataItem ansBeginTimeStr(String ansBeginTimeStr);
+
+  ItestExamListDataItem ansSubmitTimeStr(String ansSubmitTimeStr);
+
+  ItestExamListDataItem school(bool school);
+
+  ItestExamListDataItem task(bool task);
+
+  ItestExamListDataItem canKaoshiJudgeBean(
+    ItestExamListCanKaoshiJudgeBean canKaoshiJudgeBean,
+  );
+
+  ItestExamListDataItem canViewKaojuanJudgeBean(
+    ItestExamListCanViewKaojuanJudgeBean canViewKaojuanJudgeBean,
+  );
+
+  ItestExamListDataItem ksText(String ksText);
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListDataItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// DataItem(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListDataItem(...).copyWith(id: 12, name: "My name")
   /// ````
-  DataItem call({
+  ItestExamListDataItem call({
     int uid,
     int ksdId,
     int finish,
@@ -836,7 +855,7 @@ abstract class _$DataItemCWProxy {
     int competitionFlag,
     int recordFlag,
     bool? classX,
-    RateObjFinal rateObjFinal,
+    ItestExamListRateObjFinal rateObjFinal,
     bool diagnosisExam,
     bool viewScore,
     dynamic kaoshiShowTimeForCurrentStu,
@@ -852,356 +871,376 @@ abstract class _$DataItemCWProxy {
     String ansSubmitTimeStr,
     bool school,
     bool task,
-    CanKaoshiJudgeBean canKaoshiJudgeBean,
-    CanViewKaojuanJudgeBean canViewKaojuanJudgeBean,
+    ItestExamListCanKaoshiJudgeBean canKaoshiJudgeBean,
+    ItestExamListCanViewKaojuanJudgeBean canViewKaojuanJudgeBean,
     String ksText,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfDataItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfDataItem.copyWith.fieldName(...)`
-class _$DataItemCWProxyImpl implements _$DataItemCWProxy {
-  const _$DataItemCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListDataItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListDataItem.copyWith.fieldName(...)`
+class _$ItestExamListDataItemCWProxyImpl
+    implements _$ItestExamListDataItemCWProxy {
+  const _$ItestExamListDataItemCWProxyImpl(this._value);
 
-  final DataItem _value;
-
-  @override
-  DataItem uid(int uid) => this(uid: uid);
+  final ItestExamListDataItem _value;
 
   @override
-  DataItem ksdId(int ksdId) => this(ksdId: ksdId);
+  ItestExamListDataItem uid(int uid) => this(uid: uid);
 
   @override
-  DataItem finish(int finish) => this(finish: finish);
+  ItestExamListDataItem ksdId(int ksdId) => this(ksdId: ksdId);
 
   @override
-  DataItem delFlag(int delFlag) => this(delFlag: delFlag);
+  ItestExamListDataItem finish(int finish) => this(finish: finish);
 
   @override
-  DataItem ksId(int ksId) => this(ksId: ksId);
+  ItestExamListDataItem delFlag(int delFlag) => this(delFlag: delFlag);
 
   @override
-  DataItem ksName(String ksName) => this(ksName: ksName);
+  ItestExamListDataItem ksId(int ksId) => this(ksId: ksId);
 
   @override
-  DataItem examCodeFlag(bool examCodeFlag) => this(examCodeFlag: examCodeFlag);
+  ItestExamListDataItem ksName(String ksName) => this(ksName: ksName);
 
   @override
-  DataItem examType(dynamic examType) => this(examType: examType);
+  ItestExamListDataItem examCodeFlag(bool examCodeFlag) =>
+      this(examCodeFlag: examCodeFlag);
 
   @override
-  DataItem restrictBeginTime(int restrictBeginTime) =>
+  ItestExamListDataItem examType(dynamic examType) => this(examType: examType);
+
+  @override
+  ItestExamListDataItem restrictBeginTime(int restrictBeginTime) =>
       this(restrictBeginTime: restrictBeginTime);
 
   @override
-  DataItem restrictEndTime(int restrictEndTime) =>
+  ItestExamListDataItem restrictEndTime(int restrictEndTime) =>
       this(restrictEndTime: restrictEndTime);
 
   @override
-  DataItem beginTime(dynamic beginTime) => this(beginTime: beginTime);
+  ItestExamListDataItem beginTime(dynamic beginTime) =>
+      this(beginTime: beginTime);
 
   @override
-  DataItem processStep(int processStep) => this(processStep: processStep);
+  ItestExamListDataItem processStep(int processStep) =>
+      this(processStep: processStep);
 
   @override
-  DataItem enrollStartTime(dynamic enrollStartTime) =>
+  ItestExamListDataItem enrollStartTime(dynamic enrollStartTime) =>
       this(enrollStartTime: enrollStartTime);
 
   @override
-  DataItem enrollEndTime(dynamic enrollEndTime) =>
+  ItestExamListDataItem enrollEndTime(dynamic enrollEndTime) =>
       this(enrollEndTime: enrollEndTime);
 
   @override
-  DataItem ansBeginTime(dynamic ansBeginTime) =>
+  ItestExamListDataItem ansBeginTime(dynamic ansBeginTime) =>
       this(ansBeginTime: ansBeginTime);
 
   @override
-  DataItem clsId(int clsId) => this(clsId: clsId);
+  ItestExamListDataItem clsId(int clsId) => this(clsId: clsId);
 
   @override
-  DataItem ksLimit(int ksLimit) => this(ksLimit: ksLimit);
+  ItestExamListDataItem ksLimit(int ksLimit) => this(ksLimit: ksLimit);
 
   @override
-  DataItem checkTime(int checkTime) => this(checkTime: checkTime);
+  ItestExamListDataItem checkTime(int checkTime) => this(checkTime: checkTime);
 
   @override
-  DataItem beingOrOver(int beingOrOver) => this(beingOrOver: beingOrOver);
+  ItestExamListDataItem beingOrOver(int beingOrOver) =>
+      this(beingOrOver: beingOrOver);
 
   @override
-  DataItem countdownSeconds(dynamic countdownSeconds) =>
+  ItestExamListDataItem countdownSeconds(dynamic countdownSeconds) =>
       this(countdownSeconds: countdownSeconds);
 
   @override
-  DataItem examCanCountdown(bool examCanCountdown) =>
+  ItestExamListDataItem examCanCountdown(bool examCanCountdown) =>
       this(examCanCountdown: examCanCountdown);
 
   @override
-  DataItem endayFlag(int endayFlag) => this(endayFlag: endayFlag);
+  ItestExamListDataItem endayFlag(int endayFlag) => this(endayFlag: endayFlag);
 
   @override
-  DataItem realCheckTime(dynamic realCheckTime) =>
+  ItestExamListDataItem realCheckTime(dynamic realCheckTime) =>
       this(realCheckTime: realCheckTime);
 
   @override
-  DataItem rateStatus(int rateStatus) => this(rateStatus: rateStatus);
+  ItestExamListDataItem rateStatus(int rateStatus) =>
+      this(rateStatus: rateStatus);
 
   @override
-  DataItem autoRateJson(dynamic autoRateJson) =>
+  ItestExamListDataItem autoRateJson(dynamic autoRateJson) =>
       this(autoRateJson: autoRateJson);
 
   @override
-  DataItem rateJson(dynamic rateJson) => this(rateJson: rateJson);
+  ItestExamListDataItem rateJson(dynamic rateJson) => this(rateJson: rateJson);
 
   @override
-  DataItem ansSubmitTime(dynamic ansSubmitTime) =>
+  ItestExamListDataItem ansSubmitTime(dynamic ansSubmitTime) =>
       this(ansSubmitTime: ansSubmitTime);
 
   @override
-  DataItem kcId(int kcId) => this(kcId: kcId);
+  ItestExamListDataItem kcId(int kcId) => this(kcId: kcId);
 
   @override
-  DataItem ksDelFlag(bool ksDelFlag) => this(ksDelFlag: ksDelFlag);
+  ItestExamListDataItem ksDelFlag(bool ksDelFlag) => this(ksDelFlag: ksDelFlag);
 
   @override
-  DataItem enrollDelFlag(int enrollDelFlag) =>
+  ItestExamListDataItem enrollDelFlag(int enrollDelFlag) =>
       this(enrollDelFlag: enrollDelFlag);
 
   @override
-  DataItem isNeiWangKs(int isNeiWangKs) => this(isNeiWangKs: isNeiWangKs);
+  ItestExamListDataItem isNeiWangKs(int isNeiWangKs) =>
+      this(isNeiWangKs: isNeiWangKs);
 
   @override
-  DataItem showKaoshiTimeType(int showKaoshiTimeType) =>
+  ItestExamListDataItem showKaoshiTimeType(int showKaoshiTimeType) =>
       this(showKaoshiTimeType: showKaoshiTimeType);
 
   @override
-  DataItem showKaoshiTimeContent(dynamic showKaoshiTimeContent) =>
+  ItestExamListDataItem showKaoshiTimeContent(dynamic showKaoshiTimeContent) =>
       this(showKaoshiTimeContent: showKaoshiTimeContent);
 
   @override
-  DataItem enrollMaxStuCount(int enrollMaxStuCount) =>
+  ItestExamListDataItem enrollMaxStuCount(int enrollMaxStuCount) =>
       this(enrollMaxStuCount: enrollMaxStuCount);
 
   @override
-  DataItem realEnrollStuCount(int realEnrollStuCount) =>
+  ItestExamListDataItem realEnrollStuCount(int realEnrollStuCount) =>
       this(realEnrollStuCount: realEnrollStuCount);
 
   @override
-  DataItem kaoshiNote(dynamic kaoshiNote) => this(kaoshiNote: kaoshiNote);
+  ItestExamListDataItem kaoshiNote(dynamic kaoshiNote) =>
+      this(kaoshiNote: kaoshiNote);
 
   @override
-  DataItem kcName(dynamic kcName) => this(kcName: kcName);
+  ItestExamListDataItem kcName(dynamic kcName) => this(kcName: kcName);
 
   @override
-  DataItem checkContentType(int checkContentType) =>
+  ItestExamListDataItem checkContentType(int checkContentType) =>
       this(checkContentType: checkContentType);
 
   @override
-  DataItem viewSubMacScorFlag(int viewSubMacScorFlag) =>
+  ItestExamListDataItem viewSubMacScorFlag(int viewSubMacScorFlag) =>
       this(viewSubMacScorFlag: viewSubMacScorFlag);
 
   @override
-  DataItem subMacScorFlag(int subMacScorFlag) =>
+  ItestExamListDataItem subMacScorFlag(int subMacScorFlag) =>
       this(subMacScorFlag: subMacScorFlag);
 
   @override
-  DataItem guidangTime(dynamic guidangTime) => this(guidangTime: guidangTime);
+  ItestExamListDataItem guidangTime(dynamic guidangTime) =>
+      this(guidangTime: guidangTime);
 
   @override
-  DataItem isSupportApp(int isSupportApp) => this(isSupportApp: isSupportApp);
+  ItestExamListDataItem isSupportApp(int isSupportApp) =>
+      this(isSupportApp: isSupportApp);
 
   @override
-  DataItem ppId(int ppId) => this(ppId: ppId);
+  ItestExamListDataItem ppId(int ppId) => this(ppId: ppId);
 
   @override
-  DataItem tplId(int tplId) => this(tplId: tplId);
+  ItestExamListDataItem tplId(int tplId) => this(tplId: tplId);
 
   @override
-  DataItem zhiyueFlag(int zhiyueFlag) => this(zhiyueFlag: zhiyueFlag);
+  ItestExamListDataItem zhiyueFlag(int zhiyueFlag) =>
+      this(zhiyueFlag: zhiyueFlag);
 
   @override
-  DataItem examTypeEnum(String examTypeEnum) =>
+  ItestExamListDataItem examTypeEnum(String examTypeEnum) =>
       this(examTypeEnum: examTypeEnum);
 
   @override
-  DataItem postType(dynamic postType) => this(postType: postType);
+  ItestExamListDataItem postType(dynamic postType) => this(postType: postType);
 
   @override
-  DataItem taskMode(dynamic taskMode) => this(taskMode: taskMode);
+  ItestExamListDataItem taskMode(dynamic taskMode) => this(taskMode: taskMode);
 
   @override
-  DataItem scorePercentage(dynamic scorePercentage) =>
+  ItestExamListDataItem scorePercentage(dynamic scorePercentage) =>
       this(scorePercentage: scorePercentage);
 
   @override
-  DataItem finalScoreType(dynamic finalScoreType) =>
+  ItestExamListDataItem finalScoreType(dynamic finalScoreType) =>
       this(finalScoreType: finalScoreType);
 
   @override
-  DataItem score(dynamic score) => this(score: score);
+  ItestExamListDataItem score(dynamic score) => this(score: score);
 
   @override
-  DataItem answerTimes(dynamic answerTimes) => this(answerTimes: answerTimes);
+  ItestExamListDataItem answerTimes(dynamic answerTimes) =>
+      this(answerTimes: answerTimes);
 
   @override
-  DataItem standardScore(dynamic standardScore) =>
+  ItestExamListDataItem standardScore(dynamic standardScore) =>
       this(standardScore: standardScore);
 
   @override
-  DataItem current(bool current) => this(current: current);
+  ItestExamListDataItem current(bool current) => this(current: current);
 
   @override
-  DataItem totalScore(int totalScore) => this(totalScore: totalScore);
+  ItestExamListDataItem totalScore(int totalScore) =>
+      this(totalScore: totalScore);
 
   @override
-  DataItem examTag(int examTag) => this(examTag: examTag);
+  ItestExamListDataItem examTag(int examTag) => this(examTag: examTag);
 
   @override
-  DataItem skill(int skill) => this(skill: skill);
+  ItestExamListDataItem skill(int skill) => this(skill: skill);
 
   @override
-  DataItem level(int level) => this(level: level);
+  ItestExamListDataItem level(int level) => this(level: level);
 
   @override
-  DataItem mark(int mark) => this(mark: mark);
+  ItestExamListDataItem mark(int mark) => this(mark: mark);
 
   @override
-  DataItem type(int type) => this(type: type);
+  ItestExamListDataItem type(int type) => this(type: type);
 
   @override
-  DataItem allowEntryId(dynamic allowEntryId) =>
+  ItestExamListDataItem allowEntryId(dynamic allowEntryId) =>
       this(allowEntryId: allowEntryId);
 
   @override
-  DataItem rateScore(int rateScore) => this(rateScore: rateScore);
+  ItestExamListDataItem rateScore(int rateScore) => this(rateScore: rateScore);
 
   @override
-  DataItem ksLimitStr(dynamic ksLimitStr) => this(ksLimitStr: ksLimitStr);
+  ItestExamListDataItem ksLimitStr(dynamic ksLimitStr) =>
+      this(ksLimitStr: ksLimitStr);
 
   @override
-  DataItem faceRecognize(dynamic faceRecognize) =>
+  ItestExamListDataItem faceRecognize(dynamic faceRecognize) =>
       this(faceRecognize: faceRecognize);
 
   @override
-  DataItem terminal(int terminal) => this(terminal: terminal);
+  ItestExamListDataItem terminal(int terminal) => this(terminal: terminal);
 
   @override
-  DataItem terminalList(List<int> terminalList) =>
+  ItestExamListDataItem terminalList(List<int> terminalList) =>
       this(terminalList: terminalList);
 
   @override
-  DataItem cetOralFlag(int cetOralFlag) => this(cetOralFlag: cetOralFlag);
+  ItestExamListDataItem cetOralFlag(int cetOralFlag) =>
+      this(cetOralFlag: cetOralFlag);
 
   @override
-  DataItem hasFaceRecognize(dynamic hasFaceRecognize) =>
+  ItestExamListDataItem hasFaceRecognize(dynamic hasFaceRecognize) =>
       this(hasFaceRecognize: hasFaceRecognize);
 
   @override
-  DataItem hasFaceRecognizeCount(dynamic hasFaceRecognizeCount) =>
+  ItestExamListDataItem hasFaceRecognizeCount(dynamic hasFaceRecognizeCount) =>
       this(hasFaceRecognizeCount: hasFaceRecognizeCount);
 
   @override
-  DataItem commitment(dynamic commitment) => this(commitment: commitment);
+  ItestExamListDataItem commitment(dynamic commitment) =>
+      this(commitment: commitment);
 
   @override
-  DataItem rtcFlag(dynamic rtcFlag) => this(rtcFlag: rtcFlag);
+  ItestExamListDataItem rtcFlag(dynamic rtcFlag) => this(rtcFlag: rtcFlag);
 
   @override
-  DataItem captureFlag(int captureFlag) => this(captureFlag: captureFlag);
+  ItestExamListDataItem captureFlag(int captureFlag) =>
+      this(captureFlag: captureFlag);
 
   @override
-  DataItem screenMonitoringFlag(int screenMonitoringFlag) =>
+  ItestExamListDataItem screenMonitoringFlag(int screenMonitoringFlag) =>
       this(screenMonitoringFlag: screenMonitoringFlag);
 
   @override
-  DataItem competitionFlag(int competitionFlag) =>
+  ItestExamListDataItem competitionFlag(int competitionFlag) =>
       this(competitionFlag: competitionFlag);
 
   @override
-  DataItem recordFlag(int recordFlag) => this(recordFlag: recordFlag);
+  ItestExamListDataItem recordFlag(int recordFlag) =>
+      this(recordFlag: recordFlag);
 
   @override
-  DataItem classX(bool? classX) => this(classX: classX);
+  ItestExamListDataItem classX(bool? classX) => this(classX: classX);
 
   @override
-  DataItem rateObjFinal(RateObjFinal rateObjFinal) =>
+  ItestExamListDataItem rateObjFinal(ItestExamListRateObjFinal rateObjFinal) =>
       this(rateObjFinal: rateObjFinal);
 
   @override
-  DataItem diagnosisExam(bool diagnosisExam) =>
+  ItestExamListDataItem diagnosisExam(bool diagnosisExam) =>
       this(diagnosisExam: diagnosisExam);
 
   @override
-  DataItem viewScore(bool viewScore) => this(viewScore: viewScore);
+  ItestExamListDataItem viewScore(bool viewScore) => this(viewScore: viewScore);
 
   @override
-  DataItem kaoshiShowTimeForCurrentStu(dynamic kaoshiShowTimeForCurrentStu) =>
-      this(kaoshiShowTimeForCurrentStu: kaoshiShowTimeForCurrentStu);
+  ItestExamListDataItem kaoshiShowTimeForCurrentStu(
+    dynamic kaoshiShowTimeForCurrentStu,
+  ) => this(kaoshiShowTimeForCurrentStu: kaoshiShowTimeForCurrentStu);
 
   @override
-  DataItem ansBeginAndEndTimeShow(String ansBeginAndEndTimeShow) =>
+  ItestExamListDataItem ansBeginAndEndTimeShow(String ansBeginAndEndTimeShow) =>
       this(ansBeginAndEndTimeShow: ansBeginAndEndTimeShow);
 
   @override
-  DataItem enrollStartEndTime(String enrollStartEndTime) =>
+  ItestExamListDataItem enrollStartEndTime(String enrollStartEndTime) =>
       this(enrollStartEndTime: enrollStartEndTime);
 
   @override
-  DataItem examEnrollInfo(String examEnrollInfo) =>
+  ItestExamListDataItem examEnrollInfo(String examEnrollInfo) =>
       this(examEnrollInfo: examEnrollInfo);
 
   @override
-  DataItem restrictBeginTimeStr(String restrictBeginTimeStr) =>
+  ItestExamListDataItem restrictBeginTimeStr(String restrictBeginTimeStr) =>
       this(restrictBeginTimeStr: restrictBeginTimeStr);
 
   @override
-  DataItem restrictEndTimeStr(String restrictEndTimeStr) =>
+  ItestExamListDataItem restrictEndTimeStr(String restrictEndTimeStr) =>
       this(restrictEndTimeStr: restrictEndTimeStr);
 
   @override
-  DataItem beginTimeStr(String beginTimeStr) =>
+  ItestExamListDataItem beginTimeStr(String beginTimeStr) =>
       this(beginTimeStr: beginTimeStr);
 
   @override
-  DataItem enrollStartTimeStr(String enrollStartTimeStr) =>
+  ItestExamListDataItem enrollStartTimeStr(String enrollStartTimeStr) =>
       this(enrollStartTimeStr: enrollStartTimeStr);
 
   @override
-  DataItem enrollEndTimeStr(String enrollEndTimeStr) =>
+  ItestExamListDataItem enrollEndTimeStr(String enrollEndTimeStr) =>
       this(enrollEndTimeStr: enrollEndTimeStr);
 
   @override
-  DataItem ansBeginTimeStr(String ansBeginTimeStr) =>
+  ItestExamListDataItem ansBeginTimeStr(String ansBeginTimeStr) =>
       this(ansBeginTimeStr: ansBeginTimeStr);
 
   @override
-  DataItem ansSubmitTimeStr(String ansSubmitTimeStr) =>
+  ItestExamListDataItem ansSubmitTimeStr(String ansSubmitTimeStr) =>
       this(ansSubmitTimeStr: ansSubmitTimeStr);
 
   @override
-  DataItem school(bool school) => this(school: school);
+  ItestExamListDataItem school(bool school) => this(school: school);
 
   @override
-  DataItem task(bool task) => this(task: task);
+  ItestExamListDataItem task(bool task) => this(task: task);
 
   @override
-  DataItem canKaoshiJudgeBean(CanKaoshiJudgeBean canKaoshiJudgeBean) =>
-      this(canKaoshiJudgeBean: canKaoshiJudgeBean);
+  ItestExamListDataItem canKaoshiJudgeBean(
+    ItestExamListCanKaoshiJudgeBean canKaoshiJudgeBean,
+  ) => this(canKaoshiJudgeBean: canKaoshiJudgeBean);
 
   @override
-  DataItem canViewKaojuanJudgeBean(
-    CanViewKaojuanJudgeBean canViewKaojuanJudgeBean,
+  ItestExamListDataItem canViewKaojuanJudgeBean(
+    ItestExamListCanViewKaojuanJudgeBean canViewKaojuanJudgeBean,
   ) => this(canViewKaojuanJudgeBean: canViewKaojuanJudgeBean);
 
   @override
-  DataItem ksText(String ksText) => this(ksText: ksText);
+  ItestExamListDataItem ksText(String ksText) => this(ksText: ksText);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DataItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListDataItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// DataItem(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListDataItem(...).copyWith(id: 12, name: "My name")
   /// ````
-  DataItem call({
+  ItestExamListDataItem call({
     Object? uid = const $CopyWithPlaceholder(),
     Object? ksdId = const $CopyWithPlaceholder(),
     Object? finish = const $CopyWithPlaceholder(),
@@ -1298,7 +1337,7 @@ class _$DataItemCWProxyImpl implements _$DataItemCWProxy {
     Object? canViewKaojuanJudgeBean = const $CopyWithPlaceholder(),
     Object? ksText = const $CopyWithPlaceholder(),
   }) {
-    return DataItem(
+    return ItestExamListDataItem(
       uid:
           uid == const $CopyWithPlaceholder()
               ? _value.uid
@@ -1683,7 +1722,7 @@ class _$DataItemCWProxyImpl implements _$DataItemCWProxy {
           rateObjFinal == const $CopyWithPlaceholder()
               ? _value.rateObjFinal
               // ignore: cast_nullable_to_non_nullable
-              : rateObjFinal as RateObjFinal,
+              : rateObjFinal as ItestExamListRateObjFinal,
       diagnosisExam:
           diagnosisExam == const $CopyWithPlaceholder()
               ? _value.diagnosisExam
@@ -1763,12 +1802,12 @@ class _$DataItemCWProxyImpl implements _$DataItemCWProxy {
           canKaoshiJudgeBean == const $CopyWithPlaceholder()
               ? _value.canKaoshiJudgeBean
               // ignore: cast_nullable_to_non_nullable
-              : canKaoshiJudgeBean as CanKaoshiJudgeBean,
+              : canKaoshiJudgeBean as ItestExamListCanKaoshiJudgeBean,
       canViewKaojuanJudgeBean:
           canViewKaojuanJudgeBean == const $CopyWithPlaceholder()
               ? _value.canViewKaojuanJudgeBean
               // ignore: cast_nullable_to_non_nullable
-              : canViewKaojuanJudgeBean as CanViewKaojuanJudgeBean,
+              : canViewKaojuanJudgeBean as ItestExamListCanViewKaojuanJudgeBean,
       ksText:
           ksText == const $CopyWithPlaceholder()
               ? _value.ksText
@@ -1778,48 +1817,51 @@ class _$DataItemCWProxyImpl implements _$DataItemCWProxy {
   }
 }
 
-extension $DataItemCopyWith on DataItem {
-  /// Returns a callable class that can be used as follows: `instanceOfDataItem.copyWith(...)` or like so:`instanceOfDataItem.copyWith.fieldName(...)`.
+extension $ItestExamListDataItemCopyWith on ItestExamListDataItem {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamListDataItem.copyWith(...)` or like so:`instanceOfItestExamListDataItem.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$DataItemCWProxy get copyWith => _$DataItemCWProxyImpl(this);
+  _$ItestExamListDataItemCWProxy get copyWith =>
+      _$ItestExamListDataItemCWProxyImpl(this);
 }
 
-abstract class _$SummaryCWProxy {
-  Summary diagnosisTrainUnfinishCount(dynamic diagnosisTrainUnfinishCount);
+abstract class _$ItestExamListSummaryCWProxy {
+  ItestExamListSummary diagnosisTrainUnfinishCount(
+    dynamic diagnosisTrainUnfinishCount,
+  );
 
-  Summary classTrainUnfinishCount(dynamic classTrainUnfinishCount);
+  ItestExamListSummary classTrainUnfinishCount(dynamic classTrainUnfinishCount);
 
-  Summary mockUnfinishCount(dynamic mockUnfinishCount);
+  ItestExamListSummary mockUnfinishCount(dynamic mockUnfinishCount);
 
-  Summary basisFinishPercentage(dynamic basisFinishPercentage);
+  ItestExamListSummary basisFinishPercentage(dynamic basisFinishPercentage);
 
-  Summary diagnosisFlag(bool diagnosisFlag);
+  ItestExamListSummary diagnosisFlag(bool diagnosisFlag);
 
-  Summary examDoneCount(int examDoneCount);
+  ItestExamListSummary examDoneCount(int examDoneCount);
 
-  Summary examTodoCount(int examTodoCount);
+  ItestExamListSummary examTodoCount(int examTodoCount);
 
-  Summary diagnosisReportCount(int diagnosisReportCount);
+  ItestExamListSummary diagnosisReportCount(int diagnosisReportCount);
 
-  Summary examTotalCount(int examTotalCount);
+  ItestExamListSummary examTotalCount(int examTotalCount);
 
-  Summary clsNames(List<String> clsNames);
+  ItestExamListSummary clsNames(List<String> clsNames);
 
-  Summary notDoneExamFlag(bool notDoneExamFlag);
+  ItestExamListSummary notDoneExamFlag(bool notDoneExamFlag);
 
-  Summary notDoneTrainFlag(bool notDoneTrainFlag);
+  ItestExamListSummary notDoneTrainFlag(bool notDoneTrainFlag);
 
-  Summary trainAfterDiagnosisUnFinishCount(
+  ItestExamListSummary trainAfterDiagnosisUnFinishCount(
     dynamic trainAfterDiagnosisUnFinishCount,
   );
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Summary(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListSummary(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// Summary(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListSummary(...).copyWith(id: 12, name: "My name")
   /// ````
-  Summary call({
+  ItestExamListSummary call({
     dynamic diagnosisTrainUnfinishCount,
     dynamic classTrainUnfinishCount,
     dynamic mockUnfinishCount,
@@ -1836,72 +1878,76 @@ abstract class _$SummaryCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSummary.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSummary.copyWith.fieldName(...)`
-class _$SummaryCWProxyImpl implements _$SummaryCWProxy {
-  const _$SummaryCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListSummary.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListSummary.copyWith.fieldName(...)`
+class _$ItestExamListSummaryCWProxyImpl
+    implements _$ItestExamListSummaryCWProxy {
+  const _$ItestExamListSummaryCWProxyImpl(this._value);
 
-  final Summary _value;
-
-  @override
-  Summary diagnosisTrainUnfinishCount(dynamic diagnosisTrainUnfinishCount) =>
-      this(diagnosisTrainUnfinishCount: diagnosisTrainUnfinishCount);
+  final ItestExamListSummary _value;
 
   @override
-  Summary classTrainUnfinishCount(dynamic classTrainUnfinishCount) =>
-      this(classTrainUnfinishCount: classTrainUnfinishCount);
+  ItestExamListSummary diagnosisTrainUnfinishCount(
+    dynamic diagnosisTrainUnfinishCount,
+  ) => this(diagnosisTrainUnfinishCount: diagnosisTrainUnfinishCount);
 
   @override
-  Summary mockUnfinishCount(dynamic mockUnfinishCount) =>
+  ItestExamListSummary classTrainUnfinishCount(
+    dynamic classTrainUnfinishCount,
+  ) => this(classTrainUnfinishCount: classTrainUnfinishCount);
+
+  @override
+  ItestExamListSummary mockUnfinishCount(dynamic mockUnfinishCount) =>
       this(mockUnfinishCount: mockUnfinishCount);
 
   @override
-  Summary basisFinishPercentage(dynamic basisFinishPercentage) =>
+  ItestExamListSummary basisFinishPercentage(dynamic basisFinishPercentage) =>
       this(basisFinishPercentage: basisFinishPercentage);
 
   @override
-  Summary diagnosisFlag(bool diagnosisFlag) =>
+  ItestExamListSummary diagnosisFlag(bool diagnosisFlag) =>
       this(diagnosisFlag: diagnosisFlag);
 
   @override
-  Summary examDoneCount(int examDoneCount) =>
+  ItestExamListSummary examDoneCount(int examDoneCount) =>
       this(examDoneCount: examDoneCount);
 
   @override
-  Summary examTodoCount(int examTodoCount) =>
+  ItestExamListSummary examTodoCount(int examTodoCount) =>
       this(examTodoCount: examTodoCount);
 
   @override
-  Summary diagnosisReportCount(int diagnosisReportCount) =>
+  ItestExamListSummary diagnosisReportCount(int diagnosisReportCount) =>
       this(diagnosisReportCount: diagnosisReportCount);
 
   @override
-  Summary examTotalCount(int examTotalCount) =>
+  ItestExamListSummary examTotalCount(int examTotalCount) =>
       this(examTotalCount: examTotalCount);
 
   @override
-  Summary clsNames(List<String> clsNames) => this(clsNames: clsNames);
+  ItestExamListSummary clsNames(List<String> clsNames) =>
+      this(clsNames: clsNames);
 
   @override
-  Summary notDoneExamFlag(bool notDoneExamFlag) =>
+  ItestExamListSummary notDoneExamFlag(bool notDoneExamFlag) =>
       this(notDoneExamFlag: notDoneExamFlag);
 
   @override
-  Summary notDoneTrainFlag(bool notDoneTrainFlag) =>
+  ItestExamListSummary notDoneTrainFlag(bool notDoneTrainFlag) =>
       this(notDoneTrainFlag: notDoneTrainFlag);
 
   @override
-  Summary trainAfterDiagnosisUnFinishCount(
+  ItestExamListSummary trainAfterDiagnosisUnFinishCount(
     dynamic trainAfterDiagnosisUnFinishCount,
   ) => this(trainAfterDiagnosisUnFinishCount: trainAfterDiagnosisUnFinishCount);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Summary(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListSummary(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// Summary(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListSummary(...).copyWith(id: 12, name: "My name")
   /// ````
-  Summary call({
+  ItestExamListSummary call({
     Object? diagnosisTrainUnfinishCount = const $CopyWithPlaceholder(),
     Object? classTrainUnfinishCount = const $CopyWithPlaceholder(),
     Object? mockUnfinishCount = const $CopyWithPlaceholder(),
@@ -1916,7 +1962,7 @@ class _$SummaryCWProxyImpl implements _$SummaryCWProxy {
     Object? notDoneTrainFlag = const $CopyWithPlaceholder(),
     Object? trainAfterDiagnosisUnFinishCount = const $CopyWithPlaceholder(),
   }) {
-    return Summary(
+    return ItestExamListSummary(
       diagnosisTrainUnfinishCount:
           diagnosisTrainUnfinishCount == const $CopyWithPlaceholder()
               ? _value.diagnosisTrainUnfinishCount
@@ -1986,80 +2032,82 @@ class _$SummaryCWProxyImpl implements _$SummaryCWProxy {
   }
 }
 
-extension $SummaryCopyWith on Summary {
-  /// Returns a callable class that can be used as follows: `instanceOfSummary.copyWith(...)` or like so:`instanceOfSummary.copyWith.fieldName(...)`.
+extension $ItestExamListSummaryCopyWith on ItestExamListSummary {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamListSummary.copyWith(...)` or like so:`instanceOfItestExamListSummary.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$SummaryCWProxy get copyWith => _$SummaryCWProxyImpl(this);
+  _$ItestExamListSummaryCWProxy get copyWith =>
+      _$ItestExamListSummaryCWProxyImpl(this);
 }
 
-abstract class _$ItestExamResultCWProxy {
-  ItestExamResult pageSize(int pageSize);
+abstract class _$ItestExamListRsCWProxy {
+  ItestExamListRs pageSize(int pageSize);
 
-  ItestExamResult totalNum(int totalNum);
+  ItestExamListRs totalNum(int totalNum);
 
-  ItestExamResult currentPage(int currentPage);
+  ItestExamListRs currentPage(int currentPage);
 
-  ItestExamResult totalPage(int totalPage);
+  ItestExamListRs totalPage(int totalPage);
 
-  ItestExamResult data(List<DataItem> data);
+  ItestExamListRs data(List<ItestExamListDataItem> data);
 
-  ItestExamResult pageInfo(dynamic pageInfo);
+  ItestExamListRs pageInfo(dynamic pageInfo);
 
-  ItestExamResult summary(Summary summary);
+  ItestExamListRs summary(ItestExamListSummary summary);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListRs(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// ItestExamResult(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListRs(...).copyWith(id: 12, name: "My name")
   /// ````
-  ItestExamResult call({
+  ItestExamListRs call({
     int pageSize,
     int totalNum,
     int currentPage,
     int totalPage,
-    List<DataItem> data,
+    List<ItestExamListDataItem> data,
     dynamic pageInfo,
-    Summary summary,
+    ItestExamListSummary summary,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamResult.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamResult.copyWith.fieldName(...)`
-class _$ItestExamResultCWProxyImpl implements _$ItestExamResultCWProxy {
-  const _$ItestExamResultCWProxyImpl(this._value);
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamListRs.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamListRs.copyWith.fieldName(...)`
+class _$ItestExamListRsCWProxyImpl implements _$ItestExamListRsCWProxy {
+  const _$ItestExamListRsCWProxyImpl(this._value);
 
-  final ItestExamResult _value;
-
-  @override
-  ItestExamResult pageSize(int pageSize) => this(pageSize: pageSize);
+  final ItestExamListRs _value;
 
   @override
-  ItestExamResult totalNum(int totalNum) => this(totalNum: totalNum);
+  ItestExamListRs pageSize(int pageSize) => this(pageSize: pageSize);
 
   @override
-  ItestExamResult currentPage(int currentPage) =>
+  ItestExamListRs totalNum(int totalNum) => this(totalNum: totalNum);
+
+  @override
+  ItestExamListRs currentPage(int currentPage) =>
       this(currentPage: currentPage);
 
   @override
-  ItestExamResult totalPage(int totalPage) => this(totalPage: totalPage);
+  ItestExamListRs totalPage(int totalPage) => this(totalPage: totalPage);
 
   @override
-  ItestExamResult data(List<DataItem> data) => this(data: data);
+  ItestExamListRs data(List<ItestExamListDataItem> data) => this(data: data);
 
   @override
-  ItestExamResult pageInfo(dynamic pageInfo) => this(pageInfo: pageInfo);
+  ItestExamListRs pageInfo(dynamic pageInfo) => this(pageInfo: pageInfo);
 
   @override
-  ItestExamResult summary(Summary summary) => this(summary: summary);
+  ItestExamListRs summary(ItestExamListSummary summary) =>
+      this(summary: summary);
 
   @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamResult(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamListRs(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
-  /// ItestExamResult(...).copyWith(id: 12, name: "My name")
+  /// ItestExamListRs(...).copyWith(id: 12, name: "My name")
   /// ````
-  ItestExamResult call({
+  ItestExamListRs call({
     Object? pageSize = const $CopyWithPlaceholder(),
     Object? totalNum = const $CopyWithPlaceholder(),
     Object? currentPage = const $CopyWithPlaceholder(),
@@ -2068,7 +2116,7 @@ class _$ItestExamResultCWProxyImpl implements _$ItestExamResultCWProxy {
     Object? pageInfo = const $CopyWithPlaceholder(),
     Object? summary = const $CopyWithPlaceholder(),
   }) {
-    return ItestExamResult(
+    return ItestExamListRs(
       pageSize:
           pageSize == const $CopyWithPlaceholder()
               ? _value.pageSize
@@ -2093,7 +2141,7 @@ class _$ItestExamResultCWProxyImpl implements _$ItestExamResultCWProxy {
           data == const $CopyWithPlaceholder()
               ? _value.data
               // ignore: cast_nullable_to_non_nullable
-              : data as List<DataItem>,
+              : data as List<ItestExamListDataItem>,
       pageInfo:
           pageInfo == const $CopyWithPlaceholder()
               ? _value.pageInfo
@@ -2103,15 +2151,15 @@ class _$ItestExamResultCWProxyImpl implements _$ItestExamResultCWProxy {
           summary == const $CopyWithPlaceholder()
               ? _value.summary
               // ignore: cast_nullable_to_non_nullable
-              : summary as Summary,
+              : summary as ItestExamListSummary,
     );
   }
 }
 
-extension $ItestExamResultCopyWith on ItestExamResult {
-  /// Returns a callable class that can be used as follows: `instanceOfItestExamResult.copyWith(...)` or like so:`instanceOfItestExamResult.copyWith.fieldName(...)`.
+extension $ItestExamListRsCopyWith on ItestExamListRs {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamListRs.copyWith(...)` or like so:`instanceOfItestExamListRs.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
-  _$ItestExamResultCWProxy get copyWith => _$ItestExamResultCWProxyImpl(this);
+  _$ItestExamListRsCWProxy get copyWith => _$ItestExamListRsCWProxyImpl(this);
 }
 
 // **************************************************************************
@@ -2125,8 +2173,8 @@ ItestExamListResponse _$ItestExamListResponseFromJson(
   msg: json['msg'] as String? ?? '',
   rs:
       json['rs'] == null
-          ? ItestExamResult.emptyInstance()
-          : ItestExamResult.fromJson(json['rs'] as Map<String, dynamic>),
+          ? ItestExamListRs.emptyInstance()
+          : ItestExamListRs.fromJson(json['rs'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$ItestExamListResponseToJson(
@@ -2137,54 +2185,59 @@ Map<String, dynamic> _$ItestExamListResponseToJson(
   'rs': instance.rs.toJson(),
 };
 
-RateObjFinal _$RateObjFinalFromJson(Map<String, dynamic> json) => RateObjFinal(
+ItestExamListRateObjFinal _$ItestExamListRateObjFinalFromJson(
+  Map<String, dynamic> json,
+) => ItestExamListRateObjFinal(
   ratedSectionIds: json['ratedSectionIds'] as List<dynamic>? ?? [],
   rateItems: json['rateItems'] as List<dynamic>? ?? [],
 );
 
-Map<String, dynamic> _$RateObjFinalToJson(RateObjFinal instance) =>
-    <String, dynamic>{
-      'ratedSectionIds': instance.ratedSectionIds,
-      'rateItems': instance.rateItems,
-    };
+Map<String, dynamic> _$ItestExamListRateObjFinalToJson(
+  ItestExamListRateObjFinal instance,
+) => <String, dynamic>{
+  'ratedSectionIds': instance.ratedSectionIds,
+  'rateItems': instance.rateItems,
+};
 
-CanKaoshiJudgeBean _$CanKaoshiJudgeBeanFromJson(Map<String, dynamic> json) =>
-    CanKaoshiJudgeBean(
-      stuCanEnterKaoshi: json['stuCanEnterKaoshi'] as bool? ?? false,
-      stuCanEnterEnroll: json['stuCanEnterEnroll'] as bool? ?? false,
-      stuCanCancelEnroll: json['stuCanCancelEnroll'] as bool? ?? false,
-      examCanCountdown: json['examCanCountdown'] as bool? ?? false,
-      countdownSeconds: json['countdownSeconds'],
-      kaoshiStatusInfo: json['kaoshiStatusInfo'],
-      kaoshiBtnInfo: json['kaoshiBtnInfo'],
-      examType: (json['examType'] as num?)?.toInt() ?? 0,
-    );
-
-Map<String, dynamic> _$CanKaoshiJudgeBeanToJson(CanKaoshiJudgeBean instance) =>
-    <String, dynamic>{
-      'stuCanEnterKaoshi': instance.stuCanEnterKaoshi,
-      'stuCanEnterEnroll': instance.stuCanEnterEnroll,
-      'stuCanCancelEnroll': instance.stuCanCancelEnroll,
-      'examCanCountdown': instance.examCanCountdown,
-      'countdownSeconds': instance.countdownSeconds,
-      'kaoshiStatusInfo': instance.kaoshiStatusInfo,
-      'kaoshiBtnInfo': instance.kaoshiBtnInfo,
-      'examType': instance.examType,
-    };
-
-CanViewKaojuanJudgeBean _$CanViewKaojuanJudgeBeanFromJson(
+ItestExamListCanKaoshiJudgeBean _$ItestExamListCanKaoshiJudgeBeanFromJson(
   Map<String, dynamic> json,
-) => CanViewKaojuanJudgeBean(
-  stuCanViewScore: json['stuCanViewScore'] as bool? ?? false,
-  scoreText: json['scoreText'] as String? ?? '',
-  scoreReason: json['scoreReason'] as String? ?? '',
-  stuCanViewKaojuan: json['stuCanViewKaojuan'] as bool? ?? false,
-  kaojuanReason: json['kaojuanReason'] as String? ?? '',
-  canShowPaper: (json['canShowPaper'] as num?)?.toInt() ?? 0,
+) => ItestExamListCanKaoshiJudgeBean(
+  stuCanEnterKaoshi: json['stuCanEnterKaoshi'] as bool? ?? false,
+  stuCanEnterEnroll: json['stuCanEnterEnroll'] as bool? ?? false,
+  stuCanCancelEnroll: json['stuCanCancelEnroll'] as bool? ?? false,
+  examCanCountdown: json['examCanCountdown'] as bool? ?? false,
+  countdownSeconds: json['countdownSeconds'],
+  kaoshiStatusInfo: json['kaoshiStatusInfo'],
+  kaoshiBtnInfo: json['kaoshiBtnInfo'],
+  examType: (json['examType'] as num?)?.toInt() ?? 0,
 );
 
-Map<String, dynamic> _$CanViewKaojuanJudgeBeanToJson(
-  CanViewKaojuanJudgeBean instance,
+Map<String, dynamic> _$ItestExamListCanKaoshiJudgeBeanToJson(
+  ItestExamListCanKaoshiJudgeBean instance,
+) => <String, dynamic>{
+  'stuCanEnterKaoshi': instance.stuCanEnterKaoshi,
+  'stuCanEnterEnroll': instance.stuCanEnterEnroll,
+  'stuCanCancelEnroll': instance.stuCanCancelEnroll,
+  'examCanCountdown': instance.examCanCountdown,
+  'countdownSeconds': instance.countdownSeconds,
+  'kaoshiStatusInfo': instance.kaoshiStatusInfo,
+  'kaoshiBtnInfo': instance.kaoshiBtnInfo,
+  'examType': instance.examType,
+};
+
+ItestExamListCanViewKaojuanJudgeBean
+_$ItestExamListCanViewKaojuanJudgeBeanFromJson(Map<String, dynamic> json) =>
+    ItestExamListCanViewKaojuanJudgeBean(
+      stuCanViewScore: json['stuCanViewScore'] as bool? ?? false,
+      scoreText: json['scoreText'] as String? ?? '',
+      scoreReason: json['scoreReason'] as String? ?? '',
+      stuCanViewKaojuan: json['stuCanViewKaojuan'] as bool? ?? false,
+      kaojuanReason: json['kaojuanReason'] as String? ?? '',
+      canShowPaper: (json['canShowPaper'] as num?)?.toInt() ?? 0,
+    );
+
+Map<String, dynamic> _$ItestExamListCanViewKaojuanJudgeBeanToJson(
+  ItestExamListCanViewKaojuanJudgeBean instance,
 ) => <String, dynamic>{
   'stuCanViewScore': instance.stuCanViewScore,
   'scoreText': instance.scoreText,
@@ -2194,7 +2247,9 @@ Map<String, dynamic> _$CanViewKaojuanJudgeBeanToJson(
   'canShowPaper': instance.canShowPaper,
 };
 
-DataItem _$DataItemFromJson(Map<String, dynamic> json) => DataItem(
+ItestExamListDataItem _$ItestExamListDataItemFromJson(
+  Map<String, dynamic> json,
+) => ItestExamListDataItem(
   uid: (json['uid'] as num?)?.toInt() ?? 0,
   ksdId: (json['ksdId'] as num?)?.toInt() ?? 0,
   finish: (json['finish'] as num?)?.toInt() ?? 0,
@@ -2277,8 +2332,10 @@ DataItem _$DataItemFromJson(Map<String, dynamic> json) => DataItem(
   classX: json['class'] as bool?,
   rateObjFinal:
       json['rateObjFinal'] == null
-          ? RateObjFinal.emptyInstance()
-          : RateObjFinal.fromJson(json['rateObjFinal'] as Map<String, dynamic>),
+          ? ItestExamListRateObjFinal.emptyInstance()
+          : ItestExamListRateObjFinal.fromJson(
+            json['rateObjFinal'] as Map<String, dynamic>,
+          ),
   diagnosisExam: json['diagnosisExam'] as bool? ?? false,
   viewScore: json['viewScore'] as bool? ?? false,
   kaoshiShowTimeForCurrentStu: json['kaoshiShowTimeForCurrentStu'],
@@ -2296,20 +2353,22 @@ DataItem _$DataItemFromJson(Map<String, dynamic> json) => DataItem(
   task: json['task'] as bool? ?? false,
   canKaoshiJudgeBean:
       json['canKaoshiJudgeBean'] == null
-          ? CanKaoshiJudgeBean.emptyInstance()
-          : CanKaoshiJudgeBean.fromJson(
+          ? ItestExamListCanKaoshiJudgeBean.emptyInstance()
+          : ItestExamListCanKaoshiJudgeBean.fromJson(
             json['canKaoshiJudgeBean'] as Map<String, dynamic>,
           ),
   canViewKaojuanJudgeBean:
       json['canViewKaojuanJudgeBean'] == null
-          ? CanViewKaojuanJudgeBean.emptyInstance()
-          : CanViewKaojuanJudgeBean.fromJson(
+          ? ItestExamListCanViewKaojuanJudgeBean.emptyInstance()
+          : ItestExamListCanViewKaojuanJudgeBean.fromJson(
             json['canViewKaojuanJudgeBean'] as Map<String, dynamic>,
           ),
   ksText: json['ksText'] as String? ?? '',
 );
 
-Map<String, dynamic> _$DataItemToJson(DataItem instance) => <String, dynamic>{
+Map<String, dynamic> _$ItestExamListDataItemToJson(
+  ItestExamListDataItem instance,
+) => <String, dynamic>{
   'uid': instance.uid,
   'ksdId': instance.ksdId,
   'finish': instance.finish,
@@ -2407,7 +2466,9 @@ Map<String, dynamic> _$DataItemToJson(DataItem instance) => <String, dynamic>{
   'ksText': instance.ksText,
 };
 
-Summary _$SummaryFromJson(Map<String, dynamic> json) => Summary(
+ItestExamListSummary _$ItestExamListSummaryFromJson(
+  Map<String, dynamic> json,
+) => ItestExamListSummary(
   diagnosisTrainUnfinishCount: json['diagnosisTrainUnfinishCount'],
   classTrainUnfinishCount: json['classTrainUnfinishCount'],
   mockUnfinishCount: json['mockUnfinishCount'],
@@ -2425,7 +2486,9 @@ Summary _$SummaryFromJson(Map<String, dynamic> json) => Summary(
   trainAfterDiagnosisUnFinishCount: json['trainAfterDiagnosisUnFinishCount'],
 );
 
-Map<String, dynamic> _$SummaryToJson(Summary instance) => <String, dynamic>{
+Map<String, dynamic> _$ItestExamListSummaryToJson(
+  ItestExamListSummary instance,
+) => <String, dynamic>{
   'diagnosisTrainUnfinishCount': instance.diagnosisTrainUnfinishCount,
   'classTrainUnfinishCount': instance.classTrainUnfinishCount,
   'mockUnfinishCount': instance.mockUnfinishCount,
@@ -2441,25 +2504,30 @@ Map<String, dynamic> _$SummaryToJson(Summary instance) => <String, dynamic>{
   'trainAfterDiagnosisUnFinishCount': instance.trainAfterDiagnosisUnFinishCount,
 };
 
-ItestExamResult _$ItestExamResultFromJson(Map<String, dynamic> json) =>
-    ItestExamResult(
+ItestExamListRs _$ItestExamListRsFromJson(Map<String, dynamic> json) =>
+    ItestExamListRs(
       pageSize: (json['pageSize'] as num?)?.toInt() ?? 0,
       totalNum: (json['totalNum'] as num?)?.toInt() ?? 0,
       currentPage: (json['currentPage'] as num?)?.toInt() ?? 0,
       totalPage: (json['totalPage'] as num?)?.toInt() ?? 0,
       data:
           (json['data'] as List<dynamic>?)
-              ?.map((e) => DataItem.fromJson(e as Map<String, dynamic>))
+              ?.map(
+                (e) =>
+                    ItestExamListDataItem.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
       pageInfo: json['pageInfo'],
       summary:
           json['summary'] == null
-              ? Summary.emptyInstance()
-              : Summary.fromJson(json['summary'] as Map<String, dynamic>),
+              ? ItestExamListSummary.emptyInstance()
+              : ItestExamListSummary.fromJson(
+                json['summary'] as Map<String, dynamic>,
+              ),
     );
 
-Map<String, dynamic> _$ItestExamResultToJson(ItestExamResult instance) =>
+Map<String, dynamic> _$ItestExamListRsToJson(ItestExamListRs instance) =>
     <String, dynamic>{
       'pageSize': instance.pageSize,
       'totalNum': instance.totalNum,

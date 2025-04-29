@@ -39,5 +39,5 @@ contribute to the package, how to file issues, what response they can expect
 from the package authors, and more.
 
 ```shell
-flutter pub run json5_model --src=lib/src/json --dist=lib/src/model
+flutter pub run json5_model --src=lib/src/json --dist=lib/src/model  --prefix-regexp "(.+?)_response$"
 ```

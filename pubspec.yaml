@@ -21,6 +21,7 @@ dependencies:
   autoequal: ^0.9.1
   encrypt: ^5.0.3
   hex: ^0.2.0
+  json5: ^0.8.2
   # path: ^1.8.0
 
 dev_dependencies:

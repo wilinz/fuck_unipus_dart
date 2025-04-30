@@ -3,14 +3,6 @@
 part of 'itest_exam_submit_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamSubmitResponseAutoequal on ItestExamSubmitResponse {
-  List<Object?> get _$props => [msg, code, data, unNoticeList];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -100,6 +92,15 @@ extension $ItestExamSubmitResponseCopyWith on ItestExamSubmitResponse {
   // ignore: library_private_types_in_public_api
   _$ItestExamSubmitResponseCWProxy get copyWith =>
       _$ItestExamSubmitResponseCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamSubmitResponseEquatableAnnotations
+    on ItestExamSubmitResponse {
+  List<Object?> get _$props => [msg, code, data, unNoticeList];
 }
 
 // **************************************************************************

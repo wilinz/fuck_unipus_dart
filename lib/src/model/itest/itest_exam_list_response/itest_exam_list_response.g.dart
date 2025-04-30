@@ -3,174 +3,6 @@
 part of 'itest_exam_list_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamListResponseAutoequal on ItestExamListResponse {
-  List<Object?> get _$props => [code, msg, rs];
-}
-
-extension _$ItestExamListRateObjFinalAutoequal on ItestExamListRateObjFinal {
-  List<Object?> get _$props => [ratedSectionIds, rateItems];
-}
-
-extension _$ItestExamListCanKaoshiJudgeBeanAutoequal
-    on ItestExamListCanKaoshiJudgeBean {
-  List<Object?> get _$props => [
-    stuCanEnterKaoshi,
-    stuCanEnterEnroll,
-    stuCanCancelEnroll,
-    examCanCountdown,
-    countdownSeconds,
-    kaoshiStatusInfo,
-    kaoshiBtnInfo,
-    examType,
-  ];
-}
-
-extension _$ItestExamListCanViewKaojuanJudgeBeanAutoequal
-    on ItestExamListCanViewKaojuanJudgeBean {
-  List<Object?> get _$props => [
-    stuCanViewScore,
-    scoreText,
-    scoreReason,
-    stuCanViewKaojuan,
-    kaojuanReason,
-    canShowPaper,
-  ];
-}
-
-extension _$ItestExamListDataItemAutoequal on ItestExamListDataItem {
-  List<Object?> get _$props => [
-    uid,
-    ksdId,
-    finish,
-    delFlag,
-    ksId,
-    ksName,
-    examCodeFlag,
-    examType,
-    restrictBeginTime,
-    restrictEndTime,
-    beginTime,
-    processStep,
-    enrollStartTime,
-    enrollEndTime,
-    ansBeginTime,
-    clsId,
-    ksLimit,
-    checkTime,
-    beingOrOver,
-    countdownSeconds,
-    examCanCountdown,
-    endayFlag,
-    realCheckTime,
-    rateStatus,
-    autoRateJson,
-    rateJson,
-    ansSubmitTime,
-    kcId,
-    ksDelFlag,
-    enrollDelFlag,
-    isNeiWangKs,
-    showKaoshiTimeType,
-    showKaoshiTimeContent,
-    enrollMaxStuCount,
-    realEnrollStuCount,
-    kaoshiNote,
-    kcName,
-    checkContentType,
-    viewSubMacScorFlag,
-    subMacScorFlag,
-    guidangTime,
-    isSupportApp,
-    ppId,
-    tplId,
-    zhiyueFlag,
-    examTypeEnum,
-    postType,
-    taskMode,
-    scorePercentage,
-    finalScoreType,
-    score,
-    answerTimes,
-    standardScore,
-    current,
-    totalScore,
-    examTag,
-    skill,
-    level,
-    mark,
-    type,
-    allowEntryId,
-    rateScore,
-    ksLimitStr,
-    faceRecognize,
-    terminal,
-    terminalList,
-    cetOralFlag,
-    hasFaceRecognize,
-    hasFaceRecognizeCount,
-    commitment,
-    rtcFlag,
-    captureFlag,
-    screenMonitoringFlag,
-    competitionFlag,
-    recordFlag,
-    classX,
-    rateObjFinal,
-    diagnosisExam,
-    viewScore,
-    kaoshiShowTimeForCurrentStu,
-    ansBeginAndEndTimeShow,
-    enrollStartEndTime,
-    examEnrollInfo,
-    restrictBeginTimeStr,
-    restrictEndTimeStr,
-    beginTimeStr,
-    enrollStartTimeStr,
-    enrollEndTimeStr,
-    ansBeginTimeStr,
-    ansSubmitTimeStr,
-    school,
-    task,
-    canKaoshiJudgeBean,
-    canViewKaojuanJudgeBean,
-    ksText,
-  ];
-}
-
-extension _$ItestExamListSummaryAutoequal on ItestExamListSummary {
-  List<Object?> get _$props => [
-    diagnosisTrainUnfinishCount,
-    classTrainUnfinishCount,
-    mockUnfinishCount,
-    basisFinishPercentage,
-    diagnosisFlag,
-    examDoneCount,
-    examTodoCount,
-    diagnosisReportCount,
-    examTotalCount,
-    clsNames,
-    notDoneExamFlag,
-    notDoneTrainFlag,
-    trainAfterDiagnosisUnFinishCount,
-  ];
-}
-
-extension _$ItestExamListRsAutoequal on ItestExamListRs {
-  List<Object?> get _$props => [
-    pageSize,
-    totalNum,
-    currentPage,
-    totalPage,
-    data,
-    pageInfo,
-    summary,
-  ];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -2160,6 +1992,175 @@ extension $ItestExamListRsCopyWith on ItestExamListRs {
   /// Returns a callable class that can be used as follows: `instanceOfItestExamListRs.copyWith(...)` or like so:`instanceOfItestExamListRs.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$ItestExamListRsCWProxy get copyWith => _$ItestExamListRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamListResponseEquatableAnnotations on ItestExamListResponse {
+  List<Object?> get _$props => [code, msg, rs];
+}
+
+extension _$ItestExamListRateObjFinalEquatableAnnotations
+    on ItestExamListRateObjFinal {
+  List<Object?> get _$props => [ratedSectionIds, rateItems];
+}
+
+extension _$ItestExamListCanKaoshiJudgeBeanEquatableAnnotations
+    on ItestExamListCanKaoshiJudgeBean {
+  List<Object?> get _$props => [
+    stuCanEnterKaoshi,
+    stuCanEnterEnroll,
+    stuCanCancelEnroll,
+    examCanCountdown,
+    countdownSeconds,
+    kaoshiStatusInfo,
+    kaoshiBtnInfo,
+    examType,
+  ];
+}
+
+extension _$ItestExamListCanViewKaojuanJudgeBeanEquatableAnnotations
+    on ItestExamListCanViewKaojuanJudgeBean {
+  List<Object?> get _$props => [
+    stuCanViewScore,
+    scoreText,
+    scoreReason,
+    stuCanViewKaojuan,
+    kaojuanReason,
+    canShowPaper,
+  ];
+}
+
+extension _$ItestExamListDataItemEquatableAnnotations on ItestExamListDataItem {
+  List<Object?> get _$props => [
+    uid,
+    ksdId,
+    finish,
+    delFlag,
+    ksId,
+    ksName,
+    examCodeFlag,
+    examType,
+    restrictBeginTime,
+    restrictEndTime,
+    beginTime,
+    processStep,
+    enrollStartTime,
+    enrollEndTime,
+    ansBeginTime,
+    clsId,
+    ksLimit,
+    checkTime,
+    beingOrOver,
+    countdownSeconds,
+    examCanCountdown,
+    endayFlag,
+    realCheckTime,
+    rateStatus,
+    autoRateJson,
+    rateJson,
+    ansSubmitTime,
+    kcId,
+    ksDelFlag,
+    enrollDelFlag,
+    isNeiWangKs,
+    showKaoshiTimeType,
+    showKaoshiTimeContent,
+    enrollMaxStuCount,
+    realEnrollStuCount,
+    kaoshiNote,
+    kcName,
+    checkContentType,
+    viewSubMacScorFlag,
+    subMacScorFlag,
+    guidangTime,
+    isSupportApp,
+    ppId,
+    tplId,
+    zhiyueFlag,
+    examTypeEnum,
+    postType,
+    taskMode,
+    scorePercentage,
+    finalScoreType,
+    score,
+    answerTimes,
+    standardScore,
+    current,
+    totalScore,
+    examTag,
+    skill,
+    level,
+    mark,
+    type,
+    allowEntryId,
+    rateScore,
+    ksLimitStr,
+    faceRecognize,
+    terminal,
+    terminalList,
+    cetOralFlag,
+    hasFaceRecognize,
+    hasFaceRecognizeCount,
+    commitment,
+    rtcFlag,
+    captureFlag,
+    screenMonitoringFlag,
+    competitionFlag,
+    recordFlag,
+    classX,
+    rateObjFinal,
+    diagnosisExam,
+    viewScore,
+    kaoshiShowTimeForCurrentStu,
+    ansBeginAndEndTimeShow,
+    enrollStartEndTime,
+    examEnrollInfo,
+    restrictBeginTimeStr,
+    restrictEndTimeStr,
+    beginTimeStr,
+    enrollStartTimeStr,
+    enrollEndTimeStr,
+    ansBeginTimeStr,
+    ansSubmitTimeStr,
+    school,
+    task,
+    canKaoshiJudgeBean,
+    canViewKaojuanJudgeBean,
+    ksText,
+  ];
+}
+
+extension _$ItestExamListSummaryEquatableAnnotations on ItestExamListSummary {
+  List<Object?> get _$props => [
+    diagnosisTrainUnfinishCount,
+    classTrainUnfinishCount,
+    mockUnfinishCount,
+    basisFinishPercentage,
+    diagnosisFlag,
+    examDoneCount,
+    examTodoCount,
+    diagnosisReportCount,
+    examTotalCount,
+    clsNames,
+    notDoneExamFlag,
+    notDoneTrainFlag,
+    trainAfterDiagnosisUnFinishCount,
+  ];
+}
+
+extension _$ItestExamListRsEquatableAnnotations on ItestExamListRs {
+  List<Object?> get _$props => [
+    pageSize,
+    totalNum,
+    currentPage,
+    totalPage,
+    data,
+    pageInfo,
+    summary,
+  ];
 }
 
 // **************************************************************************

@@ -3,35 +3,6 @@
 part of 'itest_confirm_exam_data.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestConfirmExamDataAutoequal on ItestConfirmExamData {
-  List<Object?> get _$props => [
-    examName,
-    username,
-    realName,
-    schoolName,
-    facultyName,
-    gradeName,
-    clsNames,
-    hasRecord,
-    capture,
-    hasRecognize,
-    itestStudentUrl,
-    rtcFlag,
-    rtcRecord,
-    prepareBroadcast,
-    kcId,
-    sppid,
-    dataSource,
-    dataType,
-    dataUser,
-    openId,
-  ];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -321,6 +292,35 @@ extension $ItestConfirmExamDataCopyWith on ItestConfirmExamData {
   // ignore: library_private_types_in_public_api
   _$ItestConfirmExamDataCWProxy get copyWith =>
       _$ItestConfirmExamDataCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestConfirmExamDataEquatableAnnotations on ItestConfirmExamData {
+  List<Object?> get _$props => [
+    examName,
+    username,
+    realName,
+    schoolName,
+    facultyName,
+    gradeName,
+    clsNames,
+    hasRecord,
+    capture,
+    hasRecognize,
+    itestStudentUrl,
+    rtcFlag,
+    rtcRecord,
+    prepareBroadcast,
+    kcId,
+    sppid,
+    dataSource,
+    dataType,
+    dataUser,
+    openId,
+  ];
 }
 
 // **************************************************************************

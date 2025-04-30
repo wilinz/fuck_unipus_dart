@@ -3,22 +3,6 @@
 part of 'captcha_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$CaptchaResponseAutoequal on CaptchaResponse {
-  List<Object?> get _$props => [code, msg, rs];
-}
-
-extension _$CaptchaLinksItemAutoequal on CaptchaLinksItem {
-  List<Object?> get _$props => [rel, href];
-}
-
-extension _$CaptchaRsAutoequal on CaptchaRs {
-  List<Object?> get _$props => [type, image, encodeCaptha, codeType, links];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -245,6 +229,22 @@ extension $CaptchaRsCopyWith on CaptchaRs {
   /// Returns a callable class that can be used as follows: `instanceOfCaptchaRs.copyWith(...)` or like so:`instanceOfCaptchaRs.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$CaptchaRsCWProxy get copyWith => _$CaptchaRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$CaptchaResponseEquatableAnnotations on CaptchaResponse {
+  List<Object?> get _$props => [code, msg, rs];
+}
+
+extension _$CaptchaLinksItemEquatableAnnotations on CaptchaLinksItem {
+  List<Object?> get _$props => [rel, href];
+}
+
+extension _$CaptchaRsEquatableAnnotations on CaptchaRs {
+  List<Object?> get _$props => [type, image, encodeCaptha, codeType, links];
 }
 
 // **************************************************************************

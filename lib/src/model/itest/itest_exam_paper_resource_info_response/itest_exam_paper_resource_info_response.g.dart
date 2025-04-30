@@ -3,20 +3,6 @@
 part of 'itest_exam_paper_resource_info_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamPaperResourceInfoResponseAutoequal
-    on ItestExamPaperResourceInfoResponse {
-  List<Object?> get _$props => [msg, rs, code];
-}
-
-extension _$ItestExamPaperResourceInfoRsAutoequal
-    on ItestExamPaperResourceInfoRs {
-  List<Object?> get _$props => [urls, updateTime, size, hash];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -184,6 +170,20 @@ extension $ItestExamPaperResourceInfoRsCopyWith
   // ignore: library_private_types_in_public_api
   _$ItestExamPaperResourceInfoRsCWProxy get copyWith =>
       _$ItestExamPaperResourceInfoRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamPaperResourceInfoResponseEquatableAnnotations
+    on ItestExamPaperResourceInfoResponse {
+  List<Object?> get _$props => [msg, rs, code];
+}
+
+extension _$ItestExamPaperResourceInfoRsEquatableAnnotations
+    on ItestExamPaperResourceInfoRs {
+  List<Object?> get _$props => [urls, updateTime, size, hash];
 }
 
 // **************************************************************************

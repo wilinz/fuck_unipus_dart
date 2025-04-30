@@ -3,31 +3,6 @@
 part of 'itest_exam_questions.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamQuestionsAutoequal on ItestExamQuestions {
-  List<Object?> get _$props => [
-    pageNumber,
-    sectionKey,
-    sectionId,
-    part1,
-    sectionType,
-    questions,
-  ];
-}
-
-extension _$ItestExamQuestionsOptionsItemAutoequal
-    on ItestExamQuestionsOptionsItem {
-  List<Object?> get _$props => [value, text, subIndex, subSubIndex];
-}
-
-extension _$ItestExamQuestionsQuestionsItemAutoequal
-    on ItestExamQuestionsQuestionsItem {
-  List<Object?> get _$props => [id, index, content, options, optionsOrder];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -339,6 +314,31 @@ extension $ItestExamQuestionsQuestionsItemCopyWith
   // ignore: library_private_types_in_public_api
   _$ItestExamQuestionsQuestionsItemCWProxy get copyWith =>
       _$ItestExamQuestionsQuestionsItemCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamQuestionsEquatableAnnotations on ItestExamQuestions {
+  List<Object?> get _$props => [
+    pageNumber,
+    sectionKey,
+    sectionId,
+    part1,
+    sectionType,
+    questions,
+  ];
+}
+
+extension _$ItestExamQuestionsOptionsItemEquatableAnnotations
+    on ItestExamQuestionsOptionsItem {
+  List<Object?> get _$props => [value, text, subIndex, subSubIndex];
+}
+
+extension _$ItestExamQuestionsQuestionsItemEquatableAnnotations
+    on ItestExamQuestionsQuestionsItem {
+  List<Object?> get _$props => [id, index, content, options, optionsOrder];
 }
 
 // **************************************************************************

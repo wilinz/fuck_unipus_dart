@@ -3,29 +3,6 @@
 part of 'itest_exam_questions_wrap_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamQuestionsWrapResponseAutoequal
-    on ItestExamQuestionsWrapResponse {
-  List<Object?> get _$props => [code, data];
-}
-
-extension _$ItestExamQuestionsWrapDataAutoequal on ItestExamQuestionsWrapData {
-  List<Object?> get _$props => [
-    dHTML,
-    oPTIONORDER,
-    iSSHOWQUESPARSE,
-    bACKPLAY,
-    cHTML,
-    uIK,
-    nTL,
-    tL,
-    tYPE,
-  ];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -242,6 +219,30 @@ extension $ItestExamQuestionsWrapDataCopyWith on ItestExamQuestionsWrapData {
   // ignore: library_private_types_in_public_api
   _$ItestExamQuestionsWrapDataCWProxy get copyWith =>
       _$ItestExamQuestionsWrapDataCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamQuestionsWrapResponseEquatableAnnotations
+    on ItestExamQuestionsWrapResponse {
+  List<Object?> get _$props => [code, data];
+}
+
+extension _$ItestExamQuestionsWrapDataEquatableAnnotations
+    on ItestExamQuestionsWrapData {
+  List<Object?> get _$props => [
+    dHTML,
+    oPTIONORDER,
+    iSSHOWQUESPARSE,
+    bACKPLAY,
+    cHTML,
+    uIK,
+    nTL,
+    tL,
+    tYPE,
+  ];
 }
 
 // **************************************************************************

@@ -3,31 +3,6 @@
 part of 'unipus_class_block.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$UnipusClassBlockAutoequal on UnipusClassBlock {
-  List<Object?> get _$props => [
-    className,
-    dateRange,
-    startDate,
-    endDate,
-    courses,
-  ];
-}
-
-extension _$UnipusClassBlockCoursesItemAutoequal
-    on UnipusClassBlockCoursesItem {
-  List<Object?> get _$props => [
-    courseName,
-    status,
-    image,
-    courseUrl,
-    tutorialId,
-  ];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -229,6 +204,31 @@ extension $UnipusClassBlockCoursesItemCopyWith on UnipusClassBlockCoursesItem {
   // ignore: library_private_types_in_public_api
   _$UnipusClassBlockCoursesItemCWProxy get copyWith =>
       _$UnipusClassBlockCoursesItemCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$UnipusClassBlockEquatableAnnotations on UnipusClassBlock {
+  List<Object?> get _$props => [
+    className,
+    dateRange,
+    startDate,
+    endDate,
+    courses,
+  ];
+}
+
+extension _$UnipusClassBlockCoursesItemEquatableAnnotations
+    on UnipusClassBlockCoursesItem {
+  List<Object?> get _$props => [
+    courseName,
+    status,
+    image,
+    courseUrl,
+    tutorialId,
+  ];
 }
 
 // **************************************************************************

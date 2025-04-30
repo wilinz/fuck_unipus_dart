@@ -3,19 +3,6 @@
 part of 'itest_exam_judge_entry_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamJudgeEntryResponseAutoequal
-    on ItestExamJudgeEntryResponse {
-  List<Object?> get _$props => [code, data, msg];
-}
-
-extension _$ItestExamJudgeEntryDataAutoequal on ItestExamJudgeEntryData {
-  List<Object?> get _$props => [ksId, openId, url, token];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -180,6 +167,20 @@ extension $ItestExamJudgeEntryDataCopyWith on ItestExamJudgeEntryData {
   // ignore: library_private_types_in_public_api
   _$ItestExamJudgeEntryDataCWProxy get copyWith =>
       _$ItestExamJudgeEntryDataCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamJudgeEntryResponseEquatableAnnotations
+    on ItestExamJudgeEntryResponse {
+  List<Object?> get _$props => [code, data, msg];
+}
+
+extension _$ItestExamJudgeEntryDataEquatableAnnotations
+    on ItestExamJudgeEntryData {
+  List<Object?> get _$props => [ksId, openId, url, token];
 }
 
 // **************************************************************************

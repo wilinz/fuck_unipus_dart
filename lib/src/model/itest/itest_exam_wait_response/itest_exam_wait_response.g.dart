@@ -3,18 +3,6 @@
 part of 'itest_exam_wait_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamWaitResponseAutoequal on ItestExamWaitResponse {
-  List<Object?> get _$props => [code, msg, rs];
-}
-
-extension _$ItestExamWaitRsAutoequal on ItestExamWaitRs {
-  List<Object?> get _$props => [waitingTime, isExpire];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -146,6 +134,18 @@ extension $ItestExamWaitRsCopyWith on ItestExamWaitRs {
   /// Returns a callable class that can be used as follows: `instanceOfItestExamWaitRs.copyWith(...)` or like so:`instanceOfItestExamWaitRs.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$ItestExamWaitRsCWProxy get copyWith => _$ItestExamWaitRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamWaitResponseEquatableAnnotations on ItestExamWaitResponse {
+  List<Object?> get _$props => [code, msg, rs];
+}
+
+extension _$ItestExamWaitRsEquatableAnnotations on ItestExamWaitRs {
+  List<Object?> get _$props => [waitingTime, isExpire];
 }
 
 // **************************************************************************

@@ -3,18 +3,6 @@
 part of 'itest_exam_info_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamInfoResponseAutoequal on ItestExamInfoResponse {
-  List<Object?> get _$props => [msg, rs, code];
-}
-
-extension _$ItestExamInfoRsAutoequal on ItestExamInfoRs {
-  List<Object?> get _$props => [ksName, ksLimit, beginTime, endTime, kcName];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -184,6 +172,18 @@ extension $ItestExamInfoRsCopyWith on ItestExamInfoRs {
   /// Returns a callable class that can be used as follows: `instanceOfItestExamInfoRs.copyWith(...)` or like so:`instanceOfItestExamInfoRs.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$ItestExamInfoRsCWProxy get copyWith => _$ItestExamInfoRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamInfoResponseEquatableAnnotations on ItestExamInfoResponse {
+  List<Object?> get _$props => [msg, rs, code];
+}
+
+extension _$ItestExamInfoRsEquatableAnnotations on ItestExamInfoRs {
+  List<Object?> get _$props => [ksName, ksLimit, beginTime, endTime, kcName];
 }
 
 // **************************************************************************

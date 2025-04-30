@@ -3,19 +3,6 @@
 part of 'itest_exam_renew_token_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$ItestExamRenewTokenResponseAutoequal
-    on ItestExamRenewTokenResponse {
-  List<Object?> get _$props => [code, msg, rs];
-}
-
-extension _$ItestExamRenewTokenRsAutoequal on ItestExamRenewTokenRs {
-  List<Object?> get _$props => [ksId, openId, extSourceType, url, token];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -192,6 +179,19 @@ extension $ItestExamRenewTokenRsCopyWith on ItestExamRenewTokenRs {
   // ignore: library_private_types_in_public_api
   _$ItestExamRenewTokenRsCWProxy get copyWith =>
       _$ItestExamRenewTokenRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$ItestExamRenewTokenResponseEquatableAnnotations
+    on ItestExamRenewTokenResponse {
+  List<Object?> get _$props => [code, msg, rs];
+}
+
+extension _$ItestExamRenewTokenRsEquatableAnnotations on ItestExamRenewTokenRs {
+  List<Object?> get _$props => [ksId, openId, extSourceType, url, token];
 }
 
 // **************************************************************************

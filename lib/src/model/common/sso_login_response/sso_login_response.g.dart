@@ -3,43 +3,6 @@
 part of 'sso_login_response.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$SsoLoginResponseAutoequal on SsoLoginResponse {
-  List<Object?> get _$props => [code, msg, error, rs];
-}
-
-extension _$SsoLoginLinksItemAutoequal on SsoLoginLinksItem {
-  List<Object?> get _$props => [rel, href];
-}
-
-extension _$SsoLoginRsAutoequal on SsoLoginRs {
-  List<Object?> get _$props => [
-    grantingTicket,
-    serviceTicket,
-    tgtExpiredTime,
-    role,
-    openid,
-    nickname,
-    fullname,
-    username,
-    mobile,
-    email,
-    perms,
-    isSsoLogin,
-    isCompleted,
-    openidHash,
-    jwt,
-    rt,
-    createTime,
-    status,
-    source,
-    links,
-  ];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -465,6 +428,43 @@ extension $SsoLoginRsCopyWith on SsoLoginRs {
   /// Returns a callable class that can be used as follows: `instanceOfSsoLoginRs.copyWith(...)` or like so:`instanceOfSsoLoginRs.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$SsoLoginRsCWProxy get copyWith => _$SsoLoginRsCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$SsoLoginResponseEquatableAnnotations on SsoLoginResponse {
+  List<Object?> get _$props => [code, msg, error, rs];
+}
+
+extension _$SsoLoginLinksItemEquatableAnnotations on SsoLoginLinksItem {
+  List<Object?> get _$props => [rel, href];
+}
+
+extension _$SsoLoginRsEquatableAnnotations on SsoLoginRs {
+  List<Object?> get _$props => [
+    grantingTicket,
+    serviceTicket,
+    tgtExpiredTime,
+    role,
+    openid,
+    nickname,
+    fullname,
+    username,
+    mobile,
+    email,
+    perms,
+    isSsoLogin,
+    isCompleted,
+    openidHash,
+    jwt,
+    rt,
+    createTime,
+    status,
+    source,
+    links,
+  ];
 }
 
 // **************************************************************************

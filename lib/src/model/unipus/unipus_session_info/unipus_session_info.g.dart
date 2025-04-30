@@ -3,14 +3,6 @@
 part of 'unipus_session_info.dart';
 
 // **************************************************************************
-// AutoequalGenerator
-// **************************************************************************
-
-extension _$UnipusSessionInfoAutoequal on UnipusSessionInfo {
-  List<Object?> get _$props => [name, token, openid, websocketUrl];
-}
-
-// **************************************************************************
 // CopyWithGenerator
 // **************************************************************************
 
@@ -99,6 +91,14 @@ extension $UnipusSessionInfoCopyWith on UnipusSessionInfo {
   // ignore: library_private_types_in_public_api
   _$UnipusSessionInfoCWProxy get copyWith =>
       _$UnipusSessionInfoCWProxyImpl(this);
+}
+
+// **************************************************************************
+// EquatableGenerator
+// **************************************************************************
+
+extension _$UnipusSessionInfoEquatableAnnotations on UnipusSessionInfo {
+  List<Object?> get _$props => [name, token, openid, websocketUrl];
 }
 
 // **************************************************************************

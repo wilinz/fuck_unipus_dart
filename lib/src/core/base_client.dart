@@ -8,6 +8,7 @@ import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:path/path.dart';
 
 import '../../fuck_unipus.dart';
+import '../http/referer_interceptor.dart';
 
 typedef CaptchaHandler =
 Future<String> Function(CaptchaResponse captchaResponse);
@@ -51,13 +52,14 @@ abstract class BaseClient {
 
     dio.interceptors.addAll([
       CookieManager(cookieJar),
+      RefererInterceptor(),
       RedirectInterceptor(() => dio),
     ]);
   }
 
   Map<String, String> buildDefaultHeaders() {
     return {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
       'Connection': 'keep-alive',
     };
   }

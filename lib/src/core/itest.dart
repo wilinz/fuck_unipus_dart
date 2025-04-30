@@ -85,7 +85,10 @@ class Itest extends BaseClient {
     final url = 'utest/itest/s/clsanswer/judgeEntry';
     final response = await dio.post(
       url,
-      data: FormData.fromMap({"examId": examId, "examCode": examCode}),
+      data: {"examId": examId, "examCode": examCode},
+      options: Options(
+        headers: {"content-type": Headers.formUrlEncodedContentType},
+      ),
     );
     final data = ItestExamJudgeEntryResponse.fromJson(response.data);
     return data;
@@ -112,16 +115,23 @@ class Itest extends BaseClient {
     required ItestConfirmExamData confirmExamData,
   }) async {
     final url = "itest-api/itest/s/answer/load";
-    final form = FormData.fromMap({
+    final form = {
       "dataid": confirmExamData.sppid,
       "examId": "",
       "dataType": confirmExamData.dataType,
       "dataSource": confirmExamData.dataSource,
       "dataUser": confirmExamData.dataUser,
       "openId": confirmExamData.openId,
-    });
+    };
     final t = Random().nextDouble();
-    final response = await dio.post(url, data: form, queryParameters: {"t": t});
+    final response = await dio.post(
+      url,
+      data: form,
+      queryParameters: {"t": t},
+      options: Options(
+        headers: {"content-type": Headers.formUrlEncodedContentType},
+      ),
+    );
     final data = ItestExamQuestionsWrapResponse.fromJson(response.data);
     final questions = parseExamQuestions(data.data.cHTML);
     return questions;
@@ -170,7 +180,7 @@ class Itest extends BaseClient {
     final clearUik = action == "save";
     final exitFlag = action == "save" ? "1" : "";
 
-    final form = FormData.fromMap({
+    final form = {
       "ansData": jsonEncode(answers),
       "act": "cache",
       "sppid": confirmExamData.sppid,
@@ -182,9 +192,15 @@ class Itest extends BaseClient {
       "openId": confirmExamData.openId,
       "exitFlag": exitFlag,
       "__t": t,
-    });
+    };
 
-    final response = await dio.post(url, data: form);
+    final response = await dio.post(
+      url,
+      data: form,
+      options: Options(
+        headers: {"content-type": Headers.formUrlEncodedContentType},
+      ),
+    );
     final data = ItestExamSubmitResponse.fromJson(response.data);
     return data;
   }
@@ -210,7 +226,7 @@ class Itest extends BaseClient {
 
     final msg = msgMap[action];
 
-    if(msg == null){
+    if (msg == null) {
       throw Exception("Unknown action: $action");
     }
 
@@ -227,8 +243,8 @@ class Itest extends BaseClient {
         "examid": confirmExamData.sppid,
         "examtype": examType,
         "openid": "317e0f3a5f9cefc693f1dcde2f12d3c3",
-        "lanip": ""
-      }
+        "lanip": "",
+      },
     ];
 
     final response = await dio.post(url, data: form);
@@ -262,7 +278,10 @@ class Itest extends BaseClient {
   Future<ItestExamWaitResponse> examWait({required String token}) async {
     final response = await dio.post(
       '/itest-api/itest/s/answer/exam/wait',
-      data: FormData.fromMap({"token": token}),
+      data: {"token": token},
+      options: Options(
+        headers: {"content-type": Headers.formUrlEncodedContentType},
+      ),
     );
     final data = ItestExamWaitResponse.fromJson(response.data);
     return data;

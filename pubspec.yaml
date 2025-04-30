@@ -18,20 +18,20 @@ dependencies:
   dio_redirect_interceptor: ^1.0.0
   copy_with_extension: ^6.0.1
   equatable: ^2.0.7
-  autoequal: ^0.9.1
   encrypt: ^5.0.3
   hex: ^0.2.0
   json5: ^0.8.2
+  equatable_annotations: ^1.0.1
   # path: ^1.8.0
 
 dev_dependencies:
   lints: ^5.0.0
   test: ^1.24.0
-  build_runner: ^2.4.13
+  build_runner: ^2.4.15
   json_serializable: ^6.9.5
-  autoequal_gen: ^0.9.5
   copy_with_extension_gen: ^6.0.1
-  json5_model: ^4.0.0
+  json5_model: ^5.0.1
+  equatable_gen: ^1.0.4
 
 index_generator:
   exclude:

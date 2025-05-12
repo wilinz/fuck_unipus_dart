@@ -121,13 +121,15 @@ extension $ItestExamQuestionsCopyWith on ItestExamQuestions {
 }
 
 abstract class _$ItestExamQuestionsOptionsItemCWProxy {
-  ItestExamQuestionsOptionsItem value(String value);
+  ItestExamQuestionsOptionsItem type(String type);
+
+  ItestExamQuestionsOptionsItem value(int? value);
 
   ItestExamQuestionsOptionsItem text(String text);
 
-  ItestExamQuestionsOptionsItem subIndex(String? subIndex);
+  ItestExamQuestionsOptionsItem subIndex(int? subIndex);
 
-  ItestExamQuestionsOptionsItem subSubIndex(String? subSubIndex);
+  ItestExamQuestionsOptionsItem subSubIndex(int? subSubIndex);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsOptionsItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -136,10 +138,11 @@ abstract class _$ItestExamQuestionsOptionsItemCWProxy {
   /// ItestExamQuestionsOptionsItem(...).copyWith(id: 12, name: "My name")
   /// ````
   ItestExamQuestionsOptionsItem call({
-    String value,
+    String type,
+    int? value,
     String text,
-    String? subIndex,
-    String? subSubIndex,
+    int? subIndex,
+    int? subSubIndex,
   });
 }
 
@@ -151,17 +154,20 @@ class _$ItestExamQuestionsOptionsItemCWProxyImpl
   final ItestExamQuestionsOptionsItem _value;
 
   @override
-  ItestExamQuestionsOptionsItem value(String value) => this(value: value);
+  ItestExamQuestionsOptionsItem type(String type) => this(type: type);
+
+  @override
+  ItestExamQuestionsOptionsItem value(int? value) => this(value: value);
 
   @override
   ItestExamQuestionsOptionsItem text(String text) => this(text: text);
 
   @override
-  ItestExamQuestionsOptionsItem subIndex(String? subIndex) =>
+  ItestExamQuestionsOptionsItem subIndex(int? subIndex) =>
       this(subIndex: subIndex);
 
   @override
-  ItestExamQuestionsOptionsItem subSubIndex(String? subSubIndex) =>
+  ItestExamQuestionsOptionsItem subSubIndex(int? subSubIndex) =>
       this(subSubIndex: subSubIndex);
 
   @override
@@ -172,17 +178,23 @@ class _$ItestExamQuestionsOptionsItemCWProxyImpl
   /// ItestExamQuestionsOptionsItem(...).copyWith(id: 12, name: "My name")
   /// ````
   ItestExamQuestionsOptionsItem call({
+    Object? type = const $CopyWithPlaceholder(),
     Object? value = const $CopyWithPlaceholder(),
     Object? text = const $CopyWithPlaceholder(),
     Object? subIndex = const $CopyWithPlaceholder(),
     Object? subSubIndex = const $CopyWithPlaceholder(),
   }) {
     return ItestExamQuestionsOptionsItem(
+      type:
+          type == const $CopyWithPlaceholder()
+              ? _value.type
+              // ignore: cast_nullable_to_non_nullable
+              : type as String,
       value:
           value == const $CopyWithPlaceholder()
               ? _value.value
               // ignore: cast_nullable_to_non_nullable
-              : value as String,
+              : value as int?,
       text:
           text == const $CopyWithPlaceholder()
               ? _value.text
@@ -192,12 +204,12 @@ class _$ItestExamQuestionsOptionsItemCWProxyImpl
           subIndex == const $CopyWithPlaceholder()
               ? _value.subIndex
               // ignore: cast_nullable_to_non_nullable
-              : subIndex as String?,
+              : subIndex as int?,
       subSubIndex:
           subSubIndex == const $CopyWithPlaceholder()
               ? _value.subSubIndex
               // ignore: cast_nullable_to_non_nullable
-              : subSubIndex as String?,
+              : subSubIndex as int?,
     );
   }
 }
@@ -213,7 +225,7 @@ extension $ItestExamQuestionsOptionsItemCopyWith
 abstract class _$ItestExamQuestionsQuestionsItemCWProxy {
   ItestExamQuestionsQuestionsItem id(String id);
 
-  ItestExamQuestionsQuestionsItem index(String index);
+  ItestExamQuestionsQuestionsItem index(int? index);
 
   ItestExamQuestionsQuestionsItem content(String content);
 
@@ -231,7 +243,7 @@ abstract class _$ItestExamQuestionsQuestionsItemCWProxy {
   /// ````
   ItestExamQuestionsQuestionsItem call({
     String id,
-    String index,
+    int? index,
     String content,
     List<ItestExamQuestionsOptionsItem> options,
     List<int>? optionsOrder,
@@ -249,7 +261,7 @@ class _$ItestExamQuestionsQuestionsItemCWProxyImpl
   ItestExamQuestionsQuestionsItem id(String id) => this(id: id);
 
   @override
-  ItestExamQuestionsQuestionsItem index(String index) => this(index: index);
+  ItestExamQuestionsQuestionsItem index(int? index) => this(index: index);
 
   @override
   ItestExamQuestionsQuestionsItem content(String content) =>
@@ -288,7 +300,7 @@ class _$ItestExamQuestionsQuestionsItemCWProxyImpl
           index == const $CopyWithPlaceholder()
               ? _value.index
               // ignore: cast_nullable_to_non_nullable
-              : index as String,
+              : index as int?,
       content:
           content == const $CopyWithPlaceholder()
               ? _value.content
@@ -333,7 +345,7 @@ extension _$ItestExamQuestionsEquatableAnnotations on ItestExamQuestions {
 
 extension _$ItestExamQuestionsOptionsItemEquatableAnnotations
     on ItestExamQuestionsOptionsItem {
-  List<Object?> get _$props => [value, text, subIndex, subSubIndex];
+  List<Object?> get _$props => [type, value, text, subIndex, subSubIndex];
 }
 
 extension _$ItestExamQuestionsQuestionsItemEquatableAnnotations
@@ -376,15 +388,17 @@ Map<String, dynamic> _$ItestExamQuestionsToJson(ItestExamQuestions instance) =>
 ItestExamQuestionsOptionsItem _$ItestExamQuestionsOptionsItemFromJson(
   Map<String, dynamic> json,
 ) => ItestExamQuestionsOptionsItem(
-  value: json['value'] as String? ?? '',
+  type: json['type'] as String? ?? '',
+  value: (json['value'] as num?)?.toInt(),
   text: json['text'] as String? ?? '',
-  subIndex: json['sub_index'] as String?,
-  subSubIndex: json['sub_sub_index'] as String?,
+  subIndex: (json['sub_index'] as num?)?.toInt(),
+  subSubIndex: (json['sub_sub_index'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$ItestExamQuestionsOptionsItemToJson(
   ItestExamQuestionsOptionsItem instance,
 ) => <String, dynamic>{
+  'type': instance.type,
   'value': instance.value,
   'text': instance.text,
   'sub_index': instance.subIndex,
@@ -395,7 +409,7 @@ ItestExamQuestionsQuestionsItem _$ItestExamQuestionsQuestionsItemFromJson(
   Map<String, dynamic> json,
 ) => ItestExamQuestionsQuestionsItem(
   id: json['id'] as String? ?? '',
-  index: json['index'] as String? ?? '',
+  index: (json['index'] as num?)?.toInt(),
   content: json['content'] as String? ?? '',
   options:
       (json['options'] as List<dynamic>?)

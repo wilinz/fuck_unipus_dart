@@ -22,6 +22,8 @@ dependencies:
   hex: ^0.2.0
   json5: ^0.8.2
   equatable_annotations: ^1.0.1
+  kt_dart: ^1.1.0
+  pure_dart_extensions: ^3.0.1
   # path: ^1.8.0
 
 dev_dependencies:

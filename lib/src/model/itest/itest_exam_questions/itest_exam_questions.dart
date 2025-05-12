@@ -38,11 +38,11 @@ class ItestExamQuestions with EquatableMixin {
 
 
   factory ItestExamQuestions.fromJson(Map<String, dynamic> json) => _$ItestExamQuestionsFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$ItestExamQuestionsToJson(this);
-  
+
   factory ItestExamQuestions.emptyInstance() => ItestExamQuestions(pageNumber: 0, sectionKey: "", sectionId: "", part1: "", sectionType: "", questions: []);
-  
+
   @override
   List<Object?> get props => _$props;
 }
@@ -53,30 +53,34 @@ class ItestExamQuestions with EquatableMixin {
 class ItestExamQuestionsOptionsItem with EquatableMixin {
 
   ItestExamQuestionsOptionsItem(
-      {required this.value,
+      {required this.type,
+      this.value,
       required this.text,
       this.subIndex,
       this.subSubIndex});
 
-  @JsonKey(name: "value", defaultValue: "")
-  final String value;
+  @JsonKey(name: "type", defaultValue: "")
+  final String type;
+
+  @JsonKey(name: "value")
+  final int? value;
 
   @JsonKey(name: "text", defaultValue: "")
   final String text;
 
   @JsonKey(name: "sub_index")
-  final String? subIndex;
+  final int? subIndex;
 
   @JsonKey(name: "sub_sub_index")
-  final String? subSubIndex;
+  final int? subSubIndex;
 
 
   factory ItestExamQuestionsOptionsItem.fromJson(Map<String, dynamic> json) => _$ItestExamQuestionsOptionsItemFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$ItestExamQuestionsOptionsItemToJson(this);
-  
-  factory ItestExamQuestionsOptionsItem.emptyInstance() => ItestExamQuestionsOptionsItem(value: "", text: "");
-  
+
+  factory ItestExamQuestionsOptionsItem.emptyInstance() => ItestExamQuestionsOptionsItem(type: "", text: "");
+
   @override
   List<Object?> get props => _$props;
 }
@@ -88,7 +92,7 @@ class ItestExamQuestionsQuestionsItem with EquatableMixin {
 
   ItestExamQuestionsQuestionsItem(
       {required this.id,
-      required this.index,
+      this.index,
       required this.content,
       required this.options,
       this.optionsOrder});
@@ -96,8 +100,8 @@ class ItestExamQuestionsQuestionsItem with EquatableMixin {
   @JsonKey(name: "id", defaultValue: "")
   final String id;
 
-  @JsonKey(name: "index", defaultValue: "")
-  final String index;
+  @JsonKey(name: "index")
+  final int? index;
 
   @JsonKey(name: "content", defaultValue: "")
   final String content;
@@ -110,11 +114,11 @@ class ItestExamQuestionsQuestionsItem with EquatableMixin {
 
 
   factory ItestExamQuestionsQuestionsItem.fromJson(Map<String, dynamic> json) => _$ItestExamQuestionsQuestionsItemFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$ItestExamQuestionsQuestionsItemToJson(this);
-  
-  factory ItestExamQuestionsQuestionsItem.emptyInstance() => ItestExamQuestionsQuestionsItem(id: "", index: "", content: "", options: []);
-  
+
+  factory ItestExamQuestionsQuestionsItem.emptyInstance() => ItestExamQuestionsQuestionsItem(id: "", content: "", options: []);
+
   @override
   List<Object?> get props => _$props;
 }

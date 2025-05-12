@@ -10,7 +10,7 @@ environment:
 dependencies:
   fuck_unipus:
     path: ../
-  dcli: ^7.0.3
+  openai_dart_dio: ^2.0.2
   # path: ^1.8.0
 
 dev_dependencies:

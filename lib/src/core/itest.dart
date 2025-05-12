@@ -137,16 +137,22 @@ class Itest extends BaseClient {
     return questions;
   }
 
-  Map<String, dynamic> buildAnswer({required ItestExamQuestions questions}) {
+  Future<Map<String, dynamic>> buildAnswer({
+    required ItestExamQuestions questions,
+    required int Function(int index, ItestExamQuestionsQuestionsItem question)
+    getAnswer,
+  }) async {
     final answer = <Map<String, dynamic>>[];
-    final usageTime = 2335; // todo
-    for (final question in questions.questions) {
-      final answerOption = [0]; // todo
+
+    final watch = Stopwatch();
+    watch.start();
+    for (final (i, question) in questions.questions.indexed) {
+      final answerOption = getAnswer(i, question);
       answer.add({
         "q": question.id, // qid
         "d": [
           // answer index
-          answerOption,
+          [answerOption],
         ],
         "o": [
           // option order
@@ -156,13 +162,16 @@ class Itest extends BaseClient {
         "rnp": "-1",
         "rl": -1,
       });
+      final sleep = Random().nextInt(20) + 10;
+      await Future.delayed(Duration(seconds: sleep));
     }
+    final usageTime = watch.elapsed.inSeconds;
     final data = {
       "al": answer,
       "sl": [
         {"sid": questions.sectionId, "rnp": "-1"},
       ],
-      "ut": usageTime, // usage time
+      "ut": usageTime,
     };
     return data;
   }

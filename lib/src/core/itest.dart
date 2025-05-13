@@ -141,6 +141,7 @@ class Itest extends BaseClient {
   }
 
   Future<Map<String, dynamic>> buildAnswer({
+    required ItestConfirmExamData confirmExamData,
     required ItestExamQuestions questions,
     required Future<List<int>> Function(
       int index,
@@ -150,15 +151,13 @@ class Itest extends BaseClient {
   }) async {
     final answer = <Map<String, dynamic>>[];
 
-    final watch = Stopwatch();
-    watch.start();
-    for (final (i, question) in questions.questions.indexed) {
-      final answerOptions = await getAnswer(i, question);
+    for (final (_, question) in questions.questions.indexed) {
       answer.add({
         "q": question.id, // qid
         "d": [
-          // answer index
-          answerOptions,
+          [
+            ""
+          ]
         ],
         "o": [
           // option order
@@ -168,8 +167,30 @@ class Itest extends BaseClient {
         "rnp": "-1",
         "rl": -1,
       });
+    }
+    final watch = Stopwatch();
+    watch.start();
+
+    final timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      final usageTime = watch.elapsed.inSeconds;
+      final data = {
+        "al": answer,
+        "sl": [
+          {"sid": questions.sectionId, "rnp": "-1"},
+        ],
+        "ut": usageTime,
+      };
+      await log(confirmExamData: confirmExamData, action: ExamLoggerAction.ansSnapSubmit, answers: data);
+    });
+
+    for (final (i, question) in questions.questions.indexed) {
+      final answerOptions = await getAnswer(i, question);
+      answer[i]['d'] = [
+        answerOptions
+      ];
       final sleep = Random().nextInt(20) + 10;
       await Future.delayed(Duration(seconds: sleep));
+      await log(confirmExamData: confirmExamData, action: ExamLoggerAction.nextQuestionClick);
     }
     final usageTime = watch.elapsed.inSeconds;
     final data = {
@@ -179,12 +200,25 @@ class Itest extends BaseClient {
       ],
       "ut": usageTime,
     };
+    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.ansSnapSubmit, answers: data);
+    timer.cancel();
     return data;
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK
-  /// action: cache or save
-  Future<ItestExamSubmitResponse> submit({
+  Future<(ItestExamSubmitResponse, ItestExamSubmitResponse)> submit({
+    required Map<String, dynamic> answers,
+    required ItestConfirmExamData confirmExamData,
+    required String uik,
+  }) async {
+    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.ansSnapSubmit, answers: answers);
+    final resp1 = await _submit(answers: answers, confirmExamData: confirmExamData, uik: uik, action: ExamSubmitAction.cache);
+    final resp2 = await _submit(answers: answers, confirmExamData: confirmExamData, uik: uik, action: ExamSubmitAction.save);
+    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.examEnd);
+    return (resp1, resp2);
+  }
+
+  Future<ItestExamSubmitResponse> _submit({
     required Map<String, dynamic> answers,
     required ItestConfirmExamData confirmExamData,
     required String uik,
@@ -197,7 +231,7 @@ class Itest extends BaseClient {
 
     final form = {
       "ansData": jsonEncode(answers),
-      "act": "cache",
+      "act": action,
       "sppid": confirmExamData.sppid,
       "uik": uik,
       "clearUik": clearUik,
@@ -220,21 +254,23 @@ class Itest extends BaseClient {
     return data;
   }
 
-  /// msg: 进入上一题, 进入下一题，考试结束，answers
-  /// action: pre_ques_click, next_ques_click, exam_end, ans_snap_submit
-  /// schoolCode: cookie: p_schoolcode
+  /// action: pre_ques_click, next_ques_click, exam_end, ans_snap_submit, use ExamLoggerAction
   Future<ItestExamSubmitResponse> log({
-    required Map<String, dynamic> answers,
     required ItestConfirmExamData confirmExamData,
     required String action,
+    Map<String, dynamic>? answers,
   }) async {
     final url = "itest/log";
 
+    if (action == ExamLoggerAction.ansSnapSubmit && answers == null) {
+      throw Exception("Action is 'ans_snap_submit', but answers is null");
+    }
+
     final msgMap = {
-      "pre_ques_click": "进入上一题",
-      "next_ques_click": "进入下一题",
-      "exam_end": "考试结束",
-      "ans_snap_submit": jsonEncode(answers),
+      ExamLoggerAction.preQuestionClick: "进入上一题",
+      ExamLoggerAction.nextQuestionClick: "进入下一题",
+      ExamLoggerAction.examEnd: "考试结束",
+      ExamLoggerAction.ansSnapSubmit: jsonEncode(answers),
     };
 
     final msg = msgMap[action];
@@ -261,6 +297,9 @@ class Itest extends BaseClient {
     );
     final schoolCode = cookies.find((e) => e.name = "p_schoolcode");
 
+    print("school code: $schoolCode");
+
+
     final form = [
       {
         "host": "https://itestcloud.unipus.cn",
@@ -278,6 +317,7 @@ class Itest extends BaseClient {
       },
     ];
 
+    print("sent log: $form");
     final response = await dio.post(url, data: form);
     final data = ItestExamSubmitResponse.fromJson(response.data);
     return data;
@@ -338,4 +378,16 @@ class Itest extends BaseClient {
     final data = response.data;
     return data;
   }
+}
+
+class ExamLoggerAction {
+  static const String preQuestionClick = 'pre_ques_click';
+  static const String nextQuestionClick = 'next_ques_click';
+  static const String examEnd = 'exam_end';
+  static const String ansSnapSubmit = 'ans_snap_submit';
+}
+
+class ExamSubmitAction {
+  static const String cache= 'cache';
+  static const String save = 'save';
 }

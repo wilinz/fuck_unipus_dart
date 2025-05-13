@@ -19,5 +19,5 @@ ItestConfirmExamData parseConfirmExamData(String html) {
     }
   }
 
-  throw Exception('ItestConfirmExam parsing failed: No match found');
+  throw Exception('ItestConfirmExam parsing failed: No match found: $html');
 }

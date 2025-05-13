@@ -9,7 +9,7 @@ import 'package:openai_dart_dio/openai_dart_dio.dart';
 void main() async {
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
-  print("如需输入上次流浪器 openid 请修改 example/bin/example.dart");
+  print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
   String? openId = '';
   itestMain(cookieDir: cookieDir, username: username, loggerOpenId: openId);
   // unipusMain(cookieDir: cookieDir, username: username);

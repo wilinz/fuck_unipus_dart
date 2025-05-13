@@ -7,9 +7,11 @@ import 'package:fuck_unipus/src/utils/random.dart';
 import 'package:html/parser.dart';
 import 'package:pure_dart_extensions/pure_dart_extensions.dart';
 
+import 'html_parser/exam_blocking_html.dart';
+
 class Itest extends BaseClient {
   final timestamp = DateTime.now().millisecondsSinceEpoch;
-  final loggerOpenId = generateRandomMd5();
+  late String loggerOpenId;
 
   String get itestsService =>
       "https://itestcloud.unipus.cn/utest/itest/login?_rp=/itest?x=$timestamp";
@@ -17,8 +19,10 @@ class Itest extends BaseClient {
   static Future<Itest> newInstance({
     required String cookieDir,
     String cookieSubDir = "default",
+    String? loggerOpenId,
   }) async {
     final itest = Itest._();
+    itest.loggerOpenId = loggerOpenId ?? generateRandomMd5();
     print("loggerOpenId: ${itest.loggerOpenId}");
     await itest._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
     return itest;
@@ -103,20 +107,24 @@ class Itest extends BaseClient {
     final response = await dio.get(
       'itest-api/itest/s/answer/ksInfo',
       queryParameters: {"token": token},
+      options: Options(responseType: ResponseType.plain),
     );
-    final data = ItestExamInfoResponse.fromJson(response.data);
+    final data = ItestExamInfoResponse.fromJson(jsonDecode(response.data));
     return data;
   }
 
-  //
-  Future<dynamic> getAnswerSheets({required String token}) async {
+  // return: html string
+  Future<String> getAnswerSheets({required String token}) async {
     final url =
-        "https://itestcloud.unipus.cn/itest-api/itest/s/answer/index?token=&returnUrl=https://itestcloud.unipus.cn/utest/itest/s/exam&skipEnvTest=true";
-    throw Exception("TODO");
+        "https://itestcloud.unipus.cn/itest-api/itest/s/answer/index?returnUrl=https://itestcloud.unipus.cn/utest/itest/s/exam&skipEnvTest=true";
+    final response = await dio.get(url, queryParameters: {"token": token});
+    return response.data;
   }
 
+  // 必须先调用 getAnswerSheets 获取答题卡，不然 404
   Future<(ItestExamQuestionsWrapResponse, ItestExamQuestions?)>
   getExamQuestions({required ItestConfirmExamData confirmExamData}) async {
+    //https://itestcloud.unipus.cn/itest-api/itest/s/answer/index?token=.---.&returnUrl=https://itestcloud.unipus.cn/utest/itest/s/exam&skipEnvTest=true
     final url = "itest-api/itest/s/answer/load";
     final form = {
       "dataid": confirmExamData.sppid,
@@ -133,15 +141,19 @@ class Itest extends BaseClient {
       queryParameters: {"t": t},
       options: Options(
         headers: {"content-type": Headers.formUrlEncodedContentType},
+        responseType: ResponseType.plain,
       ),
     );
-    final data = ItestExamQuestionsWrapResponse.fromJson(response.data);
+    final data = ItestExamQuestionsWrapResponse.fromJson(
+      jsonDecode(response.data),
+    );
     final questions = parseExamQuestions(data.data.cHTML);
     return (data, questions);
   }
 
   Future<Map<String, dynamic>> buildAnswer({
     required ItestConfirmExamData confirmExamData,
+    required String uik,
     required ItestExamQuestions questions,
     required Future<List<int>> Function(
       int index,
@@ -155,9 +167,7 @@ class Itest extends BaseClient {
       answer.add({
         "q": question.id, // qid
         "d": [
-          [
-            ""
-          ]
+          [""],
         ],
         "o": [
           // option order
@@ -171,7 +181,7 @@ class Itest extends BaseClient {
     final watch = Stopwatch();
     watch.start();
 
-    final timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+    final timer = Timer.periodic(Duration(minutes: 1), (timer) async {
       final usageTime = watch.elapsed.inSeconds;
       final data = {
         "al": answer,
@@ -180,17 +190,24 @@ class Itest extends BaseClient {
         ],
         "ut": usageTime,
       };
-      await log(confirmExamData: confirmExamData, action: ExamLoggerAction.ansSnapSubmit, answers: data);
+      await log(
+        confirmExamData: confirmExamData,
+        action: ExamLoggerAction.ansSnapSubmit,
+        answers: data,
+      );
+      await _submit(answers: data, confirmExamData: confirmExamData, uik: uik, action: ExamSubmitAction.cache);
     });
 
     for (final (i, question) in questions.questions.indexed) {
       final answerOptions = await getAnswer(i, question);
-      answer[i]['d'] = [
-        answerOptions
-      ];
-      final sleep = Random().nextInt(20) + 10;
+      print("第${i+1}题答案：$answerOptions");
+      answer[i]['d'] = [answerOptions];
+      final sleep = Random().nextInt(5) + 5;
       await Future.delayed(Duration(seconds: sleep));
-      await log(confirmExamData: confirmExamData, action: ExamLoggerAction.nextQuestionClick);
+      await log(
+        confirmExamData: confirmExamData,
+        action: ExamLoggerAction.nextQuestionClick,
+      );
     }
     final usageTime = watch.elapsed.inSeconds;
     final data = {
@@ -200,22 +217,47 @@ class Itest extends BaseClient {
       ],
       "ut": usageTime,
     };
-    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.ansSnapSubmit, answers: data);
+    await log(
+      confirmExamData: confirmExamData,
+      action: ExamLoggerAction.ansSnapSubmit,
+      answers: data,
+    );
     timer.cancel();
     return data;
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK
-  Future<(ItestExamSubmitResponse, ItestExamSubmitResponse)> submit({
+  Future<ItestExamSubmitResponse> submit({
     required Map<String, dynamic> answers,
     required ItestConfirmExamData confirmExamData,
     required String uik,
   }) async {
-    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.ansSnapSubmit, answers: answers);
-    final resp1 = await _submit(answers: answers, confirmExamData: confirmExamData, uik: uik, action: ExamSubmitAction.cache);
-    final resp2 = await _submit(answers: answers, confirmExamData: confirmExamData, uik: uik, action: ExamSubmitAction.save);
-    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.examEnd);
-    return (resp1, resp2);
+    try {
+      await log(
+            confirmExamData: confirmExamData,
+            action: ExamLoggerAction.ansSnapSubmit,
+            answers: answers,
+          );
+      final resp1 = await _submit(
+            answers: answers,
+            confirmExamData: confirmExamData,
+            uik: uik,
+            action: ExamSubmitAction.cache,
+          );
+    } catch (e) {
+      print(e);
+    }
+    final resp2 = await _submit(
+      answers: answers,
+      confirmExamData: confirmExamData,
+      uik: uik,
+      action: ExamSubmitAction.save,
+    );
+    await log(
+      confirmExamData: confirmExamData,
+      action: ExamLoggerAction.examEnd,
+    );
+    return resp2;
   }
 
   Future<ItestExamSubmitResponse> _submit({
@@ -247,15 +289,16 @@ class Itest extends BaseClient {
       url,
       data: form,
       options: Options(
+        responseType: ResponseType.plain,
         headers: {"content-type": Headers.formUrlEncodedContentType},
       ),
     );
-    final data = ItestExamSubmitResponse.fromJson(response.data);
+    final data = ItestExamSubmitResponse.fromJson(jsonDecode(response.data));
     return data;
   }
 
   /// action: pre_ques_click, next_ques_click, exam_end, ans_snap_submit, use ExamLoggerAction
-  Future<ItestExamSubmitResponse> log({
+  Future<dynamic> log({
     required ItestConfirmExamData confirmExamData,
     required String action,
     Map<String, dynamic>? answers,
@@ -295,31 +338,31 @@ class Itest extends BaseClient {
     final cookies = await cookieJar.loadForRequest(
       Uri.parse("https://itestcloud.unipus.cn/itest/log"),
     );
-    final schoolCode = cookies.find((e) => e.name = "p_schoolcode");
+    final schoolCode =
+        cookies.firstOrNullWhere((e) => e.name == "p_schoolcode")?.value;
 
-    print("school code: $schoolCode");
+    final form = {
+      "host": "https://itestcloud.unipus.cn",
+      "level": "info", // 等级 info\error\warn
+      "msg": msg,
+      "action": action,
+      "client": "WEB",
+      "schoolcode": schoolCode,
+      "uid": confirmExamData.dataUser,
+      "logtime": DateTime.now().millisecondsSinceEpoch,
+      "examid": confirmExamData.sppid,
+      "examtype": examType,
+      "openid": loggerOpenId, // window.__finger, //浏览器唯一标识
+      "lanip": "",
+    };
 
+    if(form['action'] != ExamLoggerAction.ansSnapSubmit) {
+      final body = Map.from(form)..['msg'] = "";
+      print("sent log: $body");
+    }
 
-    final form = [
-      {
-        "host": "https://itestcloud.unipus.cn",
-        "level": "info", // 等级 info\error\warn
-        "msg": msg,
-        "action": action,
-        "client": "WEB",
-        "schoolcode": schoolCode,
-        "uid": confirmExamData.dataUser,
-        "logtime": DateTime.now().millisecondsSinceEpoch,
-        "examid": confirmExamData.sppid,
-        "examtype": examType,
-        "openid": loggerOpenId, // window.__finger, //浏览器唯一标识
-        "lanip": "",
-      },
-    ];
-
-    print("sent log: $form");
-    final response = await dio.post(url, data: form);
-    final data = ItestExamSubmitResponse.fromJson(response.data);
+    final response = await dio.post(url, data: [form]);
+    final data = response.data;
     return data;
   }
 
@@ -364,11 +407,27 @@ class Itest extends BaseClient {
     required String token,
     String returnUrl = "https://itestcloud.unipus.cn/utest/itest/s/exam",
   }) async {
-    final response = await dio.get(
+    final response = await dio.get<String>(
       "itest-api/itest/s/answer/index?",
       queryParameters: {"token": token, "returnUrl": returnUrl},
     );
-    final data = parseConfirmExamData(response.data);
+    final url = "/itest-api/itest/s/answer/closeReferNotify";
+    if (response.data?.contains(url) == true) {
+      final data = parseCloseReferNotifyData(response.data!);
+      if (data == null) {
+        throw Exception("parseCloseReferNotifyData fielded: ${response.data}");
+      }
+      final resp = await dio.post(
+        url,
+        data: data,
+        options: Options(responseType: ResponseType.plain),
+      );
+      final json = jsonDecode(resp.data);
+      if (resp.statusCode == 200 && json['code'] == 0) {
+        return confirmExam(token: token, returnUrl: returnUrl);
+      }
+    }
+    final data = parseConfirmExamData(response.data!);
     return data;
   }
 
@@ -388,6 +447,6 @@ class ExamLoggerAction {
 }
 
 class ExamSubmitAction {
-  static const String cache= 'cache';
+  static const String cache = 'cache';
   static const String save = 'save';
 }

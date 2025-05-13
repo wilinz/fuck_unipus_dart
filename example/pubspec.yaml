@@ -8,9 +8,10 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
+  dio: ^5.8.0+1
   fuck_unipus:
     path: ../
-  openai_dart_dio: ^2.0.2
+  openai_dart_dio: ^2.1.0
   # path: ^1.8.0
 
 dev_dependencies:

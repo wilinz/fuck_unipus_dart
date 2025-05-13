@@ -1,25 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dcli/dcli.dart';
+import 'package:dio/dio.dart';
 import 'package:example/utils/input.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
+import 'package:openai_dart_dio/openai_dart_dio.dart';
 
 void main() async {
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
-
-  itestMain(cookieDir: cookieDir, username: username);
+  print("如需输入上次流浪器 openid 请修改 example/bin/example.dart");
+  String? openId = '';
+  itestMain(cookieDir: cookieDir, username: username, loggerOpenId: openId);
   // unipusMain(cookieDir: cookieDir, username: username);
 }
 
 Future<void> itestMain({
   required String cookieDir,
   required String username,
+  String? loggerOpenId,
 }) async {
   final itest = await Itest.newInstance(
     cookieDir: cookieDir,
     cookieSubDir: username,
+    loggerOpenId: loggerOpenId,
   );
   final isLogin = await itest.checkLoginAndSetupSession();
   if (!isLogin) {
@@ -37,7 +41,158 @@ Future<void> itestMain({
   }
 
   final examList = await itest.getExamList();
-  print(examList);
+  for (final exam in examList.rs.data) {
+    print(exam.ksName);
+    print("ksd id: ${exam.ksdId}");
+    print(exam.examEnrollInfo);
+    print(exam.restrictBeginTimeStr);
+    print(exam.restrictEndTimeStr);
+    print(exam.canViewKaojuanJudgeBean.scoreReason);
+    print(exam.ksText);
+    print("-" * 150);
+  }
+
+  final examId = inputTrim("请输入 ksdId: ");
+  final judgeEntry = await itest.judgeEntry(examId: examId);
+  print(judgeEntry.msg);
+  inputTrim("回车进入考试？");
+  final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
+  print(confirmExam);
+  inputTrim("请确认考试信息，回车确认");
+  final examInfo = await itest.examInfo(token: judgeEntry.data.token);
+  print("examInfo：$examInfo");
+  final examPaperResourceInfo = await itest.examPaperResourceInfo(
+    token: judgeEntry.data.token,
+  );
+  print("examPaperResourceInfo：$examPaperResourceInfo");
+  final examWait = await itest.examWait(token: judgeEntry.data.token);
+  print("examWait：$examWait");
+
+  await itest.getAnswerSheets(token: judgeEntry.data.token);
+
+  final (questionsWarp, questions) = await itest.getExamQuestions(
+    confirmExamData: confirmExam,
+  );
+  print("questionsWarp：$questionsWarp");
+  print("questions：$questions");
+
+
+  final key = inputTrim("请输入 openai api key: ");
+  var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
+  if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
+
+  final dio = Dio();
+  dio.options = BaseOptions(validateStatus: (s) => s != null);
+  // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+  //   final client = HttpClient();
+  //   client.findProxy = (uri) {
+  //     return "PROXY 127.0.0.1:9000";
+  //   };
+  //   client.badCertificateCallback =
+  //       (X509Certificate cert, String host, int port) => true;
+  //   return client;
+  // };
+
+  final openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: dio);
+  await testOpenai(openai);
+
+  final answers = await itest.buildAnswer(
+    uik: questionsWarp.data.uIK.toString(),
+    confirmExamData: confirmExam,
+    questions: questions!,
+    getAnswer:
+        (int index, ItestExamQuestionsQuestionsItem question) =>
+            getAnswer(openai, index, question),
+  );
+
+  print("answers：$answers");
+  final submitResult = await itest.submit(
+    answers: answers,
+    confirmExamData: confirmExam,
+    uik: questionsWarp.data.uIK.toString(),
+  );
+
+  print("submitResult：$submitResult");
+}
+
+Future<void> testOpenai(OpenAiClient openai) async {
+  final resp = await openai.chatCompletionApi.createChatCompletion(
+    ChatCompletionRequest(
+      messages: [
+        ChatMessage(role: ChatMessageRole.user, content: "这是题目：$testQ，请给出答案"),
+      ],
+      model: "gpt-4o",
+      responseFormat: ResponseFormat(
+        type: ResponseFormatType.jsonSchema,
+        jsonSchema: {
+            "name": "answers",
+            "description": "answers",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "answers_list": {
+                  "type": "array",
+                  "description":
+                  "Answer array. When single-choice, the array length is 1 and the type is int. When multiple-choice, the array length can be > 1",
+                  "items": {"type": "integer"},
+                }
+              },
+              "required": ["answers_list"],
+            },
+        },
+      ),
+    ),
+  );
+  final answer = jsonDecode(resp.choices.first.message.content!)['answers_list'];
+  print(answer);
+}
+
+Future<List<int>> getAnswer(
+  OpenAiClient openai,
+  int index,
+  ItestExamQuestionsQuestionsItem question,
+) async {
+  print("题目：${question.toJson()}");
+  for (var i = 0; i < 5; i++) {
+    try {
+      final resp = await openai.chatCompletionApi.createChatCompletion(
+        ChatCompletionRequest(
+          messages: [
+            ChatMessage(
+              role: ChatMessageRole.user,
+              content: "这是题目：${question.toJson()}，请给出答案",
+            ),
+          ],
+          model: "gpt-4o",
+          responseFormat: ResponseFormat(
+            type: ResponseFormatType.jsonSchema,
+            jsonSchema: {
+              "name": "answers",
+              "description": "answers",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answers_list": {
+                    "type": "array",
+                    "description":
+                    "Answer array. When single-choice, the array length is 1 and the type is int. When multiple-choice, the array length can be > 1",
+                    "items": {"type": "integer"},
+                  }
+                },
+                "required": ["answers_list"],
+              },
+            },
+          ),
+        ),
+      );
+      final answer = (jsonDecode(resp.choices.first.message.content!)['answers_list'] as List).cast<int>();
+      print(answer);
+      return answer;
+    } catch (e) {
+      print(e);
+    }
+  }
+  throw Exception("答案获取失败");
 }
 
 Future<void> unipusMain({
@@ -264,3 +419,45 @@ String sanitizeFilename(String name) {
       .trim() // 去除前后的空格
       .replaceAll(' ', '_'); // 替换空格为下划线
 }
+
+final testQ = """    {
+      "id": "1000000",
+      "index": 48,
+      "content": "48.  The dish consists of 8 kinds of vegetables, mixed with hot chili ______ and served with beef soup.",
+      "options": [
+        {
+          "type": "radio",
+          "value": 3,
+          "text": "A. decency",
+          "sub_index": 1,
+          "sub_sub_index": 1
+        },
+        {
+          "type": "radio",
+          "value": 1,
+          "text": "B. nationality",
+          "sub_index": 1,
+          "sub_sub_index": 1
+        },
+        {
+          "type": "radio",
+          "value": 2,
+          "text": "C. paste",
+          "sub_index": 1,
+          "sub_sub_index": 1
+        },
+        {
+          "type": "radio",
+          "value": 0,
+          "text": "D. abundance",
+          "sub_index": 1,
+          "sub_sub_index": 1
+        }
+      ],
+      "options_order": [
+        3,
+        1,
+        2,
+        0
+      ]
+    }""";

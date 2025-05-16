@@ -1,16 +1,36 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:example/utils/input.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 
 void main() async {
+  // final html =
+  //     await File(
+  //       '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.html',
+  //     ).readAsString();
+  // final q = parseExamQuestionsMap(html);
+  // await File(
+  //   '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.json',
+  // ).writeAsString(JsonEncoder.withIndent("  ").convert(q));
+  //
+  // final html1 =
+  //     await File(
+  //       '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml1.html',
+  //     ).readAsString();
+  // final q1 = parseExamQuestionsMap(html1);
+  // await File(
+  //   '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml1.json',
+  // ).writeAsString(JsonEncoder.withIndent("  ").convert(q1));
+  // return;
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
   print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
-  String? openId = '';
+  String? openId = 'a2db36307238071840c875f33f9e5bec';
   itestMain(cookieDir: cookieDir, username: username, loggerOpenId: openId);
   // unipusMain(cookieDir: cookieDir, username: username);
 }
@@ -55,7 +75,9 @@ Future<void> itestMain({
   final examId = inputTrim("请输入 ksdId: ");
   final judgeEntry = await itest.judgeEntry(examId: examId);
   print(judgeEntry.msg);
-  inputTrim("回车进入考试？");
+  inputTrim(
+    "回车进入考试？考试前请准备好 openai api key, 推荐 https://next.ohmygpt.com/apis ",
+  );
   final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
   print(confirmExam);
   inputTrim("请确认考试信息，回车确认");
@@ -74,7 +96,17 @@ Future<void> itestMain({
     confirmExamData: confirmExam,
   );
   print("questionsWarp：$questionsWarp");
-  print("questions：$sections");
+  final questionsJson = jsonEncode(sections);
+  print("questions：$questionsJson");
+
+  final file = File(
+    "./questions/questions-${confirmExam.examName.replaceAll(" ", "-")}.json",
+  );
+  if (!(await file.parent.exists())) {
+    await file.parent.create(recursive: true);
+  }
+  await file.writeAsString(questionsJson);
+  print("题目json已经写入文件：${file.path}");
 
   final key = inputTrim("请输入 openai api key: ");
   var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
@@ -103,16 +135,33 @@ Future<void> itestMain({
       List<int> indexList,
       ItestExamQuestionsQuestionGroupItem question,
     ) async {
+      print(
+        "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
+      );
       return await getChooseAnswer(openai, question);
     },
+
     getChoose10From15Answer: (
       List<int> indexList,
       ItestExamQuestionsChoose10From15Question question,
     ) async {
+      print("正在获取答案...：$indexList, 15 选 10");
       return await getChoose10From15Answer(openai, question);
     },
-    getWritingAnswer: (int index, ItestExamQuestionsWriteQuestion question) {},
-    audioToText: (String url) {},
+    getWritingAnswer: (
+      int index,
+      ItestExamQuestionsWriteQuestion question,
+    ) async {
+      print("正在获取答案...：$index, ${question.title}");
+      return await getWritingAnswer(openai, question);
+    },
+    audioToText: (String url) async {
+      print("正在识别音频...：$url");
+      return audioToText(openai, url, itest.dio);
+    },
+    writingProgressCallback: (i, total) {
+      print("正在输入答案...：$i/$total");
+    },
   );
 
   print("answers：$answers");
@@ -158,6 +207,66 @@ Future<void> testOpenai(OpenAiClient openai) async {
   print(answer);
 }
 
+Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
+  final audioResponse = await dio.get(
+    url,
+    options: Options(responseType: ResponseType.bytes),
+  );
+  final Uint8List bytes = audioResponse.data;
+  final file = MultipartFile.fromBytes(bytes, filename: "audio.mp3");
+  final ats = await openai.audioApi.transcriptions<String>(
+    SpeechRecognitionRequest(
+      model: "whisper-1",
+      file: file,
+      responseFormat: "text",
+      temperature: 0.2,
+    ),
+  );
+  return ats;
+}
+
+Future<String> getWritingAnswer(
+  OpenAiClient openai,
+  ItestExamQuestionsWriteQuestion question,
+) async {
+  for (var i = 0; i < 5; i++) {
+    try {
+      final resp = await openai.chatCompletionApi.createChatCompletion(
+        ChatCompletionRequest(
+          messages: [
+            ChatMessage(
+              role: ChatMessageRole.user,
+              content:
+                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a translation question and the original question is in English, translate it into Chinese, and vice versa.",
+            ),
+          ],
+          model: "gpt-4o",
+          responseFormat: ResponseFormat(
+            type: ResponseFormatType.jsonSchema,
+            jsonSchema: {
+              "name": "answers",
+              "description": "answers",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answer": {"type": "string", "description": "Writing Answer"},
+                },
+                "required": ["answer"],
+              },
+            },
+          ),
+        ),
+      );
+      final answer =
+          jsonDecode(resp.choices.first.message.content!)['answer'] as String;
+      return answer;
+    } catch (e) {
+      print(e);
+    }
+  }
+  throw Exception("答案获取失败");
+}
+
 Future<List<List<String>>> getChoose10From15Answer(
   OpenAiClient openai,
   ItestExamQuestionsChoose10From15Question question,
@@ -169,7 +278,8 @@ Future<List<List<String>>> getChoose10From15Answer(
           messages: [
             ChatMessage(
               role: ChatMessageRole.user,
-              content: "这是题目：${jsonEncode(question.toJson())}，请给出答案",
+              content:
+                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer.",
             ),
           ],
           model: "gpt-4o",
@@ -184,7 +294,7 @@ Future<List<List<String>>> getChoose10From15Answer(
                   "answers_list": {
                     "type": "array",
                     "description":
-                        "Answer array. If the length of choose_10_from_15_question.content[type=\"input\"] is 3, an example answer would be: [[\"C\"], [[\"B\"], [[\"A\"]]. ",
+                        "Answer array. Example: If the length of choose_10_from_15_question.content[type=\"input\"] is 3, an example answer would be: [[\"C\"], [[\"B\"], [[\"A\"]]. ",
                     "items": {
                       "type": "array",
                       "description":
@@ -233,7 +343,8 @@ Future<List<List<int>>> getChooseAnswer(
           messages: [
             ChatMessage(
               role: ChatMessageRole.user,
-              content: "这是题目：${jsonEncode(question.toJson())}，请给出答案",
+              content:
+                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a listening question, I have already converted it to text. Please check the audio_to_text field.",
             ),
           ],
           model: "gpt-4o",
@@ -248,7 +359,7 @@ Future<List<List<int>>> getChooseAnswer(
                   "answers_list": {
                     "type": "array",
                     "description":
-                        "Answer array. If the length of questions is 3, an example answer would be: [[0], [1], [3]]. Each inner array represents the answer(s) to a specific question, in order. For single-choice questions, the inner array should contain exactly one integer. For multiple-choice questions, it may contain multiple integers.",
+                        "Answer array. Example: If the length of questions is 3, an example answer would be: [[0], [1], [3]]. Each inner array represents the answer(s) to a specific question, in order. For single-choice questions, the inner array should contain exactly one integer. For multiple-choice questions, it may contain multiple integers.",
                     "items": {
                       "type": "array",
                       "description":

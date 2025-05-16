@@ -166,16 +166,17 @@ class Itest extends BaseClient {
     getChooseAnswer,
     required Future<List<List<String>>> Function(
       List<int> indexList,
-        ItestExamQuestionsChoose10From15Question question,
+      ItestExamQuestionsChoose10From15Question question,
     )
     getChoose10From15Answer,
     required Future<String> Function(
-        int index,
-        ItestExamQuestionsWriteQuestion question,
-        )
+      int index,
+      ItestExamQuestionsWriteQuestion question,
+    )
     getWritingAnswer,
     required Future<String> Function(String url) audioToText,
     void Function(int index)? progressCallback,
+    void Function(int index, int total)? writingProgressCallback,
   }) async {
     // throw Exception();
     final answers = <Map<String, dynamic>>[];
@@ -187,7 +188,7 @@ class Itest extends BaseClient {
         for (final group in section.questionGroup!) {
           final answer = {
             "q": group.questions.first.id, // qid
-            "d": group.questions.map((e) => [""]).toList(),
+            "d": group.questions.map((e) => <dynamic>[""]).toList(),
             "o": group.questions.map((e) => [e.optionsOrder]).toList(),
             "role": "",
             "rnp": group.resNeedPlay,
@@ -199,7 +200,7 @@ class Itest extends BaseClient {
         final q = section.choose10From15Question!;
         final answer = {
           "q": q.content.firstWhere((e) => e.type == "input").id, // qid
-          "d": q.options.map((e) => [""]).toList(),
+          "d": q.options.map((e) => <dynamic>[""]).toList(),
           "o": q.options.map((e) => [[]]).toList(),
           "role": "",
           "rnp": q.resNeedPlay,
@@ -211,7 +212,7 @@ class Itest extends BaseClient {
         final answer = {
           "q": q.id, // qid
           "d": [
-            [""],
+            <dynamic>[""],
           ],
           "o": [
             [[]],
@@ -245,7 +246,6 @@ class Itest extends BaseClient {
     });
 
     for (final section in sections) {
-
       if (section.questionGroup != null) {
         for (final (i, group) in section.questionGroup!.indexed) {
           final qid = group.questions.first.id;
@@ -254,7 +254,7 @@ class Itest extends BaseClient {
 
           if (group.audioUrls != null) {
             final audioToTextResult = await Future.wait(
-              group.audioToText!.map((url) async {
+              group.audioUrls!.map((url) async {
                 return await audioToText(url);
               }).toList(),
             );
@@ -263,7 +263,12 @@ class Itest extends BaseClient {
               audioToText: audioToTextResult,
               questions:
                   group.questions.map((e) {
-                    return e.copyWith(audioToText: audioToTextResult[i + 1]);
+                    return e.copyWith(
+                      audioToText:
+                          audioToTextResult.length > 1
+                              ? audioToTextResult[i + 1]
+                              : audioToTextResult[0],
+                    );
                   }).toList(),
             );
           }
@@ -276,15 +281,17 @@ class Itest extends BaseClient {
           for (final (i, index) in indexList.indexed) {
             progressCallback?.call(index);
             qd[i] = d[i];
-            await sleepRandomSecond(index, confirmExamData);
+            final sleepTime = Random().nextIntInRange(5, 10);
+            await sleepRandomSecond(index, confirmExamData, sleepTime);
           }
-
         }
-
       } else if (section.choose10From15Question != null) {
-
         final q = section.choose10From15Question!;
-        final indexList = q.content.where((e) => e.type == "input").map((e) => e.index.toIntOrNull()!).toList();
+        final indexList =
+            q.content
+                .where((e) => e.type == "input")
+                .map((e) => e.index.toIntOrNull()!)
+                .toList();
         final qid = q.content.firstWhere((e) => e.type == "input").id;
         final d = await getChoose10From15Answer(indexList, q);
 
@@ -292,16 +299,33 @@ class Itest extends BaseClient {
         for (final (i, index) in indexList.indexed) {
           progressCallback?.call(index);
           qd[i] = d[i];
-          await sleepRandomSecond(index, confirmExamData);
+          final sleepTime = Random().nextIntInRange(5, 10);
+          await sleepRandomSecond(index, confirmExamData, sleepTime);
         }
-
       } else if (section.writeQuestion != null) {
         final q = section.writeQuestion!;
         final index = q.index.toIntOrNull()!;
         progressCallback?.call(index);
         final d = await getWritingAnswer(index, q);
-        answers.firstWhere((a) => a['q'] == q.id)['d'] = [[d]];
-        await sleepRandomSecond(index, confirmExamData);
+        final qd = answers.firstWhere((a) => a['q'] == q.id)['d'];
+
+        final codeUnits = d.codeUnits;
+        for (final (i, char) in codeUnits.indexed) {
+          writingProgressCallback?.call(i + 1, codeUnits.length);
+          qd[0][0] += String.fromCharCode(char);
+
+          final isChinese = char >= 0x4E00 && char <= 0x9FFF;
+
+          final sleepTime =
+              isChinese
+                  ? Random().nextIntInRange(300, 600) // 汉字延迟 300~600ms
+                  : Random().nextIntInRange(100, 200); // 字母延迟 100~200ms
+
+          await Future.delayed(Duration(milliseconds: sleepTime));
+        }
+
+        final sleepTime = Random().nextIntInRange(5, 10);
+        await sleepRandomSecond(index, confirmExamData, sleepTime);
       }
     }
 
@@ -316,10 +340,16 @@ class Itest extends BaseClient {
     return data;
   }
 
-  Future<void> sleepRandomSecond(int i, ItestConfirmExamData confirmExamData) async {
-    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.nextQuestionClick);
-    final sleepTime = Random().nextInt(5) + 5;
-    await Future.delayed(Duration(seconds: sleepTime));
+  Future<void> sleepRandomSecond(
+    int i,
+    ItestConfirmExamData confirmExamData,
+    int sleepSeconds,
+  ) async {
+    await log(
+      confirmExamData: confirmExamData,
+      action: ExamLoggerAction.nextQuestionClick,
+    );
+    await Future.delayed(Duration(seconds: sleepSeconds));
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK

@@ -122,7 +122,7 @@ class Itest extends BaseClient {
   }
 
   // 必须先调用 getAnswerSheets 获取答题卡，不然 404
-  Future<(ItestExamQuestionsWrapResponse, ItestExamQuestions?)>
+  Future<(ItestExamQuestionsWrapResponse, List<ItestExamQuestions>?)>
   getExamQuestions({required ItestConfirmExamData confirmExamData}) async {
     //https://itestcloud.unipus.cn/itest-api/itest/s/answer/index?token=.---.&returnUrl=https://itestcloud.unipus.cn/utest/itest/s/exam&skipEnvTest=true
     final url = "itest-api/itest/s/answer/load";
@@ -147,7 +147,7 @@ class Itest extends BaseClient {
     final data = ItestExamQuestionsWrapResponse.fromJson(
       jsonDecode(response.data),
     );
-    final questions = parseExamQuestions(data.data.cHTML);
+    final questions = itestExamQuestionsListFormJson(parseExamQuestionsMap(data.data.cHTML));
     return (data, questions);
   }
 

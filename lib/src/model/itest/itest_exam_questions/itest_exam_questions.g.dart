@@ -6,124 +6,10 @@ part of 'itest_exam_questions.dart';
 // CopyWithGenerator
 // **************************************************************************
 
-abstract class _$ItestExamQuestionsCWProxy {
-  ItestExamQuestions pageNumber(int pageNumber);
-
-  ItestExamQuestions sectionKey(String sectionKey);
-
-  ItestExamQuestions sectionId(String sectionId);
-
-  ItestExamQuestions part1(String part1);
-
-  ItestExamQuestions sectionType(String sectionType);
-
-  ItestExamQuestions questions(List<ItestExamQuestionsQuestionsItem> questions);
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestions(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
-  ///
-  /// Usage
-  /// ```dart
-  /// ItestExamQuestions(...).copyWith(id: 12, name: "My name")
-  /// ````
-  ItestExamQuestions call({
-    int pageNumber,
-    String sectionKey,
-    String sectionId,
-    String part1,
-    String sectionType,
-    List<ItestExamQuestionsQuestionsItem> questions,
-  });
-}
-
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamQuestions.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamQuestions.copyWith.fieldName(...)`
-class _$ItestExamQuestionsCWProxyImpl implements _$ItestExamQuestionsCWProxy {
-  const _$ItestExamQuestionsCWProxyImpl(this._value);
-
-  final ItestExamQuestions _value;
-
-  @override
-  ItestExamQuestions pageNumber(int pageNumber) => this(pageNumber: pageNumber);
-
-  @override
-  ItestExamQuestions sectionKey(String sectionKey) =>
-      this(sectionKey: sectionKey);
-
-  @override
-  ItestExamQuestions sectionId(String sectionId) => this(sectionId: sectionId);
-
-  @override
-  ItestExamQuestions part1(String part1) => this(part1: part1);
-
-  @override
-  ItestExamQuestions sectionType(String sectionType) =>
-      this(sectionType: sectionType);
-
-  @override
-  ItestExamQuestions questions(
-    List<ItestExamQuestionsQuestionsItem> questions,
-  ) => this(questions: questions);
-
-  @override
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestions(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
-  ///
-  /// Usage
-  /// ```dart
-  /// ItestExamQuestions(...).copyWith(id: 12, name: "My name")
-  /// ````
-  ItestExamQuestions call({
-    Object? pageNumber = const $CopyWithPlaceholder(),
-    Object? sectionKey = const $CopyWithPlaceholder(),
-    Object? sectionId = const $CopyWithPlaceholder(),
-    Object? part1 = const $CopyWithPlaceholder(),
-    Object? sectionType = const $CopyWithPlaceholder(),
-    Object? questions = const $CopyWithPlaceholder(),
-  }) {
-    return ItestExamQuestions(
-      pageNumber:
-          pageNumber == const $CopyWithPlaceholder()
-              ? _value.pageNumber
-              // ignore: cast_nullable_to_non_nullable
-              : pageNumber as int,
-      sectionKey:
-          sectionKey == const $CopyWithPlaceholder()
-              ? _value.sectionKey
-              // ignore: cast_nullable_to_non_nullable
-              : sectionKey as String,
-      sectionId:
-          sectionId == const $CopyWithPlaceholder()
-              ? _value.sectionId
-              // ignore: cast_nullable_to_non_nullable
-              : sectionId as String,
-      part1:
-          part1 == const $CopyWithPlaceholder()
-              ? _value.part1
-              // ignore: cast_nullable_to_non_nullable
-              : part1 as String,
-      sectionType:
-          sectionType == const $CopyWithPlaceholder()
-              ? _value.sectionType
-              // ignore: cast_nullable_to_non_nullable
-              : sectionType as String,
-      questions:
-          questions == const $CopyWithPlaceholder()
-              ? _value.questions
-              // ignore: cast_nullable_to_non_nullable
-              : questions as List<ItestExamQuestionsQuestionsItem>,
-    );
-  }
-}
-
-extension $ItestExamQuestionsCopyWith on ItestExamQuestions {
-  /// Returns a callable class that can be used as follows: `instanceOfItestExamQuestions.copyWith(...)` or like so:`instanceOfItestExamQuestions.copyWith.fieldName(...)`.
-  // ignore: library_private_types_in_public_api
-  _$ItestExamQuestionsCWProxy get copyWith =>
-      _$ItestExamQuestionsCWProxyImpl(this);
-}
-
 abstract class _$ItestExamQuestionsOptionsItemCWProxy {
-  ItestExamQuestionsOptionsItem type(String type);
+  ItestExamQuestionsOptionsItem value(int value);
 
-  ItestExamQuestionsOptionsItem value(int? value);
+  ItestExamQuestionsOptionsItem type(String type);
 
   ItestExamQuestionsOptionsItem text(String text);
 
@@ -138,8 +24,8 @@ abstract class _$ItestExamQuestionsOptionsItemCWProxy {
   /// ItestExamQuestionsOptionsItem(...).copyWith(id: 12, name: "My name")
   /// ````
   ItestExamQuestionsOptionsItem call({
+    int value,
     String type,
-    int? value,
     String text,
     int? subIndex,
     int? subSubIndex,
@@ -154,10 +40,10 @@ class _$ItestExamQuestionsOptionsItemCWProxyImpl
   final ItestExamQuestionsOptionsItem _value;
 
   @override
-  ItestExamQuestionsOptionsItem type(String type) => this(type: type);
+  ItestExamQuestionsOptionsItem value(int value) => this(value: value);
 
   @override
-  ItestExamQuestionsOptionsItem value(int? value) => this(value: value);
+  ItestExamQuestionsOptionsItem type(String type) => this(type: type);
 
   @override
   ItestExamQuestionsOptionsItem text(String text) => this(text: text);
@@ -178,23 +64,23 @@ class _$ItestExamQuestionsOptionsItemCWProxyImpl
   /// ItestExamQuestionsOptionsItem(...).copyWith(id: 12, name: "My name")
   /// ````
   ItestExamQuestionsOptionsItem call({
-    Object? type = const $CopyWithPlaceholder(),
     Object? value = const $CopyWithPlaceholder(),
+    Object? type = const $CopyWithPlaceholder(),
     Object? text = const $CopyWithPlaceholder(),
     Object? subIndex = const $CopyWithPlaceholder(),
     Object? subSubIndex = const $CopyWithPlaceholder(),
   }) {
     return ItestExamQuestionsOptionsItem(
+      value:
+          value == const $CopyWithPlaceholder()
+              ? _value.value
+              // ignore: cast_nullable_to_non_nullable
+              : value as int,
       type:
           type == const $CopyWithPlaceholder()
               ? _value.type
               // ignore: cast_nullable_to_non_nullable
               : type as String,
-      value:
-          value == const $CopyWithPlaceholder()
-              ? _value.value
-              // ignore: cast_nullable_to_non_nullable
-              : value as int?,
       text:
           text == const $CopyWithPlaceholder()
               ? _value.text
@@ -225,9 +111,13 @@ extension $ItestExamQuestionsOptionsItemCopyWith
 abstract class _$ItestExamQuestionsQuestionsItemCWProxy {
   ItestExamQuestionsQuestionsItem id(String id);
 
-  ItestExamQuestionsQuestionsItem index(int? index);
+  ItestExamQuestionsQuestionsItem index(int index);
 
   ItestExamQuestionsQuestionsItem content(String content);
+
+  ItestExamQuestionsQuestionsItem audioUrl(String? audioUrl);
+
+  ItestExamQuestionsQuestionsItem audioToText(String? audioToText);
 
   ItestExamQuestionsQuestionsItem options(
     List<ItestExamQuestionsOptionsItem> options,
@@ -243,8 +133,10 @@ abstract class _$ItestExamQuestionsQuestionsItemCWProxy {
   /// ````
   ItestExamQuestionsQuestionsItem call({
     String id,
-    int? index,
+    int index,
     String content,
+    String? audioUrl,
+    String? audioToText,
     List<ItestExamQuestionsOptionsItem> options,
     List<int>? optionsOrder,
   });
@@ -261,11 +153,19 @@ class _$ItestExamQuestionsQuestionsItemCWProxyImpl
   ItestExamQuestionsQuestionsItem id(String id) => this(id: id);
 
   @override
-  ItestExamQuestionsQuestionsItem index(int? index) => this(index: index);
+  ItestExamQuestionsQuestionsItem index(int index) => this(index: index);
 
   @override
   ItestExamQuestionsQuestionsItem content(String content) =>
       this(content: content);
+
+  @override
+  ItestExamQuestionsQuestionsItem audioUrl(String? audioUrl) =>
+      this(audioUrl: audioUrl);
+
+  @override
+  ItestExamQuestionsQuestionsItem audioToText(String? audioToText) =>
+      this(audioToText: audioToText);
 
   @override
   ItestExamQuestionsQuestionsItem options(
@@ -287,6 +187,8 @@ class _$ItestExamQuestionsQuestionsItemCWProxyImpl
     Object? id = const $CopyWithPlaceholder(),
     Object? index = const $CopyWithPlaceholder(),
     Object? content = const $CopyWithPlaceholder(),
+    Object? audioUrl = const $CopyWithPlaceholder(),
+    Object? audioToText = const $CopyWithPlaceholder(),
     Object? options = const $CopyWithPlaceholder(),
     Object? optionsOrder = const $CopyWithPlaceholder(),
   }) {
@@ -300,12 +202,22 @@ class _$ItestExamQuestionsQuestionsItemCWProxyImpl
           index == const $CopyWithPlaceholder()
               ? _value.index
               // ignore: cast_nullable_to_non_nullable
-              : index as int?,
+              : index as int,
       content:
           content == const $CopyWithPlaceholder()
               ? _value.content
               // ignore: cast_nullable_to_non_nullable
               : content as String,
+      audioUrl:
+          audioUrl == const $CopyWithPlaceholder()
+              ? _value.audioUrl
+              // ignore: cast_nullable_to_non_nullable
+              : audioUrl as String?,
+      audioToText:
+          audioToText == const $CopyWithPlaceholder()
+              ? _value.audioToText
+              // ignore: cast_nullable_to_non_nullable
+              : audioToText as String?,
       options:
           options == const $CopyWithPlaceholder()
               ? _value.options
@@ -328,68 +240,652 @@ extension $ItestExamQuestionsQuestionsItemCopyWith
       _$ItestExamQuestionsQuestionsItemCWProxyImpl(this);
 }
 
+abstract class _$ItestExamQuestionsQuestionGroupItemCWProxy {
+  ItestExamQuestionsQuestionGroupItem article(String? article);
+
+  ItestExamQuestionsQuestionGroupItem audioUrls(List<String>? audioUrls);
+
+  ItestExamQuestionsQuestionGroupItem audioToText(List<String>? audioToText);
+
+  ItestExamQuestionsQuestionGroupItem questions(
+    List<ItestExamQuestionsQuestionsItem> questions,
+  );
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsQuestionGroupItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsQuestionGroupItem(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsQuestionGroupItem call({
+    String? article,
+    List<String>? audioUrls,
+    List<String>? audioToText,
+    List<ItestExamQuestionsQuestionsItem> questions,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamQuestionsQuestionGroupItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamQuestionsQuestionGroupItem.copyWith.fieldName(...)`
+class _$ItestExamQuestionsQuestionGroupItemCWProxyImpl
+    implements _$ItestExamQuestionsQuestionGroupItemCWProxy {
+  const _$ItestExamQuestionsQuestionGroupItemCWProxyImpl(this._value);
+
+  final ItestExamQuestionsQuestionGroupItem _value;
+
+  @override
+  ItestExamQuestionsQuestionGroupItem article(String? article) =>
+      this(article: article);
+
+  @override
+  ItestExamQuestionsQuestionGroupItem audioUrls(List<String>? audioUrls) =>
+      this(audioUrls: audioUrls);
+
+  @override
+  ItestExamQuestionsQuestionGroupItem audioToText(List<String>? audioToText) =>
+      this(audioToText: audioToText);
+
+  @override
+  ItestExamQuestionsQuestionGroupItem questions(
+    List<ItestExamQuestionsQuestionsItem> questions,
+  ) => this(questions: questions);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsQuestionGroupItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsQuestionGroupItem(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsQuestionGroupItem call({
+    Object? article = const $CopyWithPlaceholder(),
+    Object? audioUrls = const $CopyWithPlaceholder(),
+    Object? audioToText = const $CopyWithPlaceholder(),
+    Object? questions = const $CopyWithPlaceholder(),
+  }) {
+    return ItestExamQuestionsQuestionGroupItem(
+      article:
+          article == const $CopyWithPlaceholder()
+              ? _value.article
+              // ignore: cast_nullable_to_non_nullable
+              : article as String?,
+      audioUrls:
+          audioUrls == const $CopyWithPlaceholder()
+              ? _value.audioUrls
+              // ignore: cast_nullable_to_non_nullable
+              : audioUrls as List<String>?,
+      audioToText:
+          audioToText == const $CopyWithPlaceholder()
+              ? _value.audioToText
+              // ignore: cast_nullable_to_non_nullable
+              : audioToText as List<String>?,
+      questions:
+          questions == const $CopyWithPlaceholder()
+              ? _value.questions
+              // ignore: cast_nullable_to_non_nullable
+              : questions as List<ItestExamQuestionsQuestionsItem>,
+    );
+  }
+}
+
+extension $ItestExamQuestionsQuestionGroupItemCopyWith
+    on ItestExamQuestionsQuestionGroupItem {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamQuestionsQuestionGroupItem.copyWith(...)` or like so:`instanceOfItestExamQuestionsQuestionGroupItem.copyWith.fieldName(...)`.
+  // ignore: library_private_types_in_public_api
+  _$ItestExamQuestionsQuestionGroupItemCWProxy get copyWith =>
+      _$ItestExamQuestionsQuestionGroupItemCWProxyImpl(this);
+}
+
+abstract class _$ItestExamQuestionsContentItemCWProxy {
+  ItestExamQuestionsContentItem type(String type);
+
+  ItestExamQuestionsContentItem content(String? content);
+
+  ItestExamQuestionsContentItem id(String? id);
+
+  ItestExamQuestionsContentItem subIndex(String? subIndex);
+
+  ItestExamQuestionsContentItem subSubIndex(String? subSubIndex);
+
+  ItestExamQuestionsContentItem index(String? index);
+
+  ItestExamQuestionsContentItem placeholder(String? placeholder);
+
+  ItestExamQuestionsContentItem validateRule(String? validateRule);
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsContentItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsContentItem(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsContentItem call({
+    String type,
+    String? content,
+    String? id,
+    String? subIndex,
+    String? subSubIndex,
+    String? index,
+    String? placeholder,
+    String? validateRule,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamQuestionsContentItem.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamQuestionsContentItem.copyWith.fieldName(...)`
+class _$ItestExamQuestionsContentItemCWProxyImpl
+    implements _$ItestExamQuestionsContentItemCWProxy {
+  const _$ItestExamQuestionsContentItemCWProxyImpl(this._value);
+
+  final ItestExamQuestionsContentItem _value;
+
+  @override
+  ItestExamQuestionsContentItem type(String type) => this(type: type);
+
+  @override
+  ItestExamQuestionsContentItem content(String? content) =>
+      this(content: content);
+
+  @override
+  ItestExamQuestionsContentItem id(String? id) => this(id: id);
+
+  @override
+  ItestExamQuestionsContentItem subIndex(String? subIndex) =>
+      this(subIndex: subIndex);
+
+  @override
+  ItestExamQuestionsContentItem subSubIndex(String? subSubIndex) =>
+      this(subSubIndex: subSubIndex);
+
+  @override
+  ItestExamQuestionsContentItem index(String? index) => this(index: index);
+
+  @override
+  ItestExamQuestionsContentItem placeholder(String? placeholder) =>
+      this(placeholder: placeholder);
+
+  @override
+  ItestExamQuestionsContentItem validateRule(String? validateRule) =>
+      this(validateRule: validateRule);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsContentItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsContentItem(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsContentItem call({
+    Object? type = const $CopyWithPlaceholder(),
+    Object? content = const $CopyWithPlaceholder(),
+    Object? id = const $CopyWithPlaceholder(),
+    Object? subIndex = const $CopyWithPlaceholder(),
+    Object? subSubIndex = const $CopyWithPlaceholder(),
+    Object? index = const $CopyWithPlaceholder(),
+    Object? placeholder = const $CopyWithPlaceholder(),
+    Object? validateRule = const $CopyWithPlaceholder(),
+  }) {
+    return ItestExamQuestionsContentItem(
+      type:
+          type == const $CopyWithPlaceholder()
+              ? _value.type
+              // ignore: cast_nullable_to_non_nullable
+              : type as String,
+      content:
+          content == const $CopyWithPlaceholder()
+              ? _value.content
+              // ignore: cast_nullable_to_non_nullable
+              : content as String?,
+      id:
+          id == const $CopyWithPlaceholder()
+              ? _value.id
+              // ignore: cast_nullable_to_non_nullable
+              : id as String?,
+      subIndex:
+          subIndex == const $CopyWithPlaceholder()
+              ? _value.subIndex
+              // ignore: cast_nullable_to_non_nullable
+              : subIndex as String?,
+      subSubIndex:
+          subSubIndex == const $CopyWithPlaceholder()
+              ? _value.subSubIndex
+              // ignore: cast_nullable_to_non_nullable
+              : subSubIndex as String?,
+      index:
+          index == const $CopyWithPlaceholder()
+              ? _value.index
+              // ignore: cast_nullable_to_non_nullable
+              : index as String?,
+      placeholder:
+          placeholder == const $CopyWithPlaceholder()
+              ? _value.placeholder
+              // ignore: cast_nullable_to_non_nullable
+              : placeholder as String?,
+      validateRule:
+          validateRule == const $CopyWithPlaceholder()
+              ? _value.validateRule
+              // ignore: cast_nullable_to_non_nullable
+              : validateRule as String?,
+    );
+  }
+}
+
+extension $ItestExamQuestionsContentItemCopyWith
+    on ItestExamQuestionsContentItem {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamQuestionsContentItem.copyWith(...)` or like so:`instanceOfItestExamQuestionsContentItem.copyWith.fieldName(...)`.
+  // ignore: library_private_types_in_public_api
+  _$ItestExamQuestionsContentItemCWProxy get copyWith =>
+      _$ItestExamQuestionsContentItemCWProxyImpl(this);
+}
+
+abstract class _$ItestExamQuestionsChoose10From15QuestionCWProxy {
+  ItestExamQuestionsChoose10From15Question options(
+    List<ItestExamQuestionsOptionsItem> options,
+  );
+
+  ItestExamQuestionsChoose10From15Question content(
+    List<ItestExamQuestionsContentItem> content,
+  );
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsChoose10From15Question(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsChoose10From15Question(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsChoose10From15Question call({
+    List<ItestExamQuestionsOptionsItem> options,
+    List<ItestExamQuestionsContentItem> content,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamQuestionsChoose10From15Question.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamQuestionsChoose10From15Question.copyWith.fieldName(...)`
+class _$ItestExamQuestionsChoose10From15QuestionCWProxyImpl
+    implements _$ItestExamQuestionsChoose10From15QuestionCWProxy {
+  const _$ItestExamQuestionsChoose10From15QuestionCWProxyImpl(this._value);
+
+  final ItestExamQuestionsChoose10From15Question _value;
+
+  @override
+  ItestExamQuestionsChoose10From15Question options(
+    List<ItestExamQuestionsOptionsItem> options,
+  ) => this(options: options);
+
+  @override
+  ItestExamQuestionsChoose10From15Question content(
+    List<ItestExamQuestionsContentItem> content,
+  ) => this(content: content);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsChoose10From15Question(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsChoose10From15Question(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsChoose10From15Question call({
+    Object? options = const $CopyWithPlaceholder(),
+    Object? content = const $CopyWithPlaceholder(),
+  }) {
+    return ItestExamQuestionsChoose10From15Question(
+      options:
+          options == const $CopyWithPlaceholder()
+              ? _value.options
+              // ignore: cast_nullable_to_non_nullable
+              : options as List<ItestExamQuestionsOptionsItem>,
+      content:
+          content == const $CopyWithPlaceholder()
+              ? _value.content
+              // ignore: cast_nullable_to_non_nullable
+              : content as List<ItestExamQuestionsContentItem>,
+    );
+  }
+}
+
+extension $ItestExamQuestionsChoose10From15QuestionCopyWith
+    on ItestExamQuestionsChoose10From15Question {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamQuestionsChoose10From15Question.copyWith(...)` or like so:`instanceOfItestExamQuestionsChoose10From15Question.copyWith.fieldName(...)`.
+  // ignore: library_private_types_in_public_api
+  _$ItestExamQuestionsChoose10From15QuestionCWProxy get copyWith =>
+      _$ItestExamQuestionsChoose10From15QuestionCWProxyImpl(this);
+}
+
+abstract class _$ItestExamQuestionsWriteQuestionCWProxy {
+  ItestExamQuestionsWriteQuestion title(String title);
+
+  ItestExamQuestionsWriteQuestion content(String content);
+
+  ItestExamQuestionsWriteQuestion id(String id);
+
+  ItestExamQuestionsWriteQuestion subIndex(String subIndex);
+
+  ItestExamQuestionsWriteQuestion index(String index);
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsWriteQuestion(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsWriteQuestion(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsWriteQuestion call({
+    String title,
+    String content,
+    String id,
+    String subIndex,
+    String index,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamQuestionsWriteQuestion.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamQuestionsWriteQuestion.copyWith.fieldName(...)`
+class _$ItestExamQuestionsWriteQuestionCWProxyImpl
+    implements _$ItestExamQuestionsWriteQuestionCWProxy {
+  const _$ItestExamQuestionsWriteQuestionCWProxyImpl(this._value);
+
+  final ItestExamQuestionsWriteQuestion _value;
+
+  @override
+  ItestExamQuestionsWriteQuestion title(String title) => this(title: title);
+
+  @override
+  ItestExamQuestionsWriteQuestion content(String content) =>
+      this(content: content);
+
+  @override
+  ItestExamQuestionsWriteQuestion id(String id) => this(id: id);
+
+  @override
+  ItestExamQuestionsWriteQuestion subIndex(String subIndex) =>
+      this(subIndex: subIndex);
+
+  @override
+  ItestExamQuestionsWriteQuestion index(String index) => this(index: index);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestionsWriteQuestion(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestionsWriteQuestion(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestionsWriteQuestion call({
+    Object? title = const $CopyWithPlaceholder(),
+    Object? content = const $CopyWithPlaceholder(),
+    Object? id = const $CopyWithPlaceholder(),
+    Object? subIndex = const $CopyWithPlaceholder(),
+    Object? index = const $CopyWithPlaceholder(),
+  }) {
+    return ItestExamQuestionsWriteQuestion(
+      title:
+          title == const $CopyWithPlaceholder()
+              ? _value.title
+              // ignore: cast_nullable_to_non_nullable
+              : title as String,
+      content:
+          content == const $CopyWithPlaceholder()
+              ? _value.content
+              // ignore: cast_nullable_to_non_nullable
+              : content as String,
+      id:
+          id == const $CopyWithPlaceholder()
+              ? _value.id
+              // ignore: cast_nullable_to_non_nullable
+              : id as String,
+      subIndex:
+          subIndex == const $CopyWithPlaceholder()
+              ? _value.subIndex
+              // ignore: cast_nullable_to_non_nullable
+              : subIndex as String,
+      index:
+          index == const $CopyWithPlaceholder()
+              ? _value.index
+              // ignore: cast_nullable_to_non_nullable
+              : index as String,
+    );
+  }
+}
+
+extension $ItestExamQuestionsWriteQuestionCopyWith
+    on ItestExamQuestionsWriteQuestion {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamQuestionsWriteQuestion.copyWith(...)` or like so:`instanceOfItestExamQuestionsWriteQuestion.copyWith.fieldName(...)`.
+  // ignore: library_private_types_in_public_api
+  _$ItestExamQuestionsWriteQuestionCWProxy get copyWith =>
+      _$ItestExamQuestionsWriteQuestionCWProxyImpl(this);
+}
+
+abstract class _$ItestExamQuestionsCWProxy {
+  ItestExamQuestions pageNumber(int? pageNumber);
+
+  ItestExamQuestions sectionKey(String? sectionKey);
+
+  ItestExamQuestions sectionId(String? sectionId);
+
+  ItestExamQuestions title(String title);
+
+  ItestExamQuestions sectionType(String? sectionType);
+
+  ItestExamQuestions type(String type);
+
+  ItestExamQuestions questionGroup(
+    List<ItestExamQuestionsQuestionGroupItem>? questionGroup,
+  );
+
+  ItestExamQuestions choose10From15Question(
+    ItestExamQuestionsChoose10From15Question? choose10From15Question,
+  );
+
+  ItestExamQuestions writeQuestion(
+    ItestExamQuestionsWriteQuestion? writeQuestion,
+  );
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestions(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestions(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestions call({
+    int? pageNumber,
+    String? sectionKey,
+    String? sectionId,
+    String title,
+    String? sectionType,
+    String type,
+    List<ItestExamQuestionsQuestionGroupItem>? questionGroup,
+    ItestExamQuestionsChoose10From15Question? choose10From15Question,
+    ItestExamQuestionsWriteQuestion? writeQuestion,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfItestExamQuestions.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfItestExamQuestions.copyWith.fieldName(...)`
+class _$ItestExamQuestionsCWProxyImpl implements _$ItestExamQuestionsCWProxy {
+  const _$ItestExamQuestionsCWProxyImpl(this._value);
+
+  final ItestExamQuestions _value;
+
+  @override
+  ItestExamQuestions pageNumber(int? pageNumber) =>
+      this(pageNumber: pageNumber);
+
+  @override
+  ItestExamQuestions sectionKey(String? sectionKey) =>
+      this(sectionKey: sectionKey);
+
+  @override
+  ItestExamQuestions sectionId(String? sectionId) => this(sectionId: sectionId);
+
+  @override
+  ItestExamQuestions title(String title) => this(title: title);
+
+  @override
+  ItestExamQuestions sectionType(String? sectionType) =>
+      this(sectionType: sectionType);
+
+  @override
+  ItestExamQuestions type(String type) => this(type: type);
+
+  @override
+  ItestExamQuestions questionGroup(
+    List<ItestExamQuestionsQuestionGroupItem>? questionGroup,
+  ) => this(questionGroup: questionGroup);
+
+  @override
+  ItestExamQuestions choose10From15Question(
+    ItestExamQuestionsChoose10From15Question? choose10From15Question,
+  ) => this(choose10From15Question: choose10From15Question);
+
+  @override
+  ItestExamQuestions writeQuestion(
+    ItestExamQuestionsWriteQuestion? writeQuestion,
+  ) => this(writeQuestion: writeQuestion);
+
+  @override
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `ItestExamQuestions(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  ///
+  /// Usage
+  /// ```dart
+  /// ItestExamQuestions(...).copyWith(id: 12, name: "My name")
+  /// ````
+  ItestExamQuestions call({
+    Object? pageNumber = const $CopyWithPlaceholder(),
+    Object? sectionKey = const $CopyWithPlaceholder(),
+    Object? sectionId = const $CopyWithPlaceholder(),
+    Object? title = const $CopyWithPlaceholder(),
+    Object? sectionType = const $CopyWithPlaceholder(),
+    Object? type = const $CopyWithPlaceholder(),
+    Object? questionGroup = const $CopyWithPlaceholder(),
+    Object? choose10From15Question = const $CopyWithPlaceholder(),
+    Object? writeQuestion = const $CopyWithPlaceholder(),
+  }) {
+    return ItestExamQuestions(
+      pageNumber:
+          pageNumber == const $CopyWithPlaceholder()
+              ? _value.pageNumber
+              // ignore: cast_nullable_to_non_nullable
+              : pageNumber as int?,
+      sectionKey:
+          sectionKey == const $CopyWithPlaceholder()
+              ? _value.sectionKey
+              // ignore: cast_nullable_to_non_nullable
+              : sectionKey as String?,
+      sectionId:
+          sectionId == const $CopyWithPlaceholder()
+              ? _value.sectionId
+              // ignore: cast_nullable_to_non_nullable
+              : sectionId as String?,
+      title:
+          title == const $CopyWithPlaceholder()
+              ? _value.title
+              // ignore: cast_nullable_to_non_nullable
+              : title as String,
+      sectionType:
+          sectionType == const $CopyWithPlaceholder()
+              ? _value.sectionType
+              // ignore: cast_nullable_to_non_nullable
+              : sectionType as String?,
+      type:
+          type == const $CopyWithPlaceholder()
+              ? _value.type
+              // ignore: cast_nullable_to_non_nullable
+              : type as String,
+      questionGroup:
+          questionGroup == const $CopyWithPlaceholder()
+              ? _value.questionGroup
+              // ignore: cast_nullable_to_non_nullable
+              : questionGroup as List<ItestExamQuestionsQuestionGroupItem>?,
+      choose10From15Question:
+          choose10From15Question == const $CopyWithPlaceholder()
+              ? _value.choose10From15Question
+              // ignore: cast_nullable_to_non_nullable
+              : choose10From15Question
+                  as ItestExamQuestionsChoose10From15Question?,
+      writeQuestion:
+          writeQuestion == const $CopyWithPlaceholder()
+              ? _value.writeQuestion
+              // ignore: cast_nullable_to_non_nullable
+              : writeQuestion as ItestExamQuestionsWriteQuestion?,
+    );
+  }
+}
+
+extension $ItestExamQuestionsCopyWith on ItestExamQuestions {
+  /// Returns a callable class that can be used as follows: `instanceOfItestExamQuestions.copyWith(...)` or like so:`instanceOfItestExamQuestions.copyWith.fieldName(...)`.
+  // ignore: library_private_types_in_public_api
+  _$ItestExamQuestionsCWProxy get copyWith =>
+      _$ItestExamQuestionsCWProxyImpl(this);
+}
+
 // **************************************************************************
 // EquatableGenerator
 // **************************************************************************
+
+extension _$ItestExamQuestionsOptionsItemEquatableAnnotations
+    on ItestExamQuestionsOptionsItem {
+  List<Object?> get _$props => [value, type, text, subIndex, subSubIndex];
+}
+
+extension _$ItestExamQuestionsQuestionsItemEquatableAnnotations
+    on ItestExamQuestionsQuestionsItem {
+  List<Object?> get _$props => [
+    id,
+    index,
+    content,
+    audioUrl,
+    audioToText,
+    options,
+    optionsOrder,
+  ];
+}
+
+extension _$ItestExamQuestionsQuestionGroupItemEquatableAnnotations
+    on ItestExamQuestionsQuestionGroupItem {
+  List<Object?> get _$props => [article, audioUrls, audioToText, questions];
+}
+
+extension _$ItestExamQuestionsContentItemEquatableAnnotations
+    on ItestExamQuestionsContentItem {
+  List<Object?> get _$props => [
+    type,
+    content,
+    id,
+    subIndex,
+    subSubIndex,
+    index,
+    placeholder,
+    validateRule,
+  ];
+}
+
+extension _$ItestExamQuestionsChoose10From15QuestionEquatableAnnotations
+    on ItestExamQuestionsChoose10From15Question {
+  List<Object?> get _$props => [options, content];
+}
+
+extension _$ItestExamQuestionsWriteQuestionEquatableAnnotations
+    on ItestExamQuestionsWriteQuestion {
+  List<Object?> get _$props => [title, content, id, subIndex, index];
+}
 
 extension _$ItestExamQuestionsEquatableAnnotations on ItestExamQuestions {
   List<Object?> get _$props => [
     pageNumber,
     sectionKey,
     sectionId,
-    part1,
+    title,
     sectionType,
-    questions,
+    type,
+    questionGroup,
+    choose10From15Question,
+    writeQuestion,
   ];
-}
-
-extension _$ItestExamQuestionsOptionsItemEquatableAnnotations
-    on ItestExamQuestionsOptionsItem {
-  List<Object?> get _$props => [type, value, text, subIndex, subSubIndex];
-}
-
-extension _$ItestExamQuestionsQuestionsItemEquatableAnnotations
-    on ItestExamQuestionsQuestionsItem {
-  List<Object?> get _$props => [id, index, content, options, optionsOrder];
 }
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ItestExamQuestions _$ItestExamQuestionsFromJson(Map<String, dynamic> json) =>
-    ItestExamQuestions(
-      pageNumber: (json['page_number'] as num?)?.toInt() ?? 0,
-      sectionKey: json['section_key'] as String? ?? '',
-      sectionId: json['section_id'] as String? ?? '',
-      part1: json['part1'] as String? ?? '',
-      sectionType: json['section_type'] as String? ?? '',
-      questions:
-          (json['questions'] as List<dynamic>?)
-              ?.map(
-                (e) => ItestExamQuestionsQuestionsItem.fromJson(
-                  e as Map<String, dynamic>,
-                ),
-              )
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$ItestExamQuestionsToJson(ItestExamQuestions instance) =>
-    <String, dynamic>{
-      'page_number': instance.pageNumber,
-      'section_key': instance.sectionKey,
-      'section_id': instance.sectionId,
-      'part1': instance.part1,
-      'section_type': instance.sectionType,
-      'questions': instance.questions.map((e) => e.toJson()).toList(),
-    };
-
 ItestExamQuestionsOptionsItem _$ItestExamQuestionsOptionsItemFromJson(
   Map<String, dynamic> json,
 ) => ItestExamQuestionsOptionsItem(
+  value: (json['value'] as num?)?.toInt() ?? 0,
   type: json['type'] as String? ?? '',
-  value: (json['value'] as num?)?.toInt(),
   text: json['text'] as String? ?? '',
   subIndex: (json['sub_index'] as num?)?.toInt(),
   subSubIndex: (json['sub_sub_index'] as num?)?.toInt(),
@@ -398,8 +894,8 @@ ItestExamQuestionsOptionsItem _$ItestExamQuestionsOptionsItemFromJson(
 Map<String, dynamic> _$ItestExamQuestionsOptionsItemToJson(
   ItestExamQuestionsOptionsItem instance,
 ) => <String, dynamic>{
-  'type': instance.type,
   'value': instance.value,
+  'type': instance.type,
   'text': instance.text,
   'sub_index': instance.subIndex,
   'sub_sub_index': instance.subSubIndex,
@@ -409,8 +905,10 @@ ItestExamQuestionsQuestionsItem _$ItestExamQuestionsQuestionsItemFromJson(
   Map<String, dynamic> json,
 ) => ItestExamQuestionsQuestionsItem(
   id: json['id'] as String? ?? '',
-  index: (json['index'] as num?)?.toInt(),
+  index: (json['index'] as num?)?.toInt() ?? 0,
   content: json['content'] as String? ?? '',
+  audioUrl: json['audio_url'] as String?,
+  audioToText: json['audio_to_text'] as String?,
   options:
       (json['options'] as List<dynamic>?)
           ?.map(
@@ -433,6 +931,162 @@ Map<String, dynamic> _$ItestExamQuestionsQuestionsItemToJson(
   'id': instance.id,
   'index': instance.index,
   'content': instance.content,
+  'audio_url': instance.audioUrl,
+  'audio_to_text': instance.audioToText,
   'options': instance.options.map((e) => e.toJson()).toList(),
   'options_order': instance.optionsOrder,
 };
+
+ItestExamQuestionsQuestionGroupItem
+_$ItestExamQuestionsQuestionGroupItemFromJson(Map<String, dynamic> json) =>
+    ItestExamQuestionsQuestionGroupItem(
+      article: json['article'] as String?,
+      audioUrls:
+          (json['audio_urls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      audioToText:
+          (json['audio_to_text'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      questions:
+          (json['questions'] as List<dynamic>?)
+              ?.map(
+                (e) => ItestExamQuestionsQuestionsItem.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$ItestExamQuestionsQuestionGroupItemToJson(
+  ItestExamQuestionsQuestionGroupItem instance,
+) => <String, dynamic>{
+  'article': instance.article,
+  'audio_urls': instance.audioUrls,
+  'audio_to_text': instance.audioToText,
+  'questions': instance.questions.map((e) => e.toJson()).toList(),
+};
+
+ItestExamQuestionsContentItem _$ItestExamQuestionsContentItemFromJson(
+  Map<String, dynamic> json,
+) => ItestExamQuestionsContentItem(
+  type: json['type'] as String? ?? '',
+  content: json['content'] as String?,
+  id: json['id'] as String?,
+  subIndex: json['sub_index'] as String?,
+  subSubIndex: json['sub_sub_index'] as String?,
+  index: json['index'] as String?,
+  placeholder: json['placeholder'] as String?,
+  validateRule: json['validate_rule'] as String?,
+);
+
+Map<String, dynamic> _$ItestExamQuestionsContentItemToJson(
+  ItestExamQuestionsContentItem instance,
+) => <String, dynamic>{
+  'type': instance.type,
+  'content': instance.content,
+  'id': instance.id,
+  'sub_index': instance.subIndex,
+  'sub_sub_index': instance.subSubIndex,
+  'index': instance.index,
+  'placeholder': instance.placeholder,
+  'validate_rule': instance.validateRule,
+};
+
+ItestExamQuestionsChoose10From15Question
+_$ItestExamQuestionsChoose10From15QuestionFromJson(Map<String, dynamic> json) =>
+    ItestExamQuestionsChoose10From15Question(
+      options:
+          (json['options'] as List<dynamic>?)
+              ?.map(
+                (e) => ItestExamQuestionsOptionsItem.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          [],
+      content:
+          (json['content'] as List<dynamic>?)
+              ?.map(
+                (e) => ItestExamQuestionsContentItem.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$ItestExamQuestionsChoose10From15QuestionToJson(
+  ItestExamQuestionsChoose10From15Question instance,
+) => <String, dynamic>{
+  'options': instance.options.map((e) => e.toJson()).toList(),
+  'content': instance.content.map((e) => e.toJson()).toList(),
+};
+
+ItestExamQuestionsWriteQuestion _$ItestExamQuestionsWriteQuestionFromJson(
+  Map<String, dynamic> json,
+) => ItestExamQuestionsWriteQuestion(
+  title: json['title'] as String? ?? '',
+  content: json['content'] as String? ?? '',
+  id: json['id'] as String? ?? '',
+  subIndex: json['sub_index'] as String? ?? '',
+  index: json['index'] as String? ?? '',
+);
+
+Map<String, dynamic> _$ItestExamQuestionsWriteQuestionToJson(
+  ItestExamQuestionsWriteQuestion instance,
+) => <String, dynamic>{
+  'title': instance.title,
+  'content': instance.content,
+  'id': instance.id,
+  'sub_index': instance.subIndex,
+  'index': instance.index,
+};
+
+ItestExamQuestions _$ItestExamQuestionsFromJson(Map<String, dynamic> json) =>
+    ItestExamQuestions(
+      pageNumber: (json['page_number'] as num?)?.toInt(),
+      sectionKey: json['section_key'] as String?,
+      sectionId: json['section_id'] as String?,
+      title: json['title'] as String? ?? '',
+      sectionType: json['section_type'] as String?,
+      type: json['type'] as String? ?? '',
+      questionGroup:
+          (json['question_group'] as List<dynamic>?)
+              ?.map(
+                (e) => ItestExamQuestionsQuestionGroupItem.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          [],
+      choose10From15Question:
+          json['choose_10_from_15_question'] == null
+              ? null
+              : ItestExamQuestionsChoose10From15Question.fromJson(
+                json['choose_10_from_15_question'] as Map<String, dynamic>,
+              ),
+      writeQuestion:
+          json['write_question'] == null
+              ? null
+              : ItestExamQuestionsWriteQuestion.fromJson(
+                json['write_question'] as Map<String, dynamic>,
+              ),
+    );
+
+Map<String, dynamic> _$ItestExamQuestionsToJson(ItestExamQuestions instance) =>
+    <String, dynamic>{
+      'page_number': instance.pageNumber,
+      'section_key': instance.sectionKey,
+      'section_id': instance.sectionId,
+      'title': instance.title,
+      'section_type': instance.sectionType,
+      'type': instance.type,
+      'question_group': instance.questionGroup?.map((e) => e.toJson()).toList(),
+      'choose_10_from_15_question': instance.choose10From15Question?.toJson(),
+      'write_question': instance.writeQuestion?.toJson(),
+    };

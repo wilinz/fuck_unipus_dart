@@ -9,28 +9,10 @@ import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 
 void main() async {
-  // final html =
-  //     await File(
-  //       '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.html',
-  //     ).readAsString();
-  // final q = parseExamQuestionsMap(html);
-  // await File(
-  //   '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.json',
-  // ).writeAsString(JsonEncoder.withIndent("  ").convert(q));
-  //
-  // final html1 =
-  //     await File(
-  //       '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml1.html',
-  //     ).readAsString();
-  // final q1 = parseExamQuestionsMap(html1);
-  // await File(
-  //   '/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml1.json',
-  // ).writeAsString(JsonEncoder.withIndent("  ").convert(q1));
-  // return;
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
   print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
-  String? openId = null;
+  String? openId;
   itestMain(cookieDir: cookieDir, username: username, loggerOpenId: openId);
   // unipusMain(cookieDir: cookieDir, username: username);
 }

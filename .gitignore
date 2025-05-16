@@ -8,3 +8,4 @@ pubspec.lock
 .DS_store
 cookies
 /example/courses/
+/example/questions/

@@ -30,7 +30,7 @@ void main() async {
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
   print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
-  String? openId = 'a2db36307238071840c875f33f9e5bec';
+  String? openId = null;
   itestMain(cookieDir: cookieDir, username: username, loggerOpenId: openId);
   // unipusMain(cookieDir: cookieDir, username: username);
 }
@@ -114,15 +114,16 @@ Future<void> itestMain({
 
   final dio = Dio();
   dio.options = BaseOptions(validateStatus: (s) => s != null);
-  // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-  //   final client = HttpClient();
-  //   client.findProxy = (uri) {
-  //     return "PROXY 127.0.0.1:9000";
-  //   };
-  //   client.badCertificateCallback =
-  //       (X509Certificate cert, String host, int port) => true;
-  //   return client;
-  // };
+
+  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+    final client = HttpClient();
+    client.findProxy = (uri) {
+      return "PROXY 127.0.0.1:9000";
+    };
+    client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    return client;
+  };
 
   final openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: dio);
   await testOpenai(openai);

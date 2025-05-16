@@ -1257,8 +1257,7 @@ ItestExamQuestions _$ItestExamQuestionsFromJson(Map<String, dynamic> json) =>
                   e as Map<String, dynamic>,
                 ),
               )
-              .toList() ??
-          [],
+              .toList(),
       choose10From15Question:
           json['choose_10_from_15_question'] == null
               ? null

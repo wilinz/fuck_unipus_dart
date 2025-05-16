@@ -75,9 +75,7 @@ Future<void> itestMain({
   final examId = inputTrim("请输入 ksdId: ");
   final judgeEntry = await itest.judgeEntry(examId: examId);
   print(judgeEntry.msg);
-  inputTrim(
-    "回车进入考试？考试前请准备好 openai api key, 推荐 https://next.ohmygpt.com/apis ",
-  );
+  inputTrim("回车进入考试？考试前请准备好 openai api key, 推荐 https://next.ohmygpt.com/apis ");
   final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
   print(confirmExam);
   inputTrim("请确认考试信息，回车确认");
@@ -96,8 +94,7 @@ Future<void> itestMain({
     confirmExamData: confirmExam,
   );
   print("questionsWarp：$questionsWarp");
-  final questionsJson = jsonEncode(sections);
-  print("questions：$questionsJson");
+  final questionsJson = JsonEncoder.withIndent("  ").convert(sections);
 
   final file = File(
     "./questions/questions-${confirmExam.examName.replaceAll(" ", "-")}.json",
@@ -115,15 +112,15 @@ Future<void> itestMain({
   final dio = Dio();
   dio.options = BaseOptions(validateStatus: (s) => s != null);
 
-  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-    final client = HttpClient();
-    client.findProxy = (uri) {
-      return "PROXY 127.0.0.1:9000";
-    };
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-    return client;
-  };
+  // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+  //   final client = HttpClient();
+  //   client.findProxy = (uri) {
+  //     return "PROXY 127.0.0.1:9000";
+  //   };
+  //   client.badCertificateCallback =
+  //       (X509Certificate cert, String host, int port) => true;
+  //   return client;
+  // };
 
   final openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: dio);
   await testOpenai(openai);
@@ -165,14 +162,29 @@ Future<void> itestMain({
     },
   );
 
-  print("answers：$answers");
-  final submitResult = await itest.submit(
-    answers: answers,
-    confirmExamData: confirmExam,
-    uik: questionsWarp.data.uIK.toString(),
+  final file1 = File(
+    "./questions/answer-${confirmExam.examName.replaceAll(" ", "-")}.json",
   );
+  if (!(await file1.parent.exists())) {
+    await file1.parent.create(recursive: true);
+  }
+  final answersJson = JsonEncoder.withIndent("  ").convert(answers);
+  await file1.writeAsString(answersJson);
+  print("答案json已经写入文件：${file1.path}");
 
-  print("submitResult：$submitResult");
+  while (true) {
+    final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
+    if (ok == "ok") {
+      final submitResult = await itest.submit(
+        answers: answers,
+        confirmExamData: confirmExam,
+        uik: questionsWarp.data.uIK.toString(),
+      );
+      print("submitResult：$submitResult");
+    }else if (ok == "exit"){
+      break;
+    }
+  }
 }
 
 Future<void> testOpenai(OpenAiClient openai) async {
@@ -209,21 +221,28 @@ Future<void> testOpenai(OpenAiClient openai) async {
 }
 
 Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
-  final audioResponse = await dio.get(
-    url,
-    options: Options(responseType: ResponseType.bytes),
-  );
-  final Uint8List bytes = audioResponse.data;
-  final file = MultipartFile.fromBytes(bytes, filename: "audio.mp3");
-  final ats = await openai.audioApi.transcriptions<String>(
-    SpeechRecognitionRequest(
-      model: "whisper-1",
-      file: file,
-      responseFormat: "text",
-      temperature: 0.2,
-    ),
-  );
-  return ats;
+  for (var i = 0; i < 5; i++) {
+    try {
+      final audioResponse = await dio.get(
+            url,
+            options: Options(responseType: ResponseType.bytes),
+          );
+      final Uint8List bytes = audioResponse.data;
+      final file = MultipartFile.fromBytes(bytes, filename: "audio.mp3");
+      final ats = await openai.audioApi.transcriptions<String>(
+            SpeechRecognitionRequest(
+              model: "whisper-1",
+              file: file,
+              responseFormat: "text",
+              temperature: 0.2,
+            ),
+          );
+      return ats;
+    } catch (e) {
+      print(e);
+    }
+  }
+  throw Exception("音频识别失败");
 }
 
 Future<String> getWritingAnswer(
@@ -238,7 +257,7 @@ Future<String> getWritingAnswer(
             ChatMessage(
               role: ChatMessageRole.user,
               content:
-                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a translation question and the original question is in English, translate it into Chinese, and vice versa.",
+                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. If it is writing, please control the number of words according to the requirements of the topic and do not write too much.",
             ),
           ],
           model: "gpt-4o",
@@ -250,7 +269,7 @@ Future<String> getWritingAnswer(
               "schema": {
                 "type": "object",
                 "properties": {
-                  "answer": {"type": "string", "description": "Writing Answer"},
+                  "answer": {"type": "string", "description": "Writing Answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. "},
                 },
                 "required": ["answer"],
               },

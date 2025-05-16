@@ -370,7 +370,7 @@ class ItestExamQuestions with EquatableMixin {
   @JsonKey(name: "type", defaultValue: "")
   final String type;
 
-  @JsonKey(name: "question_group", defaultValue: [])
+  @JsonKey(name: "question_group")
   final List<ItestExamQuestionsQuestionGroupItem>? questionGroup;
 
   @JsonKey(name: "choose_10_from_15_question")

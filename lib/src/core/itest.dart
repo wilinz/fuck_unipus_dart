@@ -187,7 +187,7 @@ class Itest extends BaseClient {
       if (section.questionGroup != null) {
         for (final group in section.questionGroup!) {
           final answer = {
-            "q": group.questions.first.id, // qid
+            "q": group.questions.first.id.toIntOrNull(), // qid
             "d": group.questions.map((e) => <dynamic>[""]).toList(),
             "o": group.questions.map((e) => [e.optionsOrder]).toList(),
             "role": "",
@@ -198,10 +198,11 @@ class Itest extends BaseClient {
         }
       } else if (section.choose10From15Question != null) {
         final q = section.choose10From15Question!;
+        final inputs = q.content.where((e) => e.type == "input").toList();
         final answer = {
-          "q": q.content.firstWhere((e) => e.type == "input").id, // qid
-          "d": q.options.map((e) => <dynamic>[""]).toList(),
-          "o": q.options.map((e) => [[]]).toList(),
+          "q": inputs.first.id.toIntOrNull(), // qid
+          "d": inputs.map((e) => <dynamic>[""]).toList(),
+          "o": inputs.map((e) => [[]]).toList(),
           "role": "",
           "rnp": q.resNeedPlay,
           "rl": q.rl,
@@ -210,7 +211,7 @@ class Itest extends BaseClient {
       } else if (section.writeQuestion != null) {
         final q = section.writeQuestion!;
         final answer = {
-          "q": q.id, // qid
+          "q": q.id.toIntOrNull(), // qid
           "d": [
             <dynamic>[""],
           ],
@@ -248,7 +249,7 @@ class Itest extends BaseClient {
     for (final section in sections) {
       if (section.questionGroup != null) {
         for (final (i, group) in section.questionGroup!.indexed) {
-          final qid = group.questions.first.id;
+          final qid = group.questions.first.id.toIntOrNull();
 
           ItestExamQuestionsQuestionGroupItem newGroup = group;
 
@@ -262,13 +263,12 @@ class Itest extends BaseClient {
             newGroup = group.copyWith(
               audioToText: audioToTextResult,
               questions:
-                  group.questions.map((e) {
-                    return e.copyWith(
-                      audioToText:
-                          audioToTextResult.length > 1
-                              ? audioToTextResult[i + 1]
-                              : audioToTextResult[0],
-                    );
+                  group.questions.indexed.map((e) {
+                    String? audioToText;
+                    if (audioToTextResult.length > 1) {
+                      audioToText = audioToTextResult[e.$1 + 1];
+                    }
+                    return e.$2.copyWith(audioToText: audioToText);
                   }).toList(),
             );
           }
@@ -292,7 +292,7 @@ class Itest extends BaseClient {
                 .where((e) => e.type == "input")
                 .map((e) => e.index.toIntOrNull()!)
                 .toList();
-        final qid = q.content.firstWhere((e) => e.type == "input").id;
+        final qid = q.content.firstWhere((e) => e.type == "input").id.toIntOrNull();
         final d = await getChoose10From15Answer(indexList, q);
 
         final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
@@ -307,7 +307,7 @@ class Itest extends BaseClient {
         final index = q.index.toIntOrNull()!;
         progressCallback?.call(index);
         final d = await getWritingAnswer(index, q);
-        final qd = answers.firstWhere((a) => a['q'] == q.id)['d'];
+        final qd = answers.firstWhere((a) => a['q'] == q.id.toIntOrNull())['d'];
 
         final codeUnits = d.codeUnits;
         for (final (i, char) in codeUnits.indexed) {
@@ -318,8 +318,8 @@ class Itest extends BaseClient {
 
           final sleepTime =
               isChinese
-                  ? Random().nextIntInRange(300, 600) // 汉字延迟 300~600ms
-                  : Random().nextIntInRange(100, 200); // 字母延迟 100~200ms
+                  ? Random().nextIntInRange(12, 20) // 汉字延迟 300~600ms
+                  : Random().nextIntInRange(12, 20); // 字母延迟 100~200ms
 
           await Future.delayed(Duration(milliseconds: sleepTime));
         }
@@ -349,7 +349,7 @@ class Itest extends BaseClient {
       confirmExamData: confirmExamData,
       action: ExamLoggerAction.nextQuestionClick,
     );
-    await Future.delayed(Duration(seconds: sleepSeconds));
+    await Future.delayed(Duration(seconds: 1));
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK

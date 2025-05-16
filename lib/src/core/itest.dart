@@ -318,8 +318,8 @@ class Itest extends BaseClient {
 
           final sleepTime =
               isChinese
-                  ? Random().nextIntInRange(12, 20) // 汉字延迟 300~600ms
-                  : Random().nextIntInRange(12, 20); // 字母延迟 100~200ms
+                  ? Random().nextIntInRange(300, 500) // 汉字延迟 300~600ms
+                  : Random().nextIntInRange(75, 150); // 字母延迟 100~200ms
 
           await Future.delayed(Duration(milliseconds: sleepTime));
         }
@@ -349,7 +349,7 @@ class Itest extends BaseClient {
       confirmExamData: confirmExamData,
       action: ExamLoggerAction.nextQuestionClick,
     );
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: sleepSeconds));
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK

@@ -70,12 +70,11 @@ Future<void> itestMain({
 
   await itest.getAnswerSheets(token: judgeEntry.data.token);
 
-  final (questionsWarp, questions) = await itest.getExamQuestions(
+  final (questionsWarp, sections!) = await itest.getExamQuestions(
     confirmExamData: confirmExam,
   );
   print("questionsWarp：$questionsWarp");
-  print("questions：$questions");
-
+  print("questions：$sections");
 
   final key = inputTrim("请输入 openai api key: ");
   var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
@@ -99,10 +98,21 @@ Future<void> itestMain({
   final answers = await itest.buildAnswer(
     uik: questionsWarp.data.uIK.toString(),
     confirmExamData: confirmExam,
-    questions: questions!,
-    getAnswer:
-        (int index, ItestExamQuestionsQuestionsItem question) =>
-            getAnswer(openai, index, question),
+    sections: sections,
+    getChooseAnswer: (
+      List<int> indexList,
+      ItestExamQuestionsQuestionGroupItem question,
+    ) async {
+      return await getChooseAnswer(openai, question);
+    },
+    getChoose10From15Answer: (
+      List<int> indexList,
+      ItestExamQuestionsChoose10From15Question question,
+    ) async {
+      return await getChoose10From15Answer(openai, question);
+    },
+    getWritingAnswer: (int index, ItestExamQuestionsWriteQuestion question) {},
+    audioToText: (String url) {},
   );
 
   print("answers：$answers");
@@ -125,34 +135,33 @@ Future<void> testOpenai(OpenAiClient openai) async {
       responseFormat: ResponseFormat(
         type: ResponseFormatType.jsonSchema,
         jsonSchema: {
-            "name": "answers",
-            "description": "answers",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "answers_list": {
-                  "type": "array",
-                  "description":
-                  "Answer array. When single-choice, the array length is 1 and the type is int. When multiple-choice, the array length can be > 1",
-                  "items": {"type": "integer"},
-                }
+          "name": "answers",
+          "description": "answers",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "answers_list": {
+                "type": "array",
+                "description":
+                    "Answer array. When single-choice, the array length is 1 and the type is int. When multiple-choice, the array length can be > 1",
+                "items": {"type": "integer"},
               },
-              "required": ["answers_list"],
             },
+            "required": ["answers_list"],
+          },
         },
       ),
     ),
   );
-  final answer = jsonDecode(resp.choices.first.message.content!)['answers_list'];
+  final answer =
+      jsonDecode(resp.choices.first.message.content!)['answers_list'];
   print(answer);
 }
 
-Future<List<int>> getAnswer(
+Future<List<List<String>>> getChoose10From15Answer(
   OpenAiClient openai,
-  int index,
-  ItestExamQuestionsQuestionsItem question,
+  ItestExamQuestionsChoose10From15Question question,
 ) async {
-  print("题目：${question.toJson()}");
   for (var i = 0; i < 5; i++) {
     try {
       final resp = await openai.chatCompletionApi.createChatCompletion(
@@ -160,7 +169,7 @@ Future<List<int>> getAnswer(
           messages: [
             ChatMessage(
               role: ChatMessageRole.user,
-              content: "这是题目：${question.toJson()}，请给出答案",
+              content: "这是题目：${jsonEncode(question.toJson())}，请给出答案",
             ),
           ],
           model: "gpt-4o",
@@ -175,9 +184,18 @@ Future<List<int>> getAnswer(
                   "answers_list": {
                     "type": "array",
                     "description":
-                    "Answer array. When single-choice, the array length is 1 and the type is int. When multiple-choice, the array length can be > 1",
-                    "items": {"type": "integer"},
-                  }
+                        "Answer array. If the length of choose_10_from_15_question.content[type=\"input\"] is 3, an example answer would be: [[\"C\"], [[\"B\"], [[\"A\"]]. ",
+                    "items": {
+                      "type": "array",
+                      "description":
+                          "Answer(s) for a single question. one options.option, example [\"C\"], The length is always 1",
+                      "items": {
+                        "type": "string",
+                        "description":
+                            "`option` of the selected option for the choose_10_from_15_question.content[type=\"input\"], example: \"C\".",
+                      },
+                    },
+                  },
                 },
                 "required": ["answers_list"],
               },
@@ -185,8 +203,80 @@ Future<List<int>> getAnswer(
           ),
         ),
       );
-      final answer = (jsonDecode(resp.choices.first.message.content!)['answers_list'] as List).cast<int>();
-      print(answer);
+      final rawList =
+          jsonDecode(resp.choices.first.message.content!)['answers_list']
+              as List;
+      final List<List<String>> answer =
+          rawList
+              .map<List<String>>(
+                (item) =>
+                    (item as List).map<String>((e) => e as String).toList(),
+              )
+              .toList();
+
+      return answer;
+    } catch (e) {
+      print(e);
+    }
+  }
+  throw Exception("答案获取失败");
+}
+
+Future<List<List<int>>> getChooseAnswer(
+  OpenAiClient openai,
+  ItestExamQuestionsQuestionGroupItem question,
+) async {
+  for (var i = 0; i < 5; i++) {
+    try {
+      final resp = await openai.chatCompletionApi.createChatCompletion(
+        ChatCompletionRequest(
+          messages: [
+            ChatMessage(
+              role: ChatMessageRole.user,
+              content: "这是题目：${jsonEncode(question.toJson())}，请给出答案",
+            ),
+          ],
+          model: "gpt-4o",
+          responseFormat: ResponseFormat(
+            type: ResponseFormatType.jsonSchema,
+            jsonSchema: {
+              "name": "answers",
+              "description": "answers",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answers_list": {
+                    "type": "array",
+                    "description":
+                        "Answer array. If the length of questions is 3, an example answer would be: [[0], [1], [3]]. Each inner array represents the answer(s) to a specific question, in order. For single-choice questions, the inner array should contain exactly one integer. For multiple-choice questions, it may contain multiple integers.",
+                    "items": {
+                      "type": "array",
+                      "description":
+                          "Answer(s) for a single question. For single-choice, contains one integer; for multiple-choice, contains multiple integers.",
+                      "items": {
+                        "type": "integer",
+                        "description":
+                            "`value` of the selected option for the question",
+                      },
+                    },
+                  },
+                },
+                "required": ["answers_list"],
+              },
+            },
+          ),
+        ),
+      );
+      final rawList =
+          jsonDecode(resp.choices.first.message.content!)['answers_list']
+              as List;
+      final List<List<int>> answer =
+          rawList
+              .map<List<int>>(
+                (item) => (item as List).map<int>((e) => e as int).toList(),
+              )
+              .toList();
+
       return answer;
     } catch (e) {
       print(e);

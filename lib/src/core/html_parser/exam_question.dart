@@ -38,15 +38,18 @@ List<Map<String, dynamic>> parseExamQuestionsMap(String html) {
 }
 
 Map<String, dynamic> parseWrite(dom.Element section, String? sectionType) {
+  final quesDiv = section.querySelector('.itest-ques')!;
   final content = section.querySelector(".title-text")!.text.cleanWhitespace();
   final textarea = section.querySelector("textarea")!;
   final title = section.attributes['part1']?.trim() ?? '';
+
   final sectionData = {
     'page_number': int.tryParse(section.attributes['pagenumber'] ?? '') ?? 0,
     'section_key': section.attributes['sectionkey'] ?? '',
     'section_id': section.attributes['sectionid'] ?? '',
     'title': title,
     'section_type': sectionType,
+    'res_need_play': section.attributes['resneedplay'],
     'type': 'write',
     'write_question': {
       'title': title,
@@ -54,10 +57,14 @@ Map<String, dynamic> parseWrite(dom.Element section, String? sectionType) {
       'id': textarea.attributes['qid'],
       'sub_index': textarea.attributes['qsubindex'],
       'index': textarea.attributes['qindex'],
+      "res_need_play": quesDiv.attributes['resneedplay'],
+      "rl": getReadRemainingTime(quesDiv),
     },
   };
   return sectionData;
 }
+
+String getReadRemainingTime(dom.Element quesDiv) => quesDiv.attributes['rl']?.toString() == "0" ? "-1" : quesDiv.attributes['rl'].toString();
 
 List<int> parseOptionsOrder(String qooString) =>
     (jsonDecode(qooString) as List).cast<int>();
@@ -115,7 +122,7 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
                   }).toList();
 
               return {
-                'id': q.attributes['qid'] ?? '',
+                'id': quesDiv.attributes['qid'] ?? '',
                 'index':
                     q
                         .querySelector('input')
@@ -143,6 +150,8 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
             }).toList();
 
         final group = {
+          "res_need_play": quesDiv.attributes['resneedplay'],
+          "rl": getReadRemainingTime(quesDiv),
           'article': article,
           'audio_urls': audioUrls,
           'audio_to_text': audioUrls?.map((e) => "").toList(),
@@ -155,6 +164,7 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
     'page_number': int.tryParse(section.attributes['pagenumber'] ?? '') ?? 0,
     'section_key': section.attributes['sectionkey'] ?? '',
     'section_id': section.attributes['sectionid'] ?? '',
+    'res_need_play': section.attributes['resneedplay'],
     'title': section.attributes['part1']?.trim() ?? '',
     'section_type': sectionType,
     'type': subType,
@@ -168,6 +178,7 @@ Map<String, dynamic> parseChoose10From15(
   dom.Element section,
   String? sectionType,
 ) {
+  final quesDiv = section.querySelector('.itest-ques')!;
   final ulElements = section.querySelectorAll('.xuanxian-list');
 
   Map<String, String> parseItem(String item) {
@@ -260,11 +271,14 @@ Map<String, dynamic> parseChoose10From15(
     'section_key': section.attributes['sectionkey'] ?? '',
     'section_id': section.attributes['sectionid'] ?? '',
     'title': section.attributes['part1']?.trim() ?? '',
+    "res_need_play": section.attributes['resneedplay'],
     'section_type': sectionType,
     'type': 'choose_10_from_15',
     'choose_10_from_15_question': {
       'options': allOptions,
       'content': textSections,
+      "res_need_play": quesDiv.attributes['resneedplay'],
+      "rl": getReadRemainingTime(quesDiv),
     },
   };
 

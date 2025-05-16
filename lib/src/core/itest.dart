@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:fuck_unipus/src/utils/random.dart';
 import 'package:html/parser.dart';
+import 'package:path/path.dart';
 import 'package:pure_dart_extensions/pure_dart_extensions.dart';
 
 import 'html_parser/exam_blocking_html.dart';
@@ -147,76 +149,164 @@ class Itest extends BaseClient {
     final data = ItestExamQuestionsWrapResponse.fromJson(
       jsonDecode(response.data),
     );
-    final questions = itestExamQuestionsListFormJson(parseExamQuestionsMap(data.data.cHTML));
+    final questions = itestExamQuestionsListFormJson(
+      parseExamQuestionsMap(data.data.cHTML),
+    );
     return (data, questions);
   }
 
   Future<Map<String, dynamic>> buildAnswer({
     required ItestConfirmExamData confirmExamData,
     required String uik,
-    required ItestExamQuestions questions,
-    required Future<List<int>> Function(
-      int index,
-      ItestExamQuestionsQuestionsItem question,
+    required List<ItestExamQuestions> sections,
+    required Future<List<List<int>>> Function(
+      List<int> indexList,
+      ItestExamQuestionsQuestionGroupItem question,
     )
-    getAnswer,
+    getChooseAnswer,
+    required Future<List<List<String>>> Function(
+      List<int> indexList,
+        ItestExamQuestionsChoose10From15Question question,
+    )
+    getChoose10From15Answer,
+    required Future<String> Function(
+        int index,
+        ItestExamQuestionsWriteQuestion question,
+        )
+    getWritingAnswer,
+    required Future<String> Function(String url) audioToText,
+    void Function(int index)? progressCallback,
   }) async {
-    final answer = <Map<String, dynamic>>[];
+    // throw Exception();
+    final answers = <Map<String, dynamic>>[];
+    final sectionList = <Map<String, dynamic>>[];
 
-    for (final (_, question) in questions.questions.indexed) {
-      answer.add({
-        "q": question.id, // qid
-        "d": [
-          [""],
-        ],
-        "o": [
-          // option order
-          [question.optionsOrder],
-        ],
-        "role": "",
-        "rnp": "-1",
-        "rl": -1,
-      });
+    for (final section in sections) {
+      sectionList.add({"sid": section.sectionId, "rnp": section.resNeedPlay});
+      if (section.questionGroup != null) {
+        for (final group in section.questionGroup!) {
+          final answer = {
+            "q": group.questions.first.id, // qid
+            "d": group.questions.map((e) => [""]).toList(),
+            "o": group.questions.map((e) => [e.optionsOrder]).toList(),
+            "role": "",
+            "rnp": group.resNeedPlay,
+            "rl": group.rl,
+          };
+          answers.add(answer);
+        }
+      } else if (section.choose10From15Question != null) {
+        final q = section.choose10From15Question!;
+        final answer = {
+          "q": q.content.firstWhere((e) => e.type == "input").id, // qid
+          "d": q.options.map((e) => [""]).toList(),
+          "o": q.options.map((e) => [[]]).toList(),
+          "role": "",
+          "rnp": q.resNeedPlay,
+          "rl": q.rl,
+        };
+        answers.add(answer);
+      } else if (section.writeQuestion != null) {
+        final q = section.writeQuestion!;
+        final answer = {
+          "q": q.id, // qid
+          "d": [
+            [""],
+          ],
+          "o": [
+            [[]],
+          ],
+          "role": "",
+          "rnp": q.resNeedPlay,
+          "rl": q.rl,
+        };
+        answers.add(answer);
+      }
     }
+
     final watch = Stopwatch();
     watch.start();
 
     final timer = Timer.periodic(Duration(minutes: 1), (timer) async {
       final usageTime = watch.elapsed.inSeconds;
-      final data = {
-        "al": answer,
-        "sl": [
-          {"sid": questions.sectionId, "rnp": "-1"},
-        ],
-        "ut": usageTime,
-      };
+
+      final data = {"al": answers, "sl": sectionList, "ut": usageTime};
       await log(
         confirmExamData: confirmExamData,
         action: ExamLoggerAction.ansSnapSubmit,
         answers: data,
       );
-      await _submit(answers: data, confirmExamData: confirmExamData, uik: uik, action: ExamSubmitAction.cache);
+      await _submit(
+        answers: data,
+        confirmExamData: confirmExamData,
+        uik: uik,
+        action: ExamSubmitAction.cache,
+      );
     });
 
-    for (final (i, question) in questions.questions.indexed) {
-      final answerOptions = await getAnswer(i, question);
-      print("第${i+1}题答案：$answerOptions");
-      answer[i]['d'] = [answerOptions];
-      final sleep = Random().nextInt(5) + 5;
-      await Future.delayed(Duration(seconds: sleep));
-      await log(
-        confirmExamData: confirmExamData,
-        action: ExamLoggerAction.nextQuestionClick,
-      );
+    for (final section in sections) {
+
+      if (section.questionGroup != null) {
+        for (final (i, group) in section.questionGroup!.indexed) {
+          final qid = group.questions.first.id;
+
+          ItestExamQuestionsQuestionGroupItem newGroup = group;
+
+          if (group.audioUrls != null) {
+            final audioToTextResult = await Future.wait(
+              group.audioToText!.map((url) async {
+                return await audioToText(url);
+              }).toList(),
+            );
+
+            newGroup = group.copyWith(
+              audioToText: audioToTextResult,
+              questions:
+                  group.questions.map((e) {
+                    return e.copyWith(audioToText: audioToTextResult[i + 1]);
+                  }).toList(),
+            );
+          }
+
+          final indexList = group.questions.map((e) => e.index).toList();
+          final d = await getChooseAnswer(indexList, newGroup);
+
+          final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
+
+          for (final (i, index) in indexList.indexed) {
+            progressCallback?.call(index);
+            qd[i] = d[i];
+            await sleepRandomSecond(index, confirmExamData);
+          }
+
+        }
+
+      } else if (section.choose10From15Question != null) {
+
+        final q = section.choose10From15Question!;
+        final indexList = q.content.where((e) => e.type == "input").map((e) => e.index.toIntOrNull()!).toList();
+        final qid = q.content.firstWhere((e) => e.type == "input").id;
+        final d = await getChoose10From15Answer(indexList, q);
+
+        final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
+        for (final (i, index) in indexList.indexed) {
+          progressCallback?.call(index);
+          qd[i] = d[i];
+          await sleepRandomSecond(index, confirmExamData);
+        }
+
+      } else if (section.writeQuestion != null) {
+        final q = section.writeQuestion!;
+        final index = q.index.toIntOrNull()!;
+        progressCallback?.call(index);
+        final d = await getWritingAnswer(index, q);
+        answers.firstWhere((a) => a['q'] == q.id)['d'] = [[d]];
+        await sleepRandomSecond(index, confirmExamData);
+      }
     }
+
     final usageTime = watch.elapsed.inSeconds;
-    final data = {
-      "al": answer,
-      "sl": [
-        {"sid": questions.sectionId, "rnp": "-1"},
-      ],
-      "ut": usageTime,
-    };
+    final data = {"al": answers, "sl": sectionList, "ut": usageTime};
     await log(
       confirmExamData: confirmExamData,
       action: ExamLoggerAction.ansSnapSubmit,
@@ -224,6 +314,12 @@ class Itest extends BaseClient {
     );
     timer.cancel();
     return data;
+  }
+
+  Future<void> sleepRandomSecond(int i, ItestConfirmExamData confirmExamData) async {
+    await log(confirmExamData: confirmExamData, action: ExamLoggerAction.nextQuestionClick);
+    final sleepTime = Random().nextInt(5) + 5;
+    await Future.delayed(Duration(seconds: sleepTime));
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK
@@ -234,16 +330,16 @@ class Itest extends BaseClient {
   }) async {
     try {
       await log(
-            confirmExamData: confirmExamData,
-            action: ExamLoggerAction.ansSnapSubmit,
-            answers: answers,
-          );
+        confirmExamData: confirmExamData,
+        action: ExamLoggerAction.ansSnapSubmit,
+        answers: answers,
+      );
       final resp1 = await _submit(
-            answers: answers,
-            confirmExamData: confirmExamData,
-            uik: uik,
-            action: ExamSubmitAction.cache,
-          );
+        answers: answers,
+        confirmExamData: confirmExamData,
+        uik: uik,
+        action: ExamSubmitAction.cache,
+      );
     } catch (e) {
       print(e);
     }
@@ -356,7 +452,7 @@ class Itest extends BaseClient {
       "lanip": "",
     };
 
-    if(form['action'] != ExamLoggerAction.ansSnapSubmit) {
+    if (form['action'] != ExamLoggerAction.ansSnapSubmit) {
       final body = Map.from(form)..['msg'] = "";
       print("sent log: $body");
     }

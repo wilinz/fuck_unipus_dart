@@ -15,9 +15,10 @@ class Unipus extends BaseClient {
   static Future<Unipus> newInstance({
     required String cookieDir,
     String cookieSubDir = "default",
+    String? userAgent,
   }) async {
     final unipus = Unipus._();
-    await unipus._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
+    await unipus._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
     return unipus;
   }
 
@@ -26,8 +27,9 @@ class Unipus extends BaseClient {
   Future<void> _init({
     required String cookieDir,
     required String cookieSubDir,
+    String? userAgent,
   }) async {
-    await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
+    await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
     final tokenInterceptor = InterceptorsWrapper(
       onRequest: (options, handler) async {
         if (sessionInfo?.token != null) {

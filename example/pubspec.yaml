@@ -9,6 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   dio: ^5.8.0+1
+  dio_smart_retry: ^7.0.1
   fuck_unipus:
     path: ../
   openai_dart_dio: ^2.1.0

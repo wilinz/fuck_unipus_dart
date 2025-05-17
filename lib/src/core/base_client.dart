@@ -5,24 +5,28 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:path/path.dart';
 
 import '../../fuck_unipus.dart';
 import '../http/referer_interceptor.dart';
 
 typedef CaptchaHandler =
-Future<String> Function(CaptchaResponse captchaResponse);
+    Future<String> Function(CaptchaResponse captchaResponse);
 
 abstract class BaseClient {
   late Dio dio;
   late CookieJar cookieJar;
+
   String get baseUrl;
+
   String get service;
 
   Future<void> initDio({
     required String cookieDir,
     required String cookieSubDir,
     bool useProxy = false,
+    String? userAgent
   }) async {
     final directory = join(cookieDir, cookieSubDir);
     if (!await Directory(directory).exists()) {
@@ -32,7 +36,7 @@ abstract class BaseClient {
     dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        headers: buildDefaultHeaders(),
+        headers: buildDefaultHeaders(userAgent),
         validateStatus: (status) => status! < 500,
         followRedirects: false,
       ),
@@ -53,13 +57,16 @@ abstract class BaseClient {
     dio.interceptors.addAll([
       CookieManager(cookieJar),
       RefererInterceptor(),
+      RetryInterceptor(dio: dio),
       RedirectInterceptor(() => dio),
     ]);
   }
 
-  Map<String, String> buildDefaultHeaders() {
+  Map<String, String> buildDefaultHeaders(String? userAgent) {
     return {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
+      'User-Agent':
+          userAgent ??
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
       'Connection': 'keep-alive',
     };
   }

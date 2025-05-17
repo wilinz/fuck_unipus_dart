@@ -22,11 +22,12 @@ class Itest extends BaseClient {
     required String cookieDir,
     String cookieSubDir = "default",
     String? loggerOpenId,
+    String? userAgent,
   }) async {
     final itest = Itest._();
     itest.loggerOpenId = loggerOpenId ?? generateRandomMd5();
     print("loggerOpenId: ${itest.loggerOpenId}");
-    await itest._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
+    await itest._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
     return itest;
   }
 
@@ -35,8 +36,9 @@ class Itest extends BaseClient {
   Future<void> _init({
     required String cookieDir,
     required String cookieSubDir,
+    String? userAgent
   }) async {
-    await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir);
+    await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
     dio.interceptors.add(UnipusDecryptInterceptor());
   }
 

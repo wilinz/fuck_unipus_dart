@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/utils/input.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
@@ -12,8 +13,19 @@ void main() async {
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
   print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
-  String? openId;
-  itestMain(cookieDir: cookieDir, username: username, loggerOpenId: openId);
+
+  String? ua = inputTrim("请输入 user-agent，直径回车随机生成：");
+  if (ua.isEmpty) ua = null;
+
+  String? openId = inputTrim("请输入浏览器指纹 openId，直径回车随机生成：");
+  if (openId.isEmpty) openId = null;
+
+  itestMain(
+    cookieDir: cookieDir,
+    username: username,
+    loggerOpenId: openId,
+    userAgent: ua,
+  );
   // unipusMain(cookieDir: cookieDir, username: username);
 }
 
@@ -21,11 +33,13 @@ Future<void> itestMain({
   required String cookieDir,
   required String username,
   String? loggerOpenId,
+  String? userAgent,
 }) async {
   final itest = await Itest.newInstance(
     cookieDir: cookieDir,
     cookieSubDir: username,
     loggerOpenId: loggerOpenId,
+    userAgent: userAgent,
   );
   final isLogin = await itest.checkLoginAndSetupSession();
   if (!isLogin) {
@@ -93,6 +107,7 @@ Future<void> itestMain({
 
   final dio = Dio();
   dio.options = BaseOptions(validateStatus: (s) => s != null);
+  dio.interceptors.add(RetryInterceptor(dio: dio));
 
   // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
   //   final client = HttpClient();
@@ -163,7 +178,7 @@ Future<void> itestMain({
         uik: questionsWarp.data.uIK.toString(),
       );
       print("submitResult：$submitResult");
-    }else if (ok == "exit"){
+    } else if (ok == "exit") {
       break;
     }
   }
@@ -206,19 +221,19 @@ Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
   for (var i = 0; i < 5; i++) {
     try {
       final audioResponse = await dio.get(
-            url,
-            options: Options(responseType: ResponseType.bytes),
-          );
+        url,
+        options: Options(responseType: ResponseType.bytes),
+      );
       final Uint8List bytes = audioResponse.data;
       final file = MultipartFile.fromBytes(bytes, filename: "audio.mp3");
       final ats = await openai.audioApi.transcriptions<String>(
-            SpeechRecognitionRequest(
-              model: "whisper-1",
-              file: file,
-              responseFormat: "text",
-              temperature: 0.2,
-            ),
-          );
+        SpeechRecognitionRequest(
+          model: "whisper-1",
+          file: file,
+          responseFormat: "text",
+          temperature: 0.2,
+        ),
+      );
       return ats;
     } catch (e) {
       print(e);
@@ -251,7 +266,11 @@ Future<String> getWritingAnswer(
               "schema": {
                 "type": "object",
                 "properties": {
-                  "answer": {"type": "string", "description": "Writing Answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. Please return plain text, not markdown"},
+                  "answer": {
+                    "type": "string",
+                    "description":
+                        "Writing Answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. Please return plain text, not markdown",
+                  },
                 },
                 "required": ["answer"],
               },

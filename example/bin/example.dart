@@ -239,7 +239,7 @@ Future<String> getWritingAnswer(
             ChatMessage(
               role: ChatMessageRole.user,
               content:
-                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. If it is writing, please control the number of words according to the requirements of the topic and do not write too much.",
+                  "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. If it is writing, please control the number of words according to the requirements of the topic and do not write too much. Please return plain text, not markdown",
             ),
           ],
           model: "gpt-4o",
@@ -251,7 +251,7 @@ Future<String> getWritingAnswer(
               "schema": {
                 "type": "object",
                 "properties": {
-                  "answer": {"type": "string", "description": "Writing Answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. "},
+                  "answer": {"type": "string", "description": "Writing Answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. Please return plain text, not markdown"},
                 },
                 "required": ["answer"],
               },

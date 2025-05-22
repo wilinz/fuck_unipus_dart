@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
@@ -65,6 +66,9 @@ Future<void> itestMain({
     print(exam.restrictEndTimeStr);
     print(exam.canViewKaojuanJudgeBean.scoreReason);
     print(exam.ksText);
+    print("faceRecognize: ${exam.faceRecognize}");
+    print("hasFaceRecognize: ${exam.hasFaceRecognize}");
+    print("hasFaceRecognizeCount: ${exam.hasFaceRecognizeCount}");
     print("-" * 150);
   }
 
@@ -190,7 +194,7 @@ Future<void> testOpenai(OpenAiClient openai) async {
       messages: [
         ChatMessage(role: ChatMessageRole.user, content: "这是题目：$testQ，请给出答案"),
       ],
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       responseFormat: ResponseFormat(
         type: ResponseFormatType.jsonSchema,
         jsonSchema: {
@@ -217,6 +221,20 @@ Future<void> testOpenai(OpenAiClient openai) async {
   print(answer);
 }
 
+// MP3 文件的比特率 (kbps) = 128, 192, 256, 320 等
+// 文件大小单位是字节 (Bytes)，文件大小 = 文件的比特数 / 8
+// 估算时长 (秒) = 文件大小 / (比特率 / 8)
+Duration estimateMp3Duration(int fileSizeInBytes, int bitrateKbps) {
+  // 计算比特率（bitrate）的字节数，单位为字节/秒
+  double bytesPerSecond = (bitrateKbps * 1000) / 8;
+
+  // 估算时长（单位：秒）
+  double durationInSeconds = fileSizeInBytes / bytesPerSecond;
+
+  // 返回 Duration 对象
+  return Duration(seconds: durationInSeconds.toInt());
+}
+
 Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
   for (var i = 0; i < 5; i++) {
     try {
@@ -225,6 +243,15 @@ Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
         options: Options(responseType: ResponseType.bytes),
       );
       final Uint8List bytes = audioResponse.data;
+      final file0 = File(
+        "./audios/${DateTime.now().millisecondsSinceEpoch}.mp3",
+      );
+      if (!(await file0.exists())) await file0.create(recursive: true);
+      await file0.writeAsBytes(bytes);
+
+      final metadata = readMetadata(file0, getImage: false);
+      final Duration duration =
+          metadata.duration ?? estimateMp3Duration(bytes.length, 320);
       final file = MultipartFile.fromBytes(bytes, filename: "audio.mp3");
       final ats = await openai.audioApi.transcriptions<String>(
         SpeechRecognitionRequest(
@@ -234,7 +261,7 @@ Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
           temperature: 0.2,
         ),
       );
-      return ats;
+      return jsonEncode({"seconds": duration.inSeconds, "text": ats});
     } catch (e) {
       print(e);
     }

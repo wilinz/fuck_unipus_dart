@@ -13,6 +13,10 @@ dependencies:
   fuck_unipus:
     path: ../
   openai_dart_dio: ^2.1.0
+  audio_metadata_reader:
+    git:
+      url: https://github.com/wilinz/audio_metadata_reader.git
+      ref: main
   # path: ^1.8.0
 
 dev_dependencies:

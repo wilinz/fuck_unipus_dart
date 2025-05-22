@@ -26,40 +26,40 @@ abstract class BaseClient {
     required String cookieDir,
     required String cookieSubDir,
     bool useProxy = false,
-    String? userAgent
+    String? userAgent,
+    Dio? dio,
   }) async {
     final directory = join(cookieDir, cookieSubDir);
     if (!await Directory(directory).exists()) {
       await Directory(directory).create(recursive: true);
     }
 
-    dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        headers: buildDefaultHeaders(userAgent),
-        validateStatus: (status) => status! < 500,
-        followRedirects: false,
-      ),
+    dio ??= Dio(BaseOptions(baseUrl: baseUrl));
+    dio.options = dio.options.copyWith(
+      headers: buildDefaultHeaders(userAgent),
+      validateStatus: (status) => status! < 500,
+      followRedirects: false,
     );
 
     cookieJar = PersistCookieJar(storage: FileStorage(directory));
 
-    // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-    //   final client = HttpClient();
-    //   client.findProxy = (uri) {
-    //     return "PROXY 127.0.0.1:9000";
-    //   };
-    //   client.badCertificateCallback =
-    //       (X509Certificate cert, String host, int port) => true;
-    //   return client;
-    // };
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient();
+      client.findProxy = (uri) {
+        return "PROXY 127.0.0.1:9000";
+      };
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
 
     dio.interceptors.addAll([
       CookieManager(cookieJar),
       RefererInterceptor(),
       RetryInterceptor(dio: dio),
-      RedirectInterceptor(() => dio),
+      RedirectInterceptor(() => dio!),
     ]);
+    this.dio = dio;
   }
 
   Map<String, String> buildDefaultHeaders(String? userAgent) {

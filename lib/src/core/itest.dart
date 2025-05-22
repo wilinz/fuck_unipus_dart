@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
+import 'package:fuck_unipus/src/utils/list.dart';
 import 'package:fuck_unipus/src/utils/random.dart';
 import 'package:html/parser.dart';
 import 'package:path/path.dart';
@@ -23,11 +24,17 @@ class Itest extends BaseClient {
     String cookieSubDir = "default",
     String? loggerOpenId,
     String? userAgent,
+    Dio? dio,
   }) async {
     final itest = Itest._();
     itest.loggerOpenId = loggerOpenId ?? generateRandomMd5();
     print("loggerOpenId: ${itest.loggerOpenId}");
-    await itest._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
+    await itest._init(
+      cookieDir: cookieDir,
+      cookieSubDir: cookieSubDir,
+      userAgent: userAgent,
+      dio: dio,
+    );
     return itest;
   }
 
@@ -36,10 +43,16 @@ class Itest extends BaseClient {
   Future<void> _init({
     required String cookieDir,
     required String cookieSubDir,
-    String? userAgent
+    String? userAgent,
+    Dio? dio,
   }) async {
-    await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
-    dio.interceptors.add(UnipusDecryptInterceptor());
+    await super.initDio(
+      cookieDir: cookieDir,
+      cookieSubDir: cookieSubDir,
+      userAgent: userAgent,
+      dio: dio,
+    );
+    this.dio.interceptors.add(UnipusDecryptInterceptor());
   }
 
   @override
@@ -280,10 +293,27 @@ class Itest extends BaseClient {
 
           final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
 
+          final audioSleep =
+              newGroup.audioToText
+                  ?.map((e) => jsonDecode(e)['seconds'] as int? ?? 30)
+                  .toList();
+
+          if (!newGroup.article.isEmptyOrNull) {
+            final readTime = Random().nextIntInRange(120, 180);
+            print("正在阅读文章：$readTime s");
+            await Future.delayed(Duration(seconds: readTime));
+          }
+
           for (final (i, index) in indexList.indexed) {
+            var readTime = audioSleep?.getOrNull(i);
+            if (readTime != null) {
+              readTime += Random().nextIntInRange(5, 10);
+              print("正在等待音频时长：$readTime s");
+              await Future.delayed(Duration(seconds: readTime));
+            }
             progressCallback?.call(index);
             qd[i] = d[i];
-            final sleepTime = Random().nextIntInRange(5, 10);
+            final sleepTime = Random().nextIntInRange(20, 30);
             await sleepRandomSecond(index, confirmExamData, sleepTime);
           }
         }
@@ -294,14 +324,20 @@ class Itest extends BaseClient {
                 .where((e) => e.type == "input")
                 .map((e) => e.index.toIntOrNull()!)
                 .toList();
-        final qid = q.content.firstWhere((e) => e.type == "input").id.toIntOrNull();
+        final qid =
+            q.content.firstWhere((e) => e.type == "input").id.toIntOrNull();
         final d = await getChoose10From15Answer(indexList, q);
 
         final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
+
+        final readTime = Random().nextIntInRange(30, 60);
+        print("正在阅读15选10文章：$readTime s");
+        await Future.delayed(Duration(seconds: readTime));
+
         for (final (i, index) in indexList.indexed) {
           progressCallback?.call(index);
           qd[i] = d[i];
-          final sleepTime = Random().nextIntInRange(5, 10);
+          final sleepTime = Random().nextIntInRange(20, 30);
           await sleepRandomSecond(index, confirmExamData, sleepTime);
         }
       } else if (section.writeQuestion != null) {
@@ -320,8 +356,8 @@ class Itest extends BaseClient {
 
           final sleepTime =
               isChinese
-                  ? Random().nextIntInRange(300, 500) // 汉字延迟 300~600ms
-                  : Random().nextIntInRange(75, 150); // 字母延迟 100~200ms
+                  ? Random().nextIntInRange(300, 600) // 汉字延迟 300~600ms
+                  : Random().nextIntInRange(100, 200); // 字母延迟 100~200ms
 
           await Future.delayed(Duration(milliseconds: sleepTime));
         }
@@ -431,67 +467,71 @@ class Itest extends BaseClient {
     required String action,
     Map<String, dynamic>? answers,
   }) async {
-    final url = "itest/log";
+    try {
+      final url = "itest/log";
 
-    if (action == ExamLoggerAction.ansSnapSubmit && answers == null) {
-      throw Exception("Action is 'ans_snap_submit', but answers is null");
+      if (action == ExamLoggerAction.ansSnapSubmit && answers == null) {
+        throw Exception("Action is 'ans_snap_submit', but answers is null");
+      }
+
+      final msgMap = {
+        ExamLoggerAction.preQuestionClick: "进入上一题",
+        ExamLoggerAction.nextQuestionClick: "进入下一题",
+        ExamLoggerAction.examEnd: "考试结束",
+        ExamLoggerAction.ansSnapSubmit: jsonEncode(answers),
+      };
+
+      final msg = msgMap[action];
+
+      if (msg == null) {
+        throw Exception("Unknown action: $action");
+      }
+
+      final dataType = confirmExamData.dataType.toIntOrNull();
+      int examType = 1;
+      // 5模考；6 班级测试  7 是测试 8是学校考试 9班级训练
+      if (dataType == 6) {
+        examType = 1;
+      } else if (dataType == 8) {
+        examType = 0;
+      } else if (dataType == 9) {
+        examType = 4;
+      } else {
+        throw Exception("ItestConfirmExamData dataType error");
+      }
+
+      final cookies = await cookieJar.loadForRequest(
+        Uri.parse("https://itestcloud.unipus.cn/itest/log"),
+      );
+      final schoolCode =
+          cookies.firstOrNullWhere((e) => e.name == "p_schoolcode")?.value;
+
+      final form = {
+        "host": "https://itestcloud.unipus.cn",
+        "level": "info", // 等级 info\error\warn
+        "msg": msg,
+        "action": action,
+        "client": "WEB",
+        "schoolcode": schoolCode,
+        "uid": confirmExamData.dataUser,
+        "logtime": DateTime.now().millisecondsSinceEpoch,
+        "examid": confirmExamData.sppid,
+        "examtype": examType,
+        "openid": loggerOpenId, // window.__finger, //浏览器唯一标识
+        "lanip": "",
+      };
+
+      if (form['action'] != ExamLoggerAction.ansSnapSubmit) {
+        final body = Map.from(form)..['msg'] = "";
+        print("sent log: $body");
+      }
+
+      final response = await dio.post(url, data: [form]);
+      final data = response.data;
+      return data;
+    } catch (e) {
+      print(e);
     }
-
-    final msgMap = {
-      ExamLoggerAction.preQuestionClick: "进入上一题",
-      ExamLoggerAction.nextQuestionClick: "进入下一题",
-      ExamLoggerAction.examEnd: "考试结束",
-      ExamLoggerAction.ansSnapSubmit: jsonEncode(answers),
-    };
-
-    final msg = msgMap[action];
-
-    if (msg == null) {
-      throw Exception("Unknown action: $action");
-    }
-
-    final dataType = confirmExamData.dataType.toIntOrNull();
-    int examType = 1;
-    // 5模考；6 班级测试  7 是测试 8是学校考试 9班级训练
-    if (dataType == 6) {
-      examType = 1;
-    } else if (dataType == 8) {
-      examType = 0;
-    } else if (dataType == 9) {
-      examType = 4;
-    } else {
-      throw Exception("ItestConfirmExamData dataType error");
-    }
-
-    final cookies = await cookieJar.loadForRequest(
-      Uri.parse("https://itestcloud.unipus.cn/itest/log"),
-    );
-    final schoolCode =
-        cookies.firstOrNullWhere((e) => e.name == "p_schoolcode")?.value;
-
-    final form = {
-      "host": "https://itestcloud.unipus.cn",
-      "level": "info", // 等级 info\error\warn
-      "msg": msg,
-      "action": action,
-      "client": "WEB",
-      "schoolcode": schoolCode,
-      "uid": confirmExamData.dataUser,
-      "logtime": DateTime.now().millisecondsSinceEpoch,
-      "examid": confirmExamData.sppid,
-      "examtype": examType,
-      "openid": loggerOpenId, // window.__finger, //浏览器唯一标识
-      "lanip": "",
-    };
-
-    if (form['action'] != ExamLoggerAction.ansSnapSubmit) {
-      final body = Map.from(form)..['msg'] = "";
-      print("sent log: $body");
-    }
-
-    final response = await dio.post(url, data: [form]);
-    final data = response.data;
-    return data;
   }
 
   Future<ItestExamRenewTokenResponse> renewToken({

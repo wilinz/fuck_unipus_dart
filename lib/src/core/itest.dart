@@ -293,10 +293,15 @@ class Itest extends BaseClient {
 
           final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
 
-          final audioSleep =
-              newGroup.audioToText
-                  ?.map((e) => jsonDecode(e)['seconds'] as int? ?? 30)
-                  .toList();
+          List<int>? audioSleep;
+          try {
+            audioSleep =
+                newGroup.audioToText
+                    ?.map((e) => jsonDecode(e)['seconds'] as int? ?? 30)
+                    .toList();
+          } catch (e) {
+            print(e);
+          }
 
           if (!newGroup.article.isEmptyOrNull) {
             final readTime = Random().nextIntInRange(120, 180);

@@ -600,22 +600,6 @@ class Itest extends BaseClient {
       "itest-api/itest/s/answer/index?",
       queryParameters: {"token": token, "returnUrl": returnUrl},
     );
-    final url = "/itest-api/itest/s/answer/closeReferNotify";
-    if (response.data?.contains(url) == true) {
-      final data = parseCloseReferNotifyData(response.data!);
-      if (data == null) {
-        throw Exception("parseCloseReferNotifyData fielded: ${response.data}");
-      }
-      final resp = await dio.post(
-        url,
-        data: data,
-        options: Options(responseType: ResponseType.plain),
-      );
-      final json = jsonDecode(resp.data);
-      if (resp.statusCode == 200 && json['code'] == 0) {
-        return confirmExam(token: token, returnUrl: returnUrl);
-      }
-    }
     final data = parseConfirmExamData(response.data!);
     return data;
   }

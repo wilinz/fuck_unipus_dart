@@ -106,10 +106,14 @@ class Itest extends BaseClient {
   Future<ItestExamJudgeEntryResponse> judgeEntry({
     required String examId,
     String examCode = "",
+    final isSchoolExam = true,
   }) async {
     final url = 'utest/itest/s/clsanswer/judgeEntry';
+    final url2 = 'utest/itest/s/exam/judgeEntry';
+
+    final u = isSchoolExam ? url2 : url;
     final response = await dio.post(
-      url,
+      u,
       data: {"examId": examId, "examCode": examCode},
       options: Options(
         headers: {"content-type": Headers.formUrlEncodedContentType},

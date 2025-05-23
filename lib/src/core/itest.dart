@@ -192,6 +192,7 @@ class Itest extends BaseClient {
     required Future<String> Function(String url) audioToText,
     void Function(int index)? progressCallback,
     void Function(int index, int total)? writingProgressCallback,
+    void Function(dynamic text)? logger,
   }) async {
     // throw Exception();
     final answers = <Map<String, dynamic>>[];
@@ -300,12 +301,12 @@ class Itest extends BaseClient {
                     ?.map((e) => jsonDecode(e)['seconds'] as int? ?? 30)
                     .toList();
           } catch (e) {
-            print(e);
+            logger?.call(e);
           }
 
           if (!newGroup.article.isEmptyOrNull) {
             final readTime = Random().nextIntInRange(120, 180);
-            print("正在阅读文章：$readTime s");
+            logger?.call("正在阅读文章：$readTime s");
             await Future.delayed(Duration(seconds: readTime));
           }
 
@@ -313,7 +314,7 @@ class Itest extends BaseClient {
             var readTime = audioSleep?.getOrNull(i);
             if (readTime != null) {
               readTime += Random().nextIntInRange(5, 10);
-              print("正在等待音频时长：$readTime s");
+              logger?.call("正在等待音频时长：$readTime s");
               await Future.delayed(Duration(seconds: readTime));
             }
             progressCallback?.call(index);
@@ -336,7 +337,7 @@ class Itest extends BaseClient {
         final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
 
         final readTime = Random().nextIntInRange(30, 60);
-        print("正在阅读15选10文章：$readTime s");
+        logger?.call("正在阅读15选10文章：$readTime s");
         await Future.delayed(Duration(seconds: readTime));
 
         for (final (i, index) in indexList.indexed) {

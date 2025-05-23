@@ -287,7 +287,7 @@ Map<String, dynamic> parseChoose10From15(
 
 extension StringCleaning on String {
   String cleanWhitespace() {
-    return replaceAll(RegExp(r'\s*\n\s*'), ' ') // 替换换行符及周围的空白
+    return replaceAll(RegExp(r'\s*\n\s*'), '\n') // 替换换行符及周围的空白
     .replaceAll(RegExp(r'\u00A0'), ' '); // 替换不间断空格
   }
 }

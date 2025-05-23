@@ -43,15 +43,15 @@ abstract class BaseClient {
 
     cookieJar = PersistCookieJar(storage: FileStorage(directory));
 
-    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-      final client = HttpClient();
-      client.findProxy = (uri) {
-        return "PROXY 127.0.0.1:9000";
-      };
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-      return client;
-    };
+    // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+    //   final client = HttpClient();
+    //   client.findProxy = (uri) {
+    //     return "PROXY 127.0.0.1:9000";
+    //   };
+    //   client.badCertificateCallback =
+    //       (X509Certificate cert, String host, int port) => true;
+    //   return client;
+    // };
 
     dio.interceptors.addAll([
       CookieManager(cookieJar),

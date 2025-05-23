@@ -1,4 +1,3 @@
-
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
@@ -7,6 +6,11 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 
 import '../../fuck_unipus.dart';
 import '../http/referer_interceptor.dart';
+
+const kIsWeb =
+    bool.hasEnvironment('dart.library.js_util')
+        ? bool.fromEnvironment('dart.library.js_util')
+        : identical(0, 0.0);
 
 typedef CaptchaHandler =
     Future<String> Function(CaptchaResponse captchaResponse);
@@ -25,7 +29,6 @@ abstract class BaseClient {
     String? userAgent,
     Dio? dio,
   }) async {
-
     dio ??= Dio(BaseOptions(baseUrl: baseUrl));
     dio.options = dio.options.copyWith(
       headers: buildDefaultHeaders(userAgent),
@@ -45,12 +48,14 @@ abstract class BaseClient {
     //   return client;
     // };
 
-    dio.interceptors.addAll([
-      CookieManager(cookieJar),
-      RefererInterceptor(),
-      RetryInterceptor(dio: dio),
-      RedirectInterceptor(() => dio!),
-    ]);
+    if (!kIsWeb) {
+      dio.interceptors.addAll([
+        CookieManager(cookieJar),
+        RefererInterceptor(),
+        RedirectInterceptor(() => dio!),
+      ]);
+    }
+    dio.interceptors.addAll([RetryInterceptor(dio: dio)]);
     this.dio = dio;
   }
 

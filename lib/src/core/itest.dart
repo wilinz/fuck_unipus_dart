@@ -193,6 +193,7 @@ class Itest extends BaseClient {
     void Function(int index)? progressCallback,
     void Function(int index, int total)? writingProgressCallback,
     void Function(dynamic text)? logger,
+    bool notSleep = false,
   }) async {
     // throw Exception();
     final answers = <Map<String, dynamic>>[];
@@ -305,7 +306,7 @@ class Itest extends BaseClient {
           }
 
           if (!newGroup.article.isEmptyOrNull) {
-            final readTime = Random().nextIntInRange(120, 180);
+            final readTime = notSleep ? 0 : Random().nextIntInRange(120, 180);
             logger?.call("正在阅读文章：$readTime s");
             await Future.delayed(Duration(seconds: readTime));
           }
@@ -315,12 +316,20 @@ class Itest extends BaseClient {
             if (readTime != null) {
               readTime += Random().nextIntInRange(5, 10);
               logger?.call("正在等待音频时长：$readTime s");
-              await Future.delayed(Duration(seconds: readTime));
+              await Future.delayed(Duration(seconds: notSleep ? 0 : readTime));
             }
             progressCallback?.call(index);
             qd[i] = d[i];
-            final sleepTime = Random().nextIntInRange(20, 30);
-            await sleepRandomSecond(index, confirmExamData, sleepTime);
+
+            final sleepTime =
+                readTime != null
+                    ? Random().nextIntInRange(2, 5)
+                    : Random().nextIntInRange(10, 20);
+            await sleepRandomSecond(
+              index,
+              confirmExamData,
+              notSleep ? 0 : sleepTime,
+            );
           }
         }
       } else if (section.choose10From15Question != null) {
@@ -336,14 +345,14 @@ class Itest extends BaseClient {
 
         final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
 
-        final readTime = Random().nextIntInRange(30, 60);
+        final readTime = notSleep ? 0 : Random().nextIntInRange(30, 60);
         logger?.call("正在阅读15选10文章：$readTime s");
         await Future.delayed(Duration(seconds: readTime));
 
         for (final (i, index) in indexList.indexed) {
           progressCallback?.call(index);
           qd[i] = d[i];
-          final sleepTime = Random().nextIntInRange(20, 30);
+          final sleepTime = notSleep ? 0 : Random().nextIntInRange(10, 20);
           await sleepRandomSecond(index, confirmExamData, sleepTime);
         }
       } else if (section.writeQuestion != null) {
@@ -365,11 +374,17 @@ class Itest extends BaseClient {
                   ? Random().nextIntInRange(300, 600) // 汉字延迟 300~600ms
                   : Random().nextIntInRange(100, 200); // 字母延迟 100~200ms
 
-          await Future.delayed(Duration(milliseconds: sleepTime));
+          await Future.delayed(
+            Duration(milliseconds: notSleep ? 0 : sleepTime),
+          );
         }
 
         final sleepTime = Random().nextIntInRange(5, 10);
-        await sleepRandomSecond(index, confirmExamData, sleepTime);
+        await sleepRandomSecond(
+          index,
+          confirmExamData,
+          notSleep ? 0 : sleepTime,
+        );
       }
     }
 

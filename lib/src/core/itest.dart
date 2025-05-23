@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:fuck_unipus/src/utils/list.dart';
 import 'package:fuck_unipus/src/utils/random.dart';
 import 'package:html/parser.dart';
-import 'package:path/path.dart';
 import 'package:pure_dart_extensions/pure_dart_extensions.dart';
-
-import 'html_parser/exam_blocking_html.dart';
 
 class Itest extends BaseClient {
   final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -20,8 +17,7 @@ class Itest extends BaseClient {
       "https://itestcloud.unipus.cn/utest/itest/login?_rp=/itest?x=$timestamp";
 
   static Future<Itest> newInstance({
-    required String cookieDir,
-    String cookieSubDir = "default",
+    required CookieJar cookieJar,
     String? loggerOpenId,
     String? userAgent,
     Dio? dio,
@@ -30,8 +26,7 @@ class Itest extends BaseClient {
     itest.loggerOpenId = loggerOpenId ?? generateRandomMd5();
     print("loggerOpenId: ${itest.loggerOpenId}");
     await itest._init(
-      cookieDir: cookieDir,
-      cookieSubDir: cookieSubDir,
+      cookieJar: cookieJar,
       userAgent: userAgent,
       dio: dio,
     );
@@ -41,14 +36,12 @@ class Itest extends BaseClient {
   Itest._();
 
   Future<void> _init({
-    required String cookieDir,
-    required String cookieSubDir,
+    required CookieJar cookieJar,
     String? userAgent,
     Dio? dio,
   }) async {
     await super.initDio(
-      cookieDir: cookieDir,
-      cookieSubDir: cookieSubDir,
+      cookieJar: cookieJar,
       userAgent: userAgent,
       dio: dio,
     );

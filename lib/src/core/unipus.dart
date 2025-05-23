@@ -1,35 +1,31 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
-import 'package:fuck_unipus/src/core/base_client.dart';
 import 'package:html/parser.dart';
 
-import '../http/decrypt_interceptor.dart';
-import 'html_parser.dart';
 
 class Unipus extends BaseClient {
   static const String unipusService = "https://u.unipus.cn/user/comm/login";
   UnipusSessionInfo? sessionInfo;
 
   static Future<Unipus> newInstance({
-    required String cookieDir,
-    String cookieSubDir = "default",
+    required CookieJar cookieJar,
     String? userAgent,
   }) async {
     final unipus = Unipus._();
-    await unipus._init(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
+    await unipus._init(cookieJar: cookieJar, userAgent: userAgent);
     return unipus;
   }
 
   Unipus._();
 
   Future<void> _init({
-    required String cookieDir,
-    required String cookieSubDir,
+    required CookieJar cookieJar,
     String? userAgent,
   }) async {
-    await super.initDio(cookieDir: cookieDir, cookieSubDir: cookieSubDir, userAgent: userAgent);
+    await super.initDio(cookieJar: cookieJar, userAgent: userAgent);
     final tokenInterceptor = InterceptorsWrapper(
       onRequest: (options, handler) async {
         if (sessionInfo?.token != null) {

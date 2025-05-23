@@ -1,12 +1,9 @@
-import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
-import 'package:path/path.dart';
 
 import '../../fuck_unipus.dart';
 import '../http/referer_interceptor.dart';
@@ -23,16 +20,11 @@ abstract class BaseClient {
   String get service;
 
   Future<void> initDio({
-    required String cookieDir,
-    required String cookieSubDir,
+    required CookieJar cookieJar,
     bool useProxy = false,
     String? userAgent,
     Dio? dio,
   }) async {
-    final directory = join(cookieDir, cookieSubDir);
-    if (!await Directory(directory).exists()) {
-      await Directory(directory).create(recursive: true);
-    }
 
     dio ??= Dio(BaseOptions(baseUrl: baseUrl));
     dio.options = dio.options.copyWith(
@@ -41,7 +33,7 @@ abstract class BaseClient {
       followRedirects: false,
     );
 
-    cookieJar = PersistCookieJar(storage: FileStorage(directory));
+    this.cookieJar = cookieJar;
 
     // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
     //   final client = HttpClient();

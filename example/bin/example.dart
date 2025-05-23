@@ -3,12 +3,14 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/utils/input.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
+import 'package:path/path.dart';
 
 void main() async {
   final cookieDir = "./cookies";
@@ -36,11 +38,23 @@ Future<void> itestMain({
   String? loggerOpenId,
   String? userAgent,
 }) async {
+  final dio0 = Dio(
+    BaseOptions(
+      // baseUrl: "http://127.0.0.1:9001/"
+    ),
+  );
+
+  final directory = join(cookieDir, username);
+  if (!await Directory(directory).exists()) {
+    await Directory(directory).create(recursive: true);
+  }
+  final cookieJar = PersistCookieJar(storage: FileStorage());
+
   final itest = await Itest.newInstance(
-    cookieDir: cookieDir,
-    cookieSubDir: username,
+    cookieJar: cookieJar,
     loggerOpenId: loggerOpenId,
     userAgent: userAgent,
+    dio: dio0,
   );
   final isLogin = await itest.checkLoginAndSetupSession();
   if (!isLogin) {
@@ -448,10 +462,17 @@ Future<void> unipusMain({
   required String cookieDir,
   required String username,
 }) async {
+
+  final directory = join(cookieDir, username);
+  if (!await Directory(directory).exists()) {
+    await Directory(directory).create(recursive: true);
+  }
+  final cookieJar = PersistCookieJar(storage: FileStorage());
+
   final unipus = await Unipus.newInstance(
-    cookieDir: cookieDir,
-    cookieSubDir: username,
+    cookieJar: cookieJar
   );
+
   final isLogin = await unipus.checkLoginAndSetupSession();
   if (!isLogin) {
     final password = inputTrim("请输入密码：");

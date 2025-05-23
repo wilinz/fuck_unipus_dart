@@ -7,7 +7,7 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 import '../../fuck_unipus.dart';
 import '../http/referer_interceptor.dart';
 
-const kIsWeb =
+const _kIsWeb =
     bool.hasEnvironment('dart.library.js_util')
         ? bool.fromEnvironment('dart.library.js_util')
         : identical(0, 0.0);
@@ -48,7 +48,7 @@ abstract class BaseClient {
     //   return client;
     // };
 
-    if (!kIsWeb) {
+    if (!_kIsWeb) {
       dio.interceptors.addAll([
         CookieManager(cookieJar),
         RefererInterceptor(),

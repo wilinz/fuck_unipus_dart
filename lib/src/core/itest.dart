@@ -130,7 +130,7 @@ class Itest extends BaseClient {
   // return: html string
   Future<String> getAnswerSheets({required String token}) async {
     final url =
-        "https://itestcloud.unipus.cn/itest-api/itest/s/answer/index?returnUrl=https://itestcloud.unipus.cn/utest/itest/s/exam&skipEnvTest=true";
+        "itest-api/itest/s/answer/index?returnUrl=https://itestcloud.unipus.cn/utest/itest/s/exam&skipEnvTest=true";
     final response = await dio.get(url, queryParameters: {"token": token});
     return response.data;
   }

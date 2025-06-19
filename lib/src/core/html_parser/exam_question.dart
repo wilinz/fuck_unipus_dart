@@ -14,8 +14,18 @@ List<Map<String, dynamic>> parseExamQuestionsMap(String html) {
     final sectionType = section.attributes['sectiontype']?.toString();
 
     if (sectionType == 'sHear') {
-      final sectionData = parseChoose(section, sectionType);
-      jsonSections.add(sectionData);
+      final t = section.attributes['part1'];
+      if (t == "复合式听写") {
+        final sectionData = parseFillBlank(
+          section,
+          sectionType,
+          "compound_dictation",
+        );
+        jsonSections.add(sectionData);
+      } else {
+        final sectionData = parseChoose(section, sectionType);
+        jsonSections.add(sectionData);
+      }
     } else if (sectionType == 'sNormal') {
       final choose10From15Div = section.querySelector('.itest-15xuan10');
       final readDiv = section.querySelector('.itest-read');
@@ -23,7 +33,11 @@ List<Map<String, dynamic>> parseExamQuestionsMap(String html) {
       final write = section.querySelector('.itest-write');
 
       if (choose10From15Div != null) {
-        final sectionData = parseChoose10From15(section, sectionType);
+        final sectionData = parseFillBlank(
+          section,
+          sectionType,
+          "choose_10_from_15",
+        );
         jsonSections.add(sectionData);
       } else if (readDiv != null || unitDiv != null) {
         final sectionData = parseChoose(section, sectionType);
@@ -47,16 +61,23 @@ Map<String, dynamic> parseWrite(dom.Element section, String? sectionType) {
     'page_number': int.tryParse(section.attributes['pagenumber'] ?? '') ?? 0,
     'section_key': section.attributes['sectionkey'] ?? '',
     'section_id': section.attributes['sectionid'] ?? '',
-    'title': title,
+    'direction':
+        section
+            .querySelector(".itest-direction > .text")
+            ?.text
+            .cleanWhitespace() ??
+        '',
+    'title': section.attributes['part1']?.trim() ?? '',
+    'sub_title': section.querySelector("div.title")?.text ?? '',
     'section_type': sectionType,
     'res_need_play': section.attributes['resneedplay'],
     'type': 'write',
     'write_question': {
       'title': title,
       'content': content,
-      'id': textarea.attributes['qid'],
-      'sub_index': textarea.attributes['qsubindex'],
-      'index': textarea.attributes['qindex'],
+      'id': textarea.attributes['qid'].toIntOrNull(),
+      'sub_index': textarea.attributes['qsubindex'].toIntOrNull(),
+      'index': textarea.attributes['qindex'].toIntOrNull(),
       "res_need_play": quesDiv.attributes['resneedplay'],
       "rl": getReadRemainingTime(quesDiv),
     },
@@ -64,7 +85,10 @@ Map<String, dynamic> parseWrite(dom.Element section, String? sectionType) {
   return sectionData;
 }
 
-String getReadRemainingTime(dom.Element quesDiv) => quesDiv.attributes['rl']?.toString() == "0" ? "-1" : quesDiv.attributes['rl'].toString();
+String? getReadRemainingTime(dom.Element quesDiv) {
+  final rl = quesDiv.attributes['rl'];
+  return rl == "0" ? "-1" : rl;
+}
 
 List<int> parseOptionsOrder(String qooString) =>
     (jsonDecode(qooString) as List).cast<int>();
@@ -79,8 +103,9 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
     subType = 'choose';
   }
 
+  final questionGroupDiv = section.querySelectorAll('.itest-ques-set');
   final questionGroup =
-      section.querySelectorAll('.itest-ques-set').map((quesSet) {
+      questionGroupDiv.map((quesSet) {
         final quesDiv = quesSet.querySelector('.itest-ques');
         if (quesDiv == null) return null;
 
@@ -102,6 +127,7 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
           article != null ? ".row" : ".css-danxuan.row",
         );
 
+        final qid = getQuestionId(quesDiv, quesSet);
         final qsData =
             qs.indexed.map((item) {
               final i = item.$1;
@@ -121,8 +147,16 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
                     };
                   }).toList();
 
+              final audioUrl =
+                  audioUrls != null
+                      ? (audioUrls.length > 1 ? audioUrls[1 + i] : audioUrls[0])
+                      : null;
               return {
-                'id': quesDiv.attributes['qid'] ?? '',
+                'qid':
+                    (quesDiv.attributes['qid'] ??
+                            quesSet.attributes['questionid'] ??
+                            '-1')
+                        .toIntOrNull(),
                 'index':
                     q
                         .querySelector('input')
@@ -135,13 +169,10 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
                         .trim()
                         .cleanWhitespace() ??
                     '',
-                'audio_url':
-                    audioUrls != null
-                        ? (audioUrls.length > 1
-                            ? audioUrls[1 + i]
-                            : audioUrls[0])
+                'audios':
+                    audioUrl != null
+                        ? {"url": audioUrl, "seconds": -1, "audio_to_text": ""}
                         : null,
-                'audio_to_text': audioUrls != null ? "" : null,
                 'options': options.where((o) => o.isNotEmpty).toList(),
                 'options_order': parseOptionsOrder(
                   q.querySelector('input')?.attributes['qoo'] ?? '[]',
@@ -150,11 +181,18 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
             }).toList();
 
         final group = {
-          "res_need_play": quesDiv.attributes['resneedplay'],
-          "rl": getReadRemainingTime(quesDiv),
+          "id": qid,
+          "res_need_play":
+              quesDiv.attributes['resneedplay'] ??
+              quesSet.attributes['resneedplay'],
+          "rl": getReadRemainingTime(
+            quesDiv.attributes['rl'] != null ? quesDiv : quesSet,
+          ),
           'article': article,
-          'audio_urls': audioUrls,
-          'audio_to_text': audioUrls?.map((e) => "").toList(),
+          'audios':
+              audioUrls
+                  ?.map((e) => {"url": e, "seconds": -1, "audio_to_text": ""})
+                  .toList(),
           'questions': qsData,
         };
         return group;
@@ -165,7 +203,14 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
     'section_key': section.attributes['sectionkey'] ?? '',
     'section_id': section.attributes['sectionid'] ?? '',
     'res_need_play': section.attributes['resneedplay'],
+    'direction':
+        section
+            .querySelector(".itest-direction > .text")
+            ?.text
+            .cleanWhitespace() ??
+        '',
     'title': section.attributes['part1']?.trim() ?? '',
+    'sub_title': section.querySelector("div.title")?.text ?? '',
     'section_type': sectionType,
     'type': subType,
     'question_group':
@@ -174,12 +219,22 @@ Map<String, dynamic> parseChoose(dom.Element section, String? sectionType) {
   return sectionData;
 }
 
-Map<String, dynamic> parseChoose10From15(
+Map<String, dynamic> parseFillBlank(
   dom.Element section,
   String? sectionType,
+  String type,
 ) {
+  final questionGroupDiv = section.querySelector('.itest-ques-set')!;
   final quesDiv = section.querySelector('.itest-ques')!;
   final ulElements = section.querySelectorAll('.xuanxian-list');
+
+  final audioNodeText = section.querySelector(".itest-hear-reslist")?.text;
+  final itestHearReslist =
+      audioNodeText != null
+          ? (jsonDecode(audioNodeText) as List).cast<String>()
+          : null;
+  final audioUrls =
+      itestHearReslist?.where((e) => e.startsWith("http")).toList();
 
   Map<String, String> parseItem(String item) {
     // 使用正则表达式提取字母和词汇
@@ -206,7 +261,7 @@ Map<String, dynamic> parseChoose10From15(
     allOptions.addAll(group);
   }
 
-  final contentDiv = section.querySelector('.xxcontent')!.children.first;
+  final contentDiv = section.querySelector('input')!.parent!;
   // 创建一个结构化的 JSON 数据
   List<Map<String, dynamic>> textSections = [];
   List<dynamic> tempSections = [];
@@ -220,10 +275,10 @@ Map<String, dynamic> parseChoose10From15(
       // 处理 <input> 元素
       tempSections.add({
         'type': 'input',
-        'id': child.attributes['qid'],
-        'sub_index': child.attributes['qsubindex'],
-        'sub_sub_index': child.attributes['qsubsubindex'],
-        'index': child.attributes['qindex'],
+        'qid': child.attributes['qid'].toIntOrNull(),
+        'sub_index': child.attributes['qsubindex'].toIntOrNull(),
+        'sub_sub_index': child.attributes['qsubsubindex'].toIntOrNull(),
+        'index': child.attributes['qindex'].toIntOrNull(),
         'placeholder': child.attributes['placeholder'],
         'validate_rule': child.attributes['validaterole'],
       });
@@ -270,12 +325,23 @@ Map<String, dynamic> parseChoose10From15(
     'page_number': int.tryParse(section.attributes['pagenumber'] ?? '') ?? 0,
     'section_key': section.attributes['sectionkey'] ?? '',
     'section_id': section.attributes['sectionid'] ?? '',
+    'direction':
+        section
+            .querySelector(".itest-direction > .text")
+            ?.text
+            .cleanWhitespace() ??
+        '',
     'title': section.attributes['part1']?.trim() ?? '',
+    'sub_title': section.querySelector("div.title")?.text ?? '',
     "res_need_play": section.attributes['resneedplay'],
     'section_type': sectionType,
-    'type': 'choose_10_from_15',
-    'choose_10_from_15_question': {
-      'options': allOptions,
+    'type': 'article_fill_blank',
+    'question': {
+      "id": getQuestionId(quesDiv, questionGroupDiv),
+      'type': type,
+      'audios':
+          audioUrls?.map((e) => {"url": e, "seconds": -1, "audio_to_text": ""}).toList(),
+      'options': allOptions.isNotEmpty ? allOptions : null,
       'content': textSections,
       "res_need_play": quesDiv.attributes['resneedplay'],
       "rl": getReadRemainingTime(quesDiv),
@@ -283,6 +349,11 @@ Map<String, dynamic> parseChoose10From15(
   };
 
   return sectionData;
+}
+
+int? getQuestionId(dom.Element quesDiv, [dom.Element? questionGroupDiv]) {
+  return quesDiv.attributes['qid'].toIntOrNull() ??
+      questionGroupDiv?.attributes['questionid'].toIntOrNull();
 }
 
 extension StringCleaning on String {

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:fuck_unipus/src/core/encrypt.dart';
 
 import '../../fuck_unipus.dart';
 import '../http/referer_interceptor.dart';
@@ -93,15 +94,14 @@ abstract class BaseClient {
     await dio.post('https://sso.unipus.cn/sso/3.0/sso/server_time');
 
     final response = await dio.post(
-      'https://sso.unipus.cn/sso/0.1/sso/login',
+      'https://sso.unipus.cn/sso/0.1/sso/cip/login',
       data: {
         'service': service,
-        'username': username,
-        'password': password,
+        'username': encryptLoginUser(username),
+        'password': encryptLoginUser(password),
         'captcha': captcha ?? '',
         'rememberMe': 'on',
         'captchaCode': captcha ?? '',
-        'encodeCaptha': encodeCaptcha ?? '',
       },
     );
 

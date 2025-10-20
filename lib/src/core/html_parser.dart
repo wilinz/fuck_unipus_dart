@@ -1,6 +1,8 @@
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart' as html;
 
+import '../utils/url.dart';
+
 List<UnipusClassBlock> parseCoursesToJson(String htmlContent) {
     var document = html.parse(htmlContent);
     var classSelector = '.class-content';
@@ -25,11 +27,12 @@ List<UnipusClassBlock> parseCoursesToJson(String htmlContent) {
             var courseUrl = item.querySelector('.hideurl')?.text.trim() ?? '';
             var tutorialId = item.attributes['tutorialid'] ?? '';
 
+
             courseList.add(UnipusClassBlockCoursesItem(
                 courseName: courseName,
                 status: status,
-                image: imageUrl,
-                courseUrl: courseUrl,
+                image: normalizeUrl(imageUrl),
+                courseUrl: normalizeUrl(courseUrl),
                 tutorialId: tutorialId,
             ));
         }

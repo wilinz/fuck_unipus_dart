@@ -8,6 +8,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/utils/input.dart';
+import 'package:example/utils/random.dart';
+import 'package:socks5_proxy/socks.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';
@@ -17,11 +19,25 @@ void main() async {
   final username = inputTrim("请输入用户名：");
   print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
 
-  String? ua = inputTrim("请输入 user-agent，直径回车随机生成：");
-  if (ua.isEmpty) ua = null;
+  // String? ua = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
 
-  String? openId = inputTrim("请输入浏览器指纹 openId，直径回车随机生成：");
-  if (openId.isEmpty) openId = null;
+  String openId;
+  final openIdStorageFile = File("./openid-$username.txt");
+  final openIdStorageFileExists = await openIdStorageFile.exists();
+
+  final openIdStorage =
+      openIdStorageFileExists
+          ? (await openIdStorageFile.readAsString()).trim()
+          : "";
+  if (openIdStorage.length == 32) {
+    openId = openIdStorage;
+  } else {
+    openId = generateRandomMd5();
+    if (!openIdStorageFileExists) openIdStorageFile.create(recursive: true);
+    await openIdStorageFile.writeAsString(openId);
+  }
+
+  String? ua;
 
   itestMain(
     cookieDir: cookieDir,
@@ -38,11 +54,27 @@ Future<void> itestMain({
   String? loggerOpenId,
   String? userAgent,
 }) async {
-  final dio0 = Dio(
+
+  final baseUrl = "https://itestcloud.unipus.cn/";
+  // final baseUrl: "http://127.0.0.1:9001/"
+  final itestDio = Dio(
     BaseOptions(
-      // baseUrl: "http://127.0.0.1:9001/"
+      baseUrl: baseUrl,
     ),
   );
+
+  // (itestDio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+  //   final client = HttpClient();
+  //   SocksTCPClient.assignToHttpClient(client, [
+  //     ProxySettings(
+  //       'proxy.example.com',
+  //       12345,
+  //       username: "username",
+  //       password: "password",
+  //     ),
+  //   ]);
+  //   return client;
+  // };
 
   final directory = join(cookieDir, username);
   if (!await Directory(directory).exists()) {
@@ -54,7 +86,7 @@ Future<void> itestMain({
     cookieJar: cookieJar,
     loggerOpenId: loggerOpenId,
     userAgent: userAgent,
-    dio: dio0,
+    dio: itestDio,
   );
   final isLogin = await itest.checkLoginAndSetupSession();
   if (!isLogin) {
@@ -68,46 +100,46 @@ Future<void> itestMain({
       },
     );
   } else {
-    print("已登录：");
+    printLogs("已登录：");
   }
 
   final examList = await itest.getExamList();
   for (final exam in examList.rs.data) {
-    print(exam.ksName);
-    print("ksd id: ${exam.ksdId}");
-    print(exam.examEnrollInfo);
-    print(exam.restrictBeginTimeStr);
-    print(exam.restrictEndTimeStr);
-    print(exam.canViewKaojuanJudgeBean.scoreReason);
-    print(exam.ksText);
-    print("faceRecognize: ${exam.faceRecognize}");
-    print("hasFaceRecognize: ${exam.hasFaceRecognize}");
-    print("hasFaceRecognizeCount: ${exam.hasFaceRecognizeCount}");
-    print("-" * 150);
+    printLogs(exam.ksName);
+    printLogs("ksd id: ${exam.ksdId}");
+    printLogs(exam.examEnrollInfo);
+    printLogs(exam.restrictBeginTimeStr);
+    printLogs(exam.restrictEndTimeStr);
+    printLogs(exam.canViewKaojuanJudgeBean.scoreReason);
+    printLogs(exam.ksText);
+    printLogs("faceRecognize: ${exam.faceRecognize}");
+    printLogs("hasFaceRecognize: ${exam.hasFaceRecognize}");
+    printLogs("hasFaceRecognizeCount: ${exam.hasFaceRecognizeCount}");
+    printLogs("-" * 150);
   }
 
   final examId = inputTrim("请输入 ksdId: ");
   final judgeEntry = await itest.judgeEntry(examId: examId);
-  print(judgeEntry.msg);
-  inputTrim("回车进入考试？考试前请准备好 openai api key, 推荐 https://next.ohmygpt.com/apis ");
+  printLogs(JsonEncoder.withIndent("  ").convert(judgeEntry));
+  inputTrim("回车进入考试？");
   final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
-  print(confirmExam);
+  printLogs(confirmExam);
   inputTrim("请确认考试信息，回车确认");
   final examInfo = await itest.examInfo(token: judgeEntry.data.token);
-  print("examInfo：$examInfo");
+  printLogs("examInfo：$examInfo");
   final examPaperResourceInfo = await itest.examPaperResourceInfo(
     token: judgeEntry.data.token,
   );
-  print("examPaperResourceInfo：$examPaperResourceInfo");
+  printLogs("examPaperResourceInfo：$examPaperResourceInfo");
   final examWait = await itest.examWait(token: judgeEntry.data.token);
-  print("examWait：$examWait");
+  printLogs("examWait：$examWait");
 
   await itest.getAnswerSheets(token: judgeEntry.data.token);
 
   final (questionsWarp, sections!) = await itest.getExamQuestions(
     confirmExamData: confirmExam,
   );
-  print("questionsWarp：$questionsWarp");
+  printLogs("questionsWarp：$questionsWarp");
   final questionsJson = JsonEncoder.withIndent("  ").convert(sections);
 
   final file = File(
@@ -117,29 +149,20 @@ Future<void> itestMain({
     await file.parent.create(recursive: true);
   }
   await file.writeAsString(questionsJson);
-  print("题目json已经写入文件：${file.path}");
+  printLogs("题目json已经写入文件：${file.path}");
 
   final key = inputTrim("请输入 openai api key: ");
   var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
   if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
 
-  final dio = Dio();
-  dio.options = BaseOptions(validateStatus: (s) => s != null);
-  dio.interceptors.add(RetryInterceptor(dio: dio));
+  final openaiDio = Dio();
+  openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
+  openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
 
-  // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-  //   final client = HttpClient();
-  //   client.findProxy = (uri) {
-  //     return "PROXY 127.0.0.1:9000";
-  //   };
-  //   client.badCertificateCallback =
-  //       (X509Certificate cert, String host, int port) => true;
-  //   return client;
-  // };
-
-  final openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: dio);
+  final openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: openaiDio);
   await testOpenai(openai);
 
+  inputTrim("回车开始自动答题");
   final answers = await itest.buildAnswer(
     uik: questionsWarp.data.uIK.toString(),
     confirmExamData: confirmExam,
@@ -148,7 +171,7 @@ Future<void> itestMain({
       List<int> indexList,
       ItestExamQuestionsQuestionGroupItem question,
     ) async {
-      print(
+      printLogs(
         "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
       );
       return await getChooseAnswer(openai, question);
@@ -158,22 +181,22 @@ Future<void> itestMain({
       List<int> indexList,
       ItestExamQuestionsChoose10From15Question question,
     ) async {
-      print("正在获取答案...：$indexList, 15 选 10");
+      printLogs("正在获取答案...：$indexList, 15 选 10");
       return await getChoose10From15Answer(openai, question);
     },
     getWritingAnswer: (
       int index,
       ItestExamQuestionsWriteQuestion question,
     ) async {
-      print("正在获取答案...：$index, ${question.title}");
+      printLogs("正在获取答案...：$index, ${question.title}");
       return await getWritingAnswer(openai, question);
     },
     audioToText: (String url) async {
-      print("正在识别音频...：$url");
+      printLogs("正在识别音频...：$url");
       return audioToText(openai, url, itest.dio);
     },
     writingProgressCallback: (i, total) {
-      print("正在输入答案...：$i/$total");
+      printLogs("正在输入答案...：$i/$total");
     },
   );
 
@@ -185,7 +208,7 @@ Future<void> itestMain({
   }
   final answersJson = JsonEncoder.withIndent("  ").convert(answers);
   await file1.writeAsString(answersJson);
-  print("答案json已经写入文件：${file1.path}");
+  printLogs("答案json已经写入文件：${file1.path}");
 
   while (true) {
     final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
@@ -195,11 +218,15 @@ Future<void> itestMain({
         confirmExamData: confirmExam,
         uik: questionsWarp.data.uIK.toString(),
       );
-      print("submitResult：$submitResult");
+      printLogs("submitResult：$submitResult");
     } else if (ok == "exit") {
       break;
     }
   }
+}
+
+Future<void> printLogs(s) async {
+  print(s);
 }
 
 Future<void> testOpenai(OpenAiClient openai) async {
@@ -208,7 +235,7 @@ Future<void> testOpenai(OpenAiClient openai) async {
       messages: [
         ChatMessage(role: ChatMessageRole.user, content: "这是题目：$testQ，请给出答案"),
       ],
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       responseFormat: ResponseFormat(
         type: ResponseFormatType.jsonSchema,
         jsonSchema: {
@@ -232,7 +259,7 @@ Future<void> testOpenai(OpenAiClient openai) async {
   );
   final answer =
       jsonDecode(resp.choices.first.message.content!)['answers_list'];
-  print(answer);
+  printLogs(answer);
 }
 
 // MP3 文件的比特率 (kbps) = 128, 192, 256, 320 等
@@ -277,7 +304,7 @@ Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
       );
       return jsonEncode({"seconds": duration.inSeconds, "text": ats});
     } catch (e) {
-      print(e);
+      printLogs(e);
     }
   }
   throw Exception("音频识别失败");
@@ -298,7 +325,7 @@ Future<String> getWritingAnswer(
                   "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a translation question, please return the Chinese translation result when 'content' is English, and when 'content' is Chinese, please return the English translation result. If it is writing, please control the number of words according to the requirements of the topic and do not write too much. Please return plain text, not markdown",
             ),
           ],
-          model: "gpt-4o",
+          model: "gpt-5-mini",
           responseFormat: ResponseFormat(
             type: ResponseFormatType.jsonSchema,
             jsonSchema: {
@@ -323,7 +350,7 @@ Future<String> getWritingAnswer(
           jsonDecode(resp.choices.first.message.content!)['answer'] as String;
       return answer;
     } catch (e) {
-      print(e);
+      printLogs(e);
     }
   }
   throw Exception("答案获取失败");
@@ -344,7 +371,7 @@ Future<List<List<String>>> getChoose10From15Answer(
                   "This is the question: ${jsonEncode(question.toJson())}, please provide the answer.",
             ),
           ],
-          model: "gpt-4o",
+          model: "gpt-5-mini",
           responseFormat: ResponseFormat(
             type: ResponseFormatType.jsonSchema,
             jsonSchema: {
@@ -388,7 +415,7 @@ Future<List<List<String>>> getChoose10From15Answer(
 
       return answer;
     } catch (e) {
-      print(e);
+      printLogs(e);
     }
   }
   throw Exception("答案获取失败");
@@ -409,7 +436,7 @@ Future<List<List<int>>> getChooseAnswer(
                   "This is the question: ${jsonEncode(question.toJson())}, please provide the answer. If it is a listening question, I have already converted it to text. Please check the audio_to_text field.",
             ),
           ],
-          model: "gpt-4o",
+          model: "gpt-5-mini",
           responseFormat: ResponseFormat(
             type: ResponseFormatType.jsonSchema,
             jsonSchema: {
@@ -452,7 +479,7 @@ Future<List<List<int>>> getChooseAnswer(
 
       return answer;
     } catch (e) {
-      print(e);
+      printLogs(e);
     }
   }
   throw Exception("答案获取失败");
@@ -462,16 +489,13 @@ Future<void> unipusMain({
   required String cookieDir,
   required String username,
 }) async {
-
   final directory = join(cookieDir, username);
   if (!await Directory(directory).exists()) {
     await Directory(directory).create(recursive: true);
   }
   final cookieJar = PersistCookieJar(storage: FileStorage());
 
-  final unipus = await Unipus.newInstance(
-    cookieJar: cookieJar
-  );
+  final unipus = await Unipus.newInstance(cookieJar: cookieJar);
 
   final isLogin = await unipus.checkLoginAndSetupSession();
   if (!isLogin) {
@@ -484,29 +508,29 @@ Future<void> unipusMain({
       },
     );
   } else {
-    print("已登录：${unipus.sessionInfo!.name}");
+    printLogs("已登录：${unipus.sessionInfo!.name}");
   }
 
   final courses = await unipus.getCourses();
-  print("📚 课程信息如下：");
+  printLogs("📚 课程信息如下：");
   for (final class_ in courses) {
-    print("\n============================================================");
-    print("🔹 班级名称: ${class_.className}");
-    print("📆 时间范围: ${class_.dateRange}");
+    printLogs("\n============================================================");
+    printLogs("🔹 班级名称: ${class_.className}");
+    printLogs("📆 时间范围: ${class_.dateRange}");
     for (final course in class_.courses) {
-      print("  ─────────────────────────────────────────────");
-      print("  📖 课程名称: ${course.courseName}");
-      print("  🔗 状态: ${course.status}");
-      print("  🆔 tutorial_id: ${course.tutorialId}");
-      print("  🌐 链接: ${course.courseUrl}");
+      printLogs("  ─────────────────────────────────────────────");
+      printLogs("  📖 课程名称: ${course.courseName}");
+      printLogs("  🔗 状态: ${course.status}");
+      printLogs("  🆔 tutorial_id: ${course.tutorialId}");
+      printLogs("  🌐 链接: ${course.courseUrl}");
     }
-    print("============================================================\n");
+    printLogs("============================================================\n");
   }
 
   final tutorialId = inputTrim("请输入 tutorial_id：");
 
   if (tutorialId.isEmpty) {
-    print('Invalid tutorial_id');
+    printLogs('Invalid tutorial_id');
     return;
   }
 
@@ -549,13 +573,13 @@ Future<void> unipusMain({
   // String? leaf = stdin.readLineSync();
   //
   // if (leaf == null || leaf.isEmpty) {
-  //   print('Invalid leaf id');
+  //   printLogs('Invalid leaf id');
   //   return;
   // }
   //
   // // 获取节点内容
   // final leafContent = await unipus.getCourseLeafContent(tutorialId, leaf);
-  // print("节点内容：$leafContent");
+  // printLogs("节点内容：$leafContent");
 }
 
 Future<void> traversalCoursesToFs(
@@ -613,7 +637,7 @@ Future<void> traversalCoursesInner(
     }
 
     final branch = isLast ? "└── " : "├── ";
-    print("$treePrefix$branch$name $statusStr");
+    printLogs("$treePrefix$branch$name $statusStr");
 
     final dirName = "${i + 1}.${sanitizeFilename(name)}";
     final thisPath = Directory('${currentPath.path}/$dirName');
@@ -646,7 +670,7 @@ Future<void> traversalCoursesInner(
   }
 
   if (prefix.isEmpty) {
-    print("遍历完成");
+    printLogs("遍历完成");
   }
 }
 
@@ -675,11 +699,13 @@ Future<void> processCourseLeaf(
 
     for (var path in paths) {
       final filePath = File('${thisPath.path}/${path.$1}');
-      print("$treePrefix$branch Fulfilling ${path.$1} ... ${filePath.path}");
+      printLogs(
+        "$treePrefix$branch Fulfilling ${path.$1} ... ${filePath.path}",
+      );
       await filePath.writeAsString(path.$2);
     }
   } catch (e) {
-    print("Error processing leaf [$url]: $e");
+    printLogs("Error processing leaf [$url]: $e");
   }
 }
 

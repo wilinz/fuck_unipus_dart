@@ -47,7 +47,10 @@ class UnipusService extends GetxService {
     return _client!.checkLoginAndSetupSession();
   }
 
-  Future<void> login({required String password}) async {
+  Future<void> login({
+    required String password,
+    CaptchaHandler? captchaHandler,
+  }) async {
     final client = _ensureClient();
     final username = _username;
     if (username == null) {
@@ -57,7 +60,7 @@ class UnipusService extends GetxService {
     await client.login(
       username: username,
       password: password,
-      captchaHandler: (captchaResponse) async {
+      captchaHandler: captchaHandler ?? (captchaResponse) async {
         throw UnimplementedError('暂不支持验证码登录');
       },
     );

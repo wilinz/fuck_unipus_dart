@@ -8,6 +8,7 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('登录 Unipus')),
       body: Center(
@@ -33,16 +34,48 @@ class LoginView extends GetView<LoginController> {
                   () => TextField(
                     controller: controller.passwordController,
                     decoration: InputDecoration(
-                      labelText: controller.isLoading.value
-                          ? '密码 (如需重新登录)'
-                          : '密码 (首次登录时必填)',
+                      labelText: controller.rememberPassword.value
+                          ? '密码 (已保存)'
+                          : '密码',
                       prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        tooltip: controller.showPassword.value
+                            ? '隐藏密码'
+                            : '显示密码',
+                        icon: Icon(
+                          controller.showPassword.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                        onPressed: controller.togglePasswordVisibility,
+                      ),
                     ),
-                    obscureText: true,
+                    obscureText: !controller.showPassword.value,
                     onChanged: (_) => controller.clearError(),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+                Obx(() {
+                  final remember = controller.rememberPassword.value;
+                  final show = controller.showPassword.value;
+                  final loading = controller.isLoading.value;
+                  return Row(
+                    children: [
+                      Checkbox(
+                        value: remember,
+                        onChanged:
+                            loading ? null : controller.toggleRememberPassword,
+                      ),
+                      const Text('保存账号密码'),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: controller.togglePasswordVisibility,
+                        child: Text(show ? '隐藏密码' : '显示密码'),
+                      ),
+                    ],
+                  );
+                }),
+                const SizedBox(height: 12),
                 Obx(
                   () {
                     final error = controller.errorMessage.value;
@@ -54,7 +87,7 @@ class LoginView extends GetView<LoginController> {
                       child: Text(
                         error,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                          color: theme.colorScheme.error,
                         ),
                       ),
                     );
@@ -78,7 +111,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  '提示：若该设备已登录过，会自动复用缓存 Cookies。',
+                  '提示：若保存密码，下次会自动填写。',
                   textAlign: TextAlign.center,
                 ),
               ],

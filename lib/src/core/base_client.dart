@@ -102,6 +102,7 @@ abstract class BaseClient {
         'captcha': captcha ?? '',
         'rememberMe': 'on',
         'captchaCode': captcha ?? '',
+        if (encodeCaptcha != null) 'encodeCaptha': encodeCaptcha ?? '',
       },
     );
 
@@ -119,6 +120,8 @@ abstract class BaseClient {
         encodeCaptcha: captchaRes.rs.encodeCaptha,
         captchaHandler: captchaHandler,
       );
+    } else if (ssoResponse.code == '1502') {
+      throw Exception(ssoResponse.msg);
     }
 
     await loginWithTicket(service, ssoResponse.rs.serviceTicket);

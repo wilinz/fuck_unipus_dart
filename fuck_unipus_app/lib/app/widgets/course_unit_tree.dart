@@ -127,6 +127,7 @@ class _BranchNodeState extends State<_BranchNode> {
       if (node.indexPath.isNotEmpty)
         _IndexBadge(indexPath: node.indexPath),
     ];
+    final chipRow = [...chips, _IdLabel(node.url)];
 
     final total = node.children.length;
     final requiredCount =
@@ -209,12 +210,18 @@ class _BranchNodeState extends State<_BranchNode> {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  const SizedBox(height: 4),
                                   Text(
                                     progressText,
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: Colors.grey[600],
                                     ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 6,
+                                    children: chipRow,
                                   ),
                                 ],
                               ),
@@ -237,14 +244,6 @@ class _BranchNodeState extends State<_BranchNode> {
                             ),
                           ],
                         ),
-                        if (chips.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: chips,
-                          ),
-                        ],
                       ],
                     ),
                   ),
@@ -289,6 +288,26 @@ class _LeafNode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final leafChips = <Widget>[
+      _StatusChip(
+        label: node.required ? '必修' : '选修',
+        background: node.required
+            ? const Color(0xFFE8F2FF)
+            : const Color(0xFFF8F9FE),
+        color: node.required
+            ? const Color(0xFF2F6FED)
+            : const Color(0xFF6B7280),
+      ),
+      if (node.passed)
+        _StatusChip(
+          label: '已完成',
+          background: const Color(0xFFE6F4EA),
+          color: const Color(0xFF1B9E59),
+        ),
+      if (node.indexPath.isNotEmpty)
+        _IndexBadge(indexPath: node.indexPath),
+      _IdLabel(node.url),
+    ];
     return Padding(
       padding: EdgeInsets.only(left: depth * 18.0 + 16, right: 16, bottom: 8),
       child: Container(
@@ -314,29 +333,11 @@ class _LeafNode extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Wrap(
                       spacing: 6,
                       runSpacing: 6,
-                      children: [
-                        _StatusChip(
-                          label: node.required ? '必修' : '选修',
-                          background: node.required
-                              ? const Color(0xFFE8F2FF)
-                              : const Color(0xFFF8F9FE),
-                          color: node.required
-                              ? const Color(0xFF2F6FED)
-                              : const Color(0xFF6B7280),
-                        ),
-                        if (node.passed)
-                          _StatusChip(
-                            label: '已完成',
-                            background: const Color(0xFFE6F4EA),
-                            color: const Color(0xFF1B9E59),
-                          ),
-                        if (node.indexPath.isNotEmpty)
-                          _IndexBadge(indexPath: node.indexPath),
-                      ],
+                      children: leafChips,
                     ),
                   ],
                 ),
@@ -351,6 +352,24 @@ class _LeafNode extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _IdLabel extends StatelessWidget {
+  const _IdLabel(this.url);
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final display = url.isNotEmpty ? url : '无 ID';
+    return Text(
+      'ID: $display',
+      style: theme.textTheme.bodySmall?.copyWith(
+        color: Colors.grey[500],
       ),
     );
   }

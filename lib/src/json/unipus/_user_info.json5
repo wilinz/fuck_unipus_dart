@@ -1,0 +1,40 @@
+{
+  "code": 0,
+  "currentTime": 1761668871077,
+  "message": "操作成功",
+  "result": {
+    "total": 49,
+    "role": 1,
+    "user": {
+      "bid": 10987654,
+      "deviceToken": "a91b23c4d56e78f90a",
+      "email": "fakeuser@none.com",
+      "gender": 0,
+      "grade": "2022",
+      "mobile": "13987654321",
+      "name": "张小测",
+      "nickname": "zz",
+      "num": "2201630999",
+      "openid": "f1e2d3c4b5a697887766554433221100",
+      "realName": "张小测",
+      "role": 1,
+      "schoolId": 10196,
+      "schoolName": "东南虚构大学",
+      "uid": 13999999,
+      "useMode": 0,
+      "username": "13987654321"
+    },
+    "school": {
+      "code": "C1988",
+      "dnsIp": "",
+      "id": 10196,
+      "level": 1,
+      "name": "东南虚构大学",
+      "openTime": 1537864408000,
+      "registerMode": 0,
+      "status": 0,
+      "useMode": 0
+    }
+  },
+  "success": true
+}

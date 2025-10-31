@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
@@ -39,13 +40,14 @@ void main() async {
 
   String? ua;
 
-  itestMain(
-    cookieDir: cookieDir,
-    username: username,
-    loggerOpenId: openId,
-    userAgent: ua,
-  );
-  // unipusMain(cookieDir: cookieDir, username: username);
+  // itestMain(
+  //   cookieDir: cookieDir,
+  //   username: username,
+  //   loggerOpenId: openId,
+  //   userAgent: ua,
+  // );
+
+  unipusMain(cookieDir: cookieDir, username: username);
 }
 
 Future<void> itestMain({
@@ -54,14 +56,9 @@ Future<void> itestMain({
   String? loggerOpenId,
   String? userAgent,
 }) async {
-
   final baseUrl = "https://itestcloud.unipus.cn/";
   // final baseUrl: "http://127.0.0.1:9001/"
-  final itestDio = Dio(
-    BaseOptions(
-      baseUrl: baseUrl,
-    ),
-  );
+  final itestDio = Dio(BaseOptions(baseUrl: baseUrl));
 
   // (itestDio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
   //   final client = HttpClient();
@@ -534,6 +531,10 @@ Future<void> unipusMain({
     return;
   }
 
+  final course = courses
+      .expand((e) => e.courses)
+      .firstWhere((e) => e.tutorialId == tutorialId);
+
   // 获取课程进度
   var courseProgress = await unipus.getCourseProgress(tutorialId);
 
@@ -566,6 +567,7 @@ Future<void> unipusMain({
     leafs,
     '',
     Directory('courses'),
+    course,
   );
 
   // // 输入节点 id
@@ -590,6 +592,7 @@ Future<void> traversalCoursesToFs(
   Map<String, dynamic> leafsProgress,
   String treePrefix,
   Directory rootDir,
+  UnipusClassBlockCoursesItem course,
 ) async {
   await rootDir.create(recursive: true);
   await traversalCoursesInner(
@@ -600,6 +603,8 @@ Future<void> traversalCoursesToFs(
     leafsProgress,
     treePrefix,
     rootDir,
+    '',
+    course,
   );
 }
 
@@ -611,6 +616,8 @@ Future<void> traversalCoursesInner(
   Map<String, dynamic> leafsProgress,
   String treePrefix,
   Directory currentPath,
+  String leafPath,
+  UnipusClassBlockCoursesItem course,
 ) async {
   for (var i = 0; i < units.length; i++) {
     final unit = units[i];
@@ -618,14 +625,19 @@ Future<void> traversalCoursesInner(
     final currentPrefix = List<int>.from(prefix)..add(i + 1);
 
     final name = unit['name'] ?? '<Unnamed>';
-    final url = unit['url'] ?? '';
+    final currentLeaf = unit['url'] ?? '';
 
+    // 构建当前节点的 URL 路径
+    final currentLeafPath =
+        currentLeaf.isEmpty ? leafPath : '$leafPath/$currentLeaf';
     String statusStr = "";
 
     bool required = false;
     bool pass = false;
-    if (leafsProgress.containsKey(url)) {
-      final leaf = leafsProgress[url];
+
+    final leaf = leafsProgress[currentLeaf];
+    bool isStudy = leaf != null;
+    if (isStudy) {
       pass = (leaf['state']?['pass'] ?? 0) != 0;
       required = leaf['strategies']?['required'] ?? false;
       statusStr =
@@ -638,19 +650,24 @@ Future<void> traversalCoursesInner(
 
     final branch = isLast ? "└── " : "├── ";
     printLogs("$treePrefix$branch$name $statusStr");
+    printLogs(
+      "$treePrefix${isLast ? '    ' : '│   '}📍 URL Path: $currentLeafPath",
+    );
 
     final dirName = "${i + 1}.${sanitizeFilename(name)}";
     final thisPath = Directory('${currentPath.path}/$dirName');
     await thisPath.create();
 
-    if (required) {
+    if (isStudy && !pass) {
       await processCourseLeaf(
         unipus,
         tutorialId,
-        url,
+        currentLeaf,
         thisPath,
         treePrefix,
         branch,
+        currentLeafPath,
+        course,
       );
     }
 
@@ -665,6 +682,8 @@ Future<void> traversalCoursesInner(
         leafsProgress,
         newPrefix,
         thisPath,
+        currentLeafPath,
+        course,
       );
     }
   }
@@ -677,15 +696,61 @@ Future<void> traversalCoursesInner(
 Future<void> processCourseLeaf(
   Unipus unipus,
   String tutorialId,
-  String url,
+  String currentLeaf,
   Directory thisPath,
   String treePrefix,
   String branch,
+  String leafPath,
+  UnipusClassBlockCoursesItem course,
 ) async {
   try {
-    final content = await unipus.getCourseLeafContent(tutorialId, url);
-    final summary = await unipus.getCourseSummary(tutorialId, url);
-    final questions = await unipus.getCourseLeafQuestions(tutorialId, url);
+    final pageUrl = Unipus.buildStudyPageUrl(
+      tutorialId: course.tutorialId!,
+      leafPath: leafPath,
+    );
+
+    try {
+      if (unipus.studyDurationTracker == null) {
+            await unipus.connectStudyDurationTracker(
+              leaf: currentLeaf,
+              tutorialId: tutorialId,
+              pageUrl: pageUrl,
+            );
+          } else {
+            unipus.studyDurationTracker!.sendStart(
+              newLeaf: currentLeaf,
+              newUrl: pageUrl,
+            );
+          }
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+
+    print("【$currentLeaf】正在学习");
+    await Future.delayed(Duration(seconds: Random().nextIntInRange(30, 60)));
+
+    final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
+    final summary = await unipus.getCourseSummary(tutorialId, currentLeaf);
+    final questions = await unipus.getCourseLeafQuestions(
+      tutorialId,
+      currentLeaf,
+    );
+
+    final answer = Unipus.genAnswerBySummary(summary);
+    final result = await unipus.submitAnswer(
+      tutorialId: course.tutorialId!,
+      leaf: currentLeaf,
+      answer: answer,
+    );
+    print("【$currentLeaf】答案提交结果：$result");
+
+    try {
+      final result2 = await unipus.postProgress(tutorialId: tutorialId, leaf: currentLeaf);
+      print("【$currentLeaf】进度提交结果：$result2");
+    } catch (e) {
+      print(e);
+    }
 
     final contentPretty = JsonEncoder.withIndent('  ').convert(content);
     final questionsPretty = JsonEncoder.withIndent('  ').convert(questions);
@@ -702,10 +767,13 @@ Future<void> processCourseLeaf(
       printLogs(
         "$treePrefix$branch Fulfilling ${path.$1} ... ${filePath.path}",
       );
+      printLogs(
+        "$leafPath $treePrefix $branch Fulfilling ${path.$1} ... ${filePath.path}",
+      );
       await filePath.writeAsString(path.$2);
     }
   } catch (e) {
-    printLogs("Error processing leaf [$url]: $e");
+    printLogs("Error processing leaf [$currentLeaf]: $e");
   }
 }
 

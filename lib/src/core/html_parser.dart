@@ -27,6 +27,12 @@ List<UnipusClassBlock> parseCoursesToJson(String htmlContent) {
             var courseUrl = item.querySelector('.hideurl')?.text.trim() ?? '';
             var tutorialId = item.attributes['tutorialid'] ?? '';
 
+            final uri = Uri.parse(courseUrl);
+            final courseId = uri.queryParameters['courseId'];
+            final schoolId = uri.queryParameters['school_id'];
+            final eccId = uri.queryParameters['eccId'];
+            final classId = uri.queryParameters['classId'];
+            final courseType = uri.queryParameters['coursetype'];
 
             courseList.add(UnipusClassBlockCoursesItem(
                 courseName: courseName,
@@ -34,6 +40,11 @@ List<UnipusClassBlock> parseCoursesToJson(String htmlContent) {
                 image: normalizeUrl(imageUrl),
                 courseUrl: normalizeUrl(courseUrl),
                 tutorialId: tutorialId,
+                courseId: courseId,
+                schoolId: schoolId,
+                eccId: eccId,
+                classId: classId,
+                courseType: courseType,
             ));
         }
 

@@ -115,6 +115,16 @@ abstract class _$UnipusClassBlockCoursesItemCWProxy {
 
   UnipusClassBlockCoursesItem tutorialId(String? tutorialId);
 
+  UnipusClassBlockCoursesItem courseId(String? courseId);
+
+  UnipusClassBlockCoursesItem schoolId(String? schoolId);
+
+  UnipusClassBlockCoursesItem eccId(String? eccId);
+
+  UnipusClassBlockCoursesItem classId(String? classId);
+
+  UnipusClassBlockCoursesItem courseType(String? courseType);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `UnipusClassBlockCoursesItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -127,6 +137,11 @@ abstract class _$UnipusClassBlockCoursesItemCWProxy {
     String image,
     String? courseUrl,
     String? tutorialId,
+    String? courseId,
+    String? schoolId,
+    String? eccId,
+    String? classId,
+    String? courseType,
   });
 }
 
@@ -156,6 +171,25 @@ class _$UnipusClassBlockCoursesItemCWProxyImpl
       this(tutorialId: tutorialId);
 
   @override
+  UnipusClassBlockCoursesItem courseId(String? courseId) =>
+      this(courseId: courseId);
+
+  @override
+  UnipusClassBlockCoursesItem schoolId(String? schoolId) =>
+      this(schoolId: schoolId);
+
+  @override
+  UnipusClassBlockCoursesItem eccId(String? eccId) => this(eccId: eccId);
+
+  @override
+  UnipusClassBlockCoursesItem classId(String? classId) =>
+      this(classId: classId);
+
+  @override
+  UnipusClassBlockCoursesItem courseType(String? courseType) =>
+      this(courseType: courseType);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `UnipusClassBlockCoursesItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -168,6 +202,11 @@ class _$UnipusClassBlockCoursesItemCWProxyImpl
     Object? image = const $CopyWithPlaceholder(),
     Object? courseUrl = const $CopyWithPlaceholder(),
     Object? tutorialId = const $CopyWithPlaceholder(),
+    Object? courseId = const $CopyWithPlaceholder(),
+    Object? schoolId = const $CopyWithPlaceholder(),
+    Object? eccId = const $CopyWithPlaceholder(),
+    Object? classId = const $CopyWithPlaceholder(),
+    Object? courseType = const $CopyWithPlaceholder(),
   }) {
     return UnipusClassBlockCoursesItem(
       courseName:
@@ -195,6 +234,31 @@ class _$UnipusClassBlockCoursesItemCWProxyImpl
               ? _value.tutorialId
               // ignore: cast_nullable_to_non_nullable
               : tutorialId as String?,
+      courseId:
+          courseId == const $CopyWithPlaceholder()
+              ? _value.courseId
+              // ignore: cast_nullable_to_non_nullable
+              : courseId as String?,
+      schoolId:
+          schoolId == const $CopyWithPlaceholder()
+              ? _value.schoolId
+              // ignore: cast_nullable_to_non_nullable
+              : schoolId as String?,
+      eccId:
+          eccId == const $CopyWithPlaceholder()
+              ? _value.eccId
+              // ignore: cast_nullable_to_non_nullable
+              : eccId as String?,
+      classId:
+          classId == const $CopyWithPlaceholder()
+              ? _value.classId
+              // ignore: cast_nullable_to_non_nullable
+              : classId as String?,
+      courseType:
+          courseType == const $CopyWithPlaceholder()
+              ? _value.courseType
+              // ignore: cast_nullable_to_non_nullable
+              : courseType as String?,
     );
   }
 }
@@ -228,6 +292,11 @@ extension _$UnipusClassBlockCoursesItemEquatableAnnotations
     image,
     courseUrl,
     tutorialId,
+    courseId,
+    schoolId,
+    eccId,
+    classId,
+    courseType,
   ];
 }
 
@@ -269,6 +338,11 @@ UnipusClassBlockCoursesItem _$UnipusClassBlockCoursesItemFromJson(
   image: json['image'] as String? ?? '',
   courseUrl: json['course_url'] as String?,
   tutorialId: json['tutorial_id'] as String?,
+  courseId: json['course_id'] as String?,
+  schoolId: json['school_id'] as String?,
+  eccId: json['ecc_id'] as String?,
+  classId: json['class_id'] as String?,
+  courseType: json['course_type'] as String?,
 );
 
 Map<String, dynamic> _$UnipusClassBlockCoursesItemToJson(
@@ -279,4 +353,9 @@ Map<String, dynamic> _$UnipusClassBlockCoursesItemToJson(
   'image': instance.image,
   'course_url': instance.courseUrl,
   'tutorial_id': instance.tutorialId,
+  'course_id': instance.courseId,
+  'school_id': instance.schoolId,
+  'ecc_id': instance.eccId,
+  'class_id': instance.classId,
+  'course_type': instance.courseType,
 };

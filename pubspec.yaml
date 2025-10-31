@@ -25,6 +25,7 @@ dependencies:
   kt_dart: ^1.1.0
   pure_dart_extensions: ^3.0.1
   dio_smart_retry: ^7.0.1
+  web_socket_channel: ^3.0.3
   # path: ^1.8.0
 
 dev_dependencies:

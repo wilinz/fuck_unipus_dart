@@ -53,7 +53,12 @@ class UnipusClassBlockCoursesItem with EquatableMixin {
       required this.status,
       required this.image,
       this.courseUrl,
-      this.tutorialId});
+      this.tutorialId,
+      this.courseId,
+      this.schoolId,
+      this.eccId,
+      this.classId,
+      this.courseType});
 
   @JsonKey(name: "course_name")
   final String? courseName;
@@ -69,6 +74,21 @@ class UnipusClassBlockCoursesItem with EquatableMixin {
 
   @JsonKey(name: "tutorial_id")
   final String? tutorialId;
+
+  @JsonKey(name: "course_id")
+  final String? courseId;
+
+  @JsonKey(name: "school_id")
+  final String? schoolId;
+
+  @JsonKey(name: "ecc_id")
+  final String? eccId;
+
+  @JsonKey(name: "class_id")
+  final String? classId;
+
+  @JsonKey(name: "course_type")
+  final String? courseType;
 
 
   factory UnipusClassBlockCoursesItem.fromJson(Map<String, dynamic> json) => _$UnipusClassBlockCoursesItemFromJson(json);

@@ -4,5 +4,5 @@
 .DS_store
 /cookies/
 /.cookies/
-/openid-17891140504.txt
+/openid-*.txt
 /example

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:fuck_unipus/src/model/unipus/user_info/user_info.dart';
 import 'package:web_socket_channel/io.dart';
@@ -164,6 +165,182 @@ class Unipus extends BaseClient {
     );
 
     return jsonDecode(response.data);
+  }
+
+  /// 进入单元测试
+  ///
+  /// 参数:
+  /// - [exerciseId]: 练习ID
+  /// - [tutorialId]: 课程ID (例如: "course-v1:Unipus+nhce_3_vls_2+2018_03")
+  /// - [leaf]: 单元标识符 (例如: "u3g199")
+  /// - [exerciseType]: 练习类型 (默认: 3)
+  /// - [forwardUrl]: 转发URL (默认: "//ucontent.unipus.cn/_pc_default/UTCallback.html")
+  /// - [ntc]: ntc(need_two_confirmation)参数 (默认: 1)
+  /// - [nad]: nad(need_all_done)参数 (默认: 1)
+  /// - [sms]: sms(show_modal_stratege)参数 (默认: 1)
+  /// - [lcs]: lcs参数 (默认: 1)
+  /// - [schema]: schema(strategy_schema)参数 (默认: 0)
+  /// - [plf]: plf参数 (默认: 0)，平台类型标识：判断是否为UTalk平台环境，"&plf=" + (t.env.IS_UTALK ? 1 : 0)
+  /// - [sf]: sf参数 (默认: 1)，开始时间校验标识：检查课程是否已到开放时间，"&sf=" + n.checkStartTime()
+  /// - [sign]: 签名
+  Future<String> enterUnitTest({
+    required String exerciseId,
+    required String tutorialId,
+    required String leaf,
+    Map<String, dynamic>? courseProgressResult,
+    String forwardUrl = '//ucontent.unipus.cn/_pc_default/UTCallback.html',
+    int exerciseType = 3,
+    int plf = 0,
+    int sf = 1,
+  }) async {
+    final openId = sessionInfo?.openid;
+    if (openId == null) {
+      throw Exception('Session openid is not available');
+    }
+
+    int ntc = courseProgressResult?['ntc'] ?? 1;
+    int nad = courseProgressResult?['nad'] ?? 1;
+    int sms = courseProgressResult?['sms'] ?? 1;
+    int lcs = courseProgressResult?['lcs'] ?? 1;
+    int schema = courseProgressResult?['strategy_schema'] ?? 1;
+
+    // 构建 callbackUrl
+    final callbackUrl =
+        'http://ucontent.unipus.cn/course/api/utscore/$tutorialId/$leaf/default/';
+
+    String sign = md5.convert(utf8.encode("$openId#$exerciseId#3#16fltrp!")).toString();
+
+    // 构建查询参数
+    final queryParameters = <String, dynamic>{
+      'exerciseId': exerciseId,
+      'forwardUrl': forwardUrl,
+      'openId': openId,
+      'callbackUrl': callbackUrl,
+      'ntc': ntc,
+      'nad': nad,
+      'sms': sms,
+      'lcs': lcs,
+      'schema': schema,
+      'plf': plf,
+      'sf': sf,
+      'sign': sign,
+      'exerciseType': exerciseType,
+    };
+
+    try {
+      final response = await dio.get(
+        'https://uexercise.unipus.cn/uexercise/api/v2/enter_unit_test',
+        queryParameters: queryParameters,
+        options: Options(
+          followRedirects: false,
+          validateStatus: (status) => status! < 400,
+        ),
+      );
+
+      // return response;
+      // 从HTML响应中提取sppid
+      final html = response.data as String;
+      final sppidRegex = RegExp(r'<input\s+id="sppid"[^>]*value="(\d+)"');
+      final match = sppidRegex.firstMatch(html);
+
+      if (match != null && match.groupCount >= 1) {
+        return match.group(1)!;
+      }
+
+      throw Exception('Failed to extract sppid from response');
+    } catch (e) {
+      throw Exception('Failed to enter unit test: $e');
+    }
+  }
+
+  /// 加载单元测试数据
+  ///
+  /// 参数:
+  /// - [dataId]: 数据ID，通常是从 enterUnitTest 返回的 sppid
+  ///
+  /// 返回:
+  /// - 单元测试的题目数据
+  Future<(ItestExamQuestionsWrapResponse, List<ItestExamQuestions>?)> loadUT({
+    required String dataId,
+  }) async {
+    try {
+      final response = await dio.post(
+        'https://uexercise.unipus.cn/itest/s/clsanswer/loadUT',
+        data: {'dataid': dataId},
+        options: Options(
+          contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        ),
+      );
+
+      final data = ItestExamQuestionsWrapResponse.fromJson(
+        jsonDecode(response.data),
+      );
+      final questions = itestExamQuestionsListFormJson(
+        parseExamQuestionsMap(data.data.cHTML),
+      );
+      return (data, questions);
+    } catch (e) {
+      throw Exception('Failed to load unit test: $e');
+    }
+  }
+
+  /// 提交单元测试答案
+  ///
+  /// 参数:
+  /// - [ansData]: 答案数据，包含答案列表(al)、section列表(sl)和使用时间(ut)
+  /// - [sppid]: 从 enterUnitTest 或 loadUT 返回的 sppid
+  /// - [exerciseId]: 练习ID
+  /// - [act]: 提交动作类型，'cache' 表示缓存，'save' 表示保存 (默认: 'cache')
+  /// - [plf]: 平台标识 (默认: 0)
+  /// - [answerNumber]: 答案数量 (默认: 0)
+  ///
+  /// 返回:
+  /// - 提交结果
+  Future<Map<String, dynamic>> submitUT({
+    required Map<String, dynamic> ansData,
+    required String sppid,
+    required String exerciseId,
+    String act = 'cache',
+    int plf = 0,
+    int answerNumber = 0,
+  }) async {
+    try {
+      // 获取当前时间
+      final now = DateTime.now();
+      final nowString =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} '
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+
+      // 生成随机时间戳
+      final t = Random().nextDouble();
+
+      final formData = {
+        'ansData': jsonEncode(ansData),
+        'act': act,
+        'sppid': sppid,
+        'plf': plf,
+        'exerciseId': exerciseId,
+        'now': nowString,
+        'answerNumber': answerNumber,
+        '__t': t,
+      };
+
+      final response = await dio.post(
+        'https://uexercise.unipus.cn/itest/s/clsanswer/submitUT',
+        data: formData,
+        options: Options(
+          contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+          },
+        ),
+      );
+
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to submit unit test: $e');
+    }
   }
 
   static Map<String, dynamic> genAnswerBySummary(Map<String, dynamic> summary) {

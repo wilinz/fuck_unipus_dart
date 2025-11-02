@@ -167,10 +167,12 @@ class Itest extends BaseClient {
     return (data, questions);
   }
 
-  Future<Map<String, dynamic>> buildAnswer({
+  static Future<Map<String, dynamic>> buildAnswer({
     required ItestConfirmExamData confirmExamData,
     required String uik,
     required List<ItestExamQuestions> sections,
+    ExamLogFunction? log,
+    required ExamSubmitFunction submit,
     required Future<List<List<int>>> Function(
       List<int> indexList,
       ItestExamQuestionsQuestionGroupItem question,
@@ -243,16 +245,29 @@ class Itest extends BaseClient {
     final watch = Stopwatch();
     watch.start();
 
+    // 定义内部辅助函数
+    Future<void> sleepRandomSecond(
+      int i,
+      ItestConfirmExamData confirmExamData,
+      int sleepSeconds,
+    ) async {
+      await log?.call(
+        confirmExamData: confirmExamData,
+        action: ExamLoggerAction.nextQuestionClick,
+      );
+      await Future.delayed(Duration(seconds: sleepSeconds));
+    }
+
     final timer = Timer.periodic(Duration(minutes: 1), (timer) async {
       final usageTime = watch.elapsed.inSeconds;
 
       final data = {"al": answers, "sl": sectionList, "ut": usageTime};
-      await log(
+      await log?.call(
         confirmExamData: confirmExamData,
         action: ExamLoggerAction.ansSnapSubmit,
         answers: data,
       );
-      await _submit(
+      await submit(
         answers: data,
         confirmExamData: confirmExamData,
         uik: uik,
@@ -387,25 +402,13 @@ class Itest extends BaseClient {
 
     final usageTime = watch.elapsed.inSeconds;
     final data = {"al": answers, "sl": sectionList, "ut": usageTime};
-    await log(
+    await log?.call(
       confirmExamData: confirmExamData,
       action: ExamLoggerAction.ansSnapSubmit,
       answers: data,
     );
     timer.cancel();
     return data;
-  }
-
-  Future<void> sleepRandomSecond(
-    int i,
-    ItestConfirmExamData confirmExamData,
-    int sleepSeconds,
-  ) async {
-    await log(
-      confirmExamData: confirmExamData,
-      action: ExamLoggerAction.nextQuestionClick,
-    );
-    await Future.delayed(Duration(seconds: sleepSeconds));
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK
@@ -608,6 +611,20 @@ class Itest extends BaseClient {
     return data;
   }
 }
+
+// 定义函数类型
+typedef ExamLogFunction = Future<dynamic> Function({
+  required ItestConfirmExamData confirmExamData,
+  required String action,
+  Map<String, dynamic>? answers,
+});
+
+typedef ExamSubmitFunction = Future<ItestExamSubmitResponse> Function({
+  required Map<String, dynamic> answers,
+  required ItestConfirmExamData confirmExamData,
+  required String uik,
+  required String action,
+});
 
 class ExamLoggerAction {
   static const String preQuestionClick = 'pre_ques_click';

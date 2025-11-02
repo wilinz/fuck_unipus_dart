@@ -19,6 +19,7 @@ dependencies:
       ref: main
   cookie_jar: ^4.0.8
   path: ^1.9.1
+  dio_redirect_interceptor: ^1.0.1
   socks5_proxy:
     git:
       url: https://github.com/wilinz/socks_dart.git

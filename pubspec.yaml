@@ -15,7 +15,7 @@ dependencies:
   html: ^0.15.6
   path: ^1.9.1
   json_annotation: ^4.9.0
-  dio_redirect_interceptor: ^1.0.0
+  dio_redirect_interceptor: ^1.0.1
   copy_with_extension: ^6.0.1
   equatable: ^2.0.7
   encrypt: ^5.0.3

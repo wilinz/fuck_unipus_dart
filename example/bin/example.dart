@@ -6,11 +6,9 @@ import 'dart:typed_data';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/utils/input.dart';
 import 'package:example/utils/random.dart';
-import 'package:socks5_proxy/socks.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';
@@ -626,6 +624,20 @@ Future<void> traversalCoursesInner(
 
     final name = unit['name'] ?? '<Unnamed>';
     final currentLeaf = unit['url'] ?? '';
+
+    final String? summaryString = unit['summary'];
+    if (summaryString?.contains('exerciseId') == true) {
+      // {"questionNumber":"25","exerciseType":3,"fromApp":3001,"tutorialId":"course-v1:Unipus+nhce_3_vls_1+2016_10","totalScore":"25","exerciseName":"Unit test","scoreDetail":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"type":"ut","tutorialType":2,"exerciseId":"453","examId":"20000082"}
+      final Map<String, dynamic> summary = jsonDecode(summaryString!);
+      final String exerciseId = summary['exerciseId'];
+      final dataId = await unipus.enterUnitTest(exerciseId: exerciseId, tutorialId: course.tutorialId!, leaf: currentLeaf);
+
+      final (questionsWarp, sections!) = await unipus.loadUT(
+        dataId: dataId
+      );
+
+      // todo
+    }
 
     // 构建当前节点的 URL 路径
     final currentLeafPath =

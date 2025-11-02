@@ -33,8 +33,8 @@
         <entry key="asn1lib">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.4/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.5/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.4/lib" />
             </list>
           </value>
         </entry>
@@ -237,23 +237,22 @@
         <entry key="dio">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio-5.8.0+1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio-5.9.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio-5.8.0+1/lib" />
             </list>
           </value>
         </entry>
         <entry key="dio_cookie_manager">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio_cookie_manager-3.2.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio_cookie_manager-3.3.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio_cookie_manager-3.2.0/lib" />
             </list>
           </value>
         </entry>
         <entry key="dio_redirect_interceptor">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio_redirect_interceptor-1.0.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dio_redirect_interceptor-1.0.1/lib" />
             </list>
           </value>
@@ -289,8 +288,8 @@
         <entry key="equatable_annotations">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/equatable_annotations-1.0.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/equatable_annotations-1.2.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/equatable_annotations-1.0.1/lib" />
             </list>
           </value>
         </entry>
@@ -416,8 +415,8 @@
         <entry key="http">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.3.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.5.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.3.0/lib" />
             </list>
           </value>
         </entry>
@@ -817,8 +816,8 @@
         <entry key="test_api">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.4/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.6/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.4/lib" />
             </list>
           </value>
         </entry>
@@ -860,8 +859,8 @@
         <entry key="vm_service">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-15.0.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-15.0.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-15.0.0/lib" />
             </list>
           </value>
         </entry>
@@ -956,7 +955,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio-5.9.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_cookie_manager-3.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_cookie_manager-3.3.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_redirect_interceptor-1.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_redirect_interceptor-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_smart_retry-7.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_web_adapter-2.1.1/lib" />

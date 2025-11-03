@@ -99,8 +99,7 @@ List<Map<String, dynamic>> parseExamQuestionsMap(String html) {
     final sectionType = section.attributes['sectiontype']?.toString();
 
     if (sectionType == 'sHear') {
-      final t = section.attributes['part1'];
-      if (t == "复合式听写") {
+      if (section.querySelector("input.blankinput") != null) {
         final sectionData = parseFillBlank(
           section,
           sectionType,

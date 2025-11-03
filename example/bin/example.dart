@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/utils/input.dart';
 import 'package:example/utils/random.dart';
@@ -14,6 +15,15 @@ import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';
 
 void main() async {
+  // final chtml = File("/Users/wilinz/StudioProjects/fuck_itest/scratch/unipus/c_html1.html").readAsStringSync();
+  // final json = parseExamQuestionsMap(chtml);
+  // File("/Users/wilinz/StudioProjects/fuck_itest/scratch/unipus/c_html1.json5").writeAsStringSync(JsonEncoder.withIndent("  ").convert(json));
+  //
+  // final chtml1 = File("/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.html").readAsStringSync();
+  // final json1 = parseExamQuestionsMap(chtml1);
+  // File("/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.json5").writeAsStringSync(JsonEncoder.withIndent("  ").convert(json1));
+  //
+  // return;
   final cookieDir = "./cookies";
   final username = inputTrim("请输入用户名：");
   print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
@@ -158,7 +168,7 @@ Future<void> itestMain({
   await testOpenai(openai);
 
   inputTrim("回车开始自动答题");
-  final answers = await itest.buildAnswer(
+  final answers = await Itest.buildAnswer(
     uik: questionsWarp.data.uIK.toString(),
     confirmExamData: confirmExam,
     sections: sections,
@@ -172,12 +182,12 @@ Future<void> itestMain({
       return await getChooseAnswer(openai, question);
     },
 
-    getChoose10From15Answer: (
+    getArticleFillBlankAnswer: (
       List<int> indexList,
-      ItestExamQuestionsChoose10From15Question question,
+      ItestExamQuestionsQuestion question,
     ) async {
       printLogs("正在获取答案...：$indexList, 15 选 10");
-      return await getChoose10From15Answer(openai, question);
+      return await getArticleFillBlankAnswer(openai, question);
     },
     getWritingAnswer: (
       int index,
@@ -186,13 +196,16 @@ Future<void> itestMain({
       printLogs("正在获取答案...：$index, ${question.title}");
       return await getWritingAnswer(openai, question);
     },
-    audioToText: (String url) async {
-      printLogs("正在识别音频...：$url");
-      return audioToText(openai, url, itest.dio);
+    audioToText: (audio) async {
+      printLogs("正在识别音频...：${audio.toString()}");
+      return audioToText(openai, audio, itest.dio);
     },
     writingProgressCallback: (i, total) {
       printLogs("正在输入答案...：$i/$total");
     },
+    submit: itest.submit,
+    itestPlatformType: ItestPlatformType.itestcloud,
+    logFunction: itest.log,
   );
 
   final file1 = File(
@@ -208,7 +221,7 @@ Future<void> itestMain({
   while (true) {
     final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
     if (ok == "ok") {
-      final submitResult = await itest.submit(
+      final submitResult = await itest.submitFinal(
         answers: answers,
         confirmExamData: confirmExam,
         uik: questionsWarp.data.uIK.toString(),
@@ -271,11 +284,15 @@ Duration estimateMp3Duration(int fileSizeInBytes, int bitrateKbps) {
   return Duration(seconds: durationInSeconds.toInt());
 }
 
-Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
+Future<ItestExamQuestionsAudio> audioToText(
+  OpenAiClient openai,
+  ItestExamQuestionsAudio audio,
+  Dio dio,
+) async {
   for (var i = 0; i < 5; i++) {
     try {
       final audioResponse = await dio.get(
-        url,
+        audio.url,
         options: Options(responseType: ResponseType.bytes),
       );
       final Uint8List bytes = audioResponse.data;
@@ -285,9 +302,14 @@ Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
       if (!(await file0.exists())) await file0.create(recursive: true);
       await file0.writeAsBytes(bytes);
 
-      final metadata = readMetadata(file0, getImage: false);
-      final Duration duration =
-          metadata.duration ?? estimateMp3Duration(bytes.length, 320);
+      Duration duration;
+      try {
+        final metadata = readMetadata(file0, getImage: false);
+        duration = metadata.duration ?? estimateMp3Duration(bytes.length, 320);
+      } catch (e) {
+        duration = estimateMp3Duration(bytes.length, 320);
+        print(e);
+      }
       final file = MultipartFile.fromBytes(bytes, filename: "audio.mp3");
       final ats = await openai.audioApi.transcriptions<String>(
         SpeechRecognitionRequest(
@@ -297,7 +319,7 @@ Future<String> audioToText(OpenAiClient openai, String url, Dio dio) async {
           temperature: 0.2,
         ),
       );
-      return jsonEncode({"seconds": duration.inSeconds, "text": ats});
+      return audio.copyWith(seconds: duration.inSeconds, audioToText: ats);
     } catch (e) {
       printLogs(e);
     }
@@ -351,9 +373,9 @@ Future<String> getWritingAnswer(
   throw Exception("答案获取失败");
 }
 
-Future<List<List<String>>> getChoose10From15Answer(
+Future<List<List<String>>> getArticleFillBlankAnswer(
   OpenAiClient openai,
-  ItestExamQuestionsChoose10From15Question question,
+  ItestExamQuestionsQuestion question,
 ) async {
   for (var i = 0; i < 5; i++) {
     try {
@@ -378,15 +400,15 @@ Future<List<List<String>>> getChoose10From15Answer(
                   "answers_list": {
                     "type": "array",
                     "description":
-                        "Answer array. Example: If the length of choose_10_from_15_question.content[type=\"input\"] is 3, an example answer would be: [[\"C\"], [[\"B\"], [[\"A\"]]. ",
+                        "Answer array for article_fill_blank questions. Each element corresponds to a question.content[type=\"input\"] item. Example: For 3 input items: [[\"C\"], [\"B\"], [\"A\"]] for choose_10_from_15 (with options), or [[\"word0\"], [\"word1\"], [\"word2\"]] for compound_dictation (without options).",
                     "items": {
                       "type": "array",
                       "description":
-                          "Answer(s) for a single question. one options.option, example [\"C\"], The length is always 1",
+                          "Answer(s) for a single input item. Always contains exactly 1 string element. Example: [\"C\"] or [\"word\"].",
                       "items": {
                         "type": "string",
                         "description":
-                            "`option` of the selected option for the choose_10_from_15_question.content[type=\"input\"], example: \"C\".",
+                            "The answer text. For choose_10_from_15 (type=\"choose_10_from_15\"): use the `option` field from question.options (e.g., \"C\"). For compound_dictation (type=\"compound_dictation\"): use the dictated word/phrase directly (e.g., \"education\" or \"human history\").",
                       },
                     },
                   },
@@ -400,6 +422,9 @@ Future<List<List<String>>> getChoose10From15Answer(
       final rawList =
           jsonDecode(resp.choices.first.message.content!)['answers_list']
               as List;
+
+      print(rawList);
+
       final List<List<String>> answer =
           rawList
               .map<List<String>>(
@@ -409,7 +434,8 @@ Future<List<List<String>>> getChoose10From15Answer(
               .toList();
 
       return answer;
-    } catch (e) {
+    } catch (e, st) {
+      print(st);
       printLogs(e);
     }
   }
@@ -465,6 +491,9 @@ Future<List<List<int>>> getChooseAnswer(
       final rawList =
           jsonDecode(resp.choices.first.message.content!)['answers_list']
               as List;
+
+      print(rawList);
+
       final List<List<int>> answer =
           rawList
               .map<List<int>>(
@@ -556,6 +585,21 @@ Future<void> unipusMain({
         courseDetail['units'],
       ).map((e) => e as Map<String, dynamic>).toList();
 
+  OpenAiClient? openai;
+  if (jsonEncode(units).contains('exerciseId')) {
+    final key = inputTrim("请输入 openai api key: ");
+    var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
+
+    if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
+
+    final openaiDio = Dio();
+    openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
+    openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
+
+    openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: openaiDio);
+    await testOpenai(openai);
+  }
+
   // 遍历课程单元
   await traversalCoursesToFs(
     units,
@@ -566,6 +610,7 @@ Future<void> unipusMain({
     '',
     Directory('courses'),
     course,
+    openai,
   );
 
   // // 输入节点 id
@@ -591,6 +636,7 @@ Future<void> traversalCoursesToFs(
   String treePrefix,
   Directory rootDir,
   UnipusClassBlockCoursesItem course,
+  OpenAiClient? openai,
 ) async {
   await rootDir.create(recursive: true);
   await traversalCoursesInner(
@@ -603,6 +649,7 @@ Future<void> traversalCoursesToFs(
     rootDir,
     '',
     course,
+    openai,
   );
 }
 
@@ -616,6 +663,7 @@ Future<void> traversalCoursesInner(
   Directory currentPath,
   String leafPath,
   UnipusClassBlockCoursesItem course,
+  OpenAiClient? openai,
 ) async {
   for (var i = 0; i < units.length; i++) {
     final unit = units[i];
@@ -624,20 +672,6 @@ Future<void> traversalCoursesInner(
 
     final name = unit['name'] ?? '<Unnamed>';
     final currentLeaf = unit['url'] ?? '';
-
-    final String? summaryString = unit['summary'];
-    if (summaryString?.contains('exerciseId') == true) {
-      // {"questionNumber":"25","exerciseType":3,"fromApp":3001,"tutorialId":"course-v1:Unipus+nhce_3_vls_1+2016_10","totalScore":"25","exerciseName":"Unit test","scoreDetail":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"type":"ut","tutorialType":2,"exerciseId":"453","examId":"20000082"}
-      final Map<String, dynamic> summary = jsonDecode(summaryString!);
-      final String exerciseId = summary['exerciseId'];
-      final dataId = await unipus.enterUnitTest(exerciseId: exerciseId, tutorialId: course.tutorialId!, leaf: currentLeaf);
-
-      final (questionsWarp, sections!) = await unipus.loadUT(
-        dataId: dataId
-      );
-
-      // todo
-    }
 
     // 构建当前节点的 URL 路径
     final currentLeafPath =
@@ -670,17 +704,31 @@ Future<void> traversalCoursesInner(
     final thisPath = Directory('${currentPath.path}/$dirName');
     await thisPath.create();
 
-    if (isStudy && !pass) {
-      await processCourseLeaf(
-        unipus,
-        tutorialId,
-        currentLeaf,
-        thisPath,
-        treePrefix,
-        branch,
-        currentLeafPath,
-        course,
-      );
+    final String? summaryString = unit['summary'];
+    final isUnitTest = summaryString?.contains('exerciseId') == true;
+    if (!pass) {
+      if (isUnitTest) {
+        await processUnitTest(
+          summaryString,
+          unipus,
+          course,
+          currentLeaf,
+          openai,
+          tutorialId,
+          leafPath,
+        );
+      } else if (isStudy) {
+        await processCourseLeaf(
+          unipus,
+          tutorialId,
+          currentLeaf,
+          thisPath,
+          treePrefix,
+          branch,
+          currentLeafPath,
+          course,
+        );
+      }
     }
 
     if (unit.containsKey('children')) {
@@ -696,12 +744,132 @@ Future<void> traversalCoursesInner(
         thisPath,
         currentLeafPath,
         course,
+        openai,
       );
     }
   }
 
   if (prefix.isEmpty) {
     printLogs("遍历完成");
+  }
+}
+
+Future<void> processUnitTest(
+  String? summaryString,
+  Unipus unipus,
+  UnipusClassBlockCoursesItem course,
+  currentLeaf,
+  OpenAiClient? openai,
+  String tutorialId,
+  String leafPath,
+) async {
+  try {
+    final Map<String, dynamic> summary = jsonDecode(summaryString!);
+    final String exerciseId = summary['exerciseId'];
+    final (response, dataId) = await unipus.enterUnitTest(
+        exerciseId: exerciseId,
+        tutorialId: course.tutorialId!,
+        leaf: currentLeaf,
+      );
+
+    final pageUrl = response.rawUri.toString();
+
+    print(pageUrl);
+    if (unipus.studyDurationTracker == null) {
+        await unipus.connectStudyDurationTracker(
+          leaf: currentLeaf,
+          tutorialId: tutorialId,
+          pageUrl: pageUrl,
+        );
+      } else {
+        unipus.studyDurationTracker!.sendStart(
+          newLeaf: currentLeaf,
+          newUrl: pageUrl,
+        );
+      }
+
+    final (questionsWarp, sections!) = await unipus.loadUT(dataId: dataId);
+
+    printLogs("questionsWarp：$questionsWarp");
+    final questionsJson = JsonEncoder.withIndent("  ").convert(sections);
+
+    final file = File(
+      "./questions-unittest/questions-$tutorialId-$leafPath.json",
+    );
+    if (!(await file.parent.exists())) {
+      await file.parent.create(recursive: true);
+    }
+    await file.writeAsString(questionsJson);
+    printLogs("题目json已经写入文件：${file.path}");
+
+    final answers = await Itest.buildAnswer(
+        uik: questionsWarp.data.uIK.toString(),
+        confirmExamData: null,
+        sections: sections,
+        getChooseAnswer: (
+          List<int> indexList,
+          ItestExamQuestionsQuestionGroupItem question,
+        ) async {
+          printLogs(
+            "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
+          );
+          return await getChooseAnswer(openai!, question);
+        },
+        getArticleFillBlankAnswer: (
+          List<int> indexList,
+          ItestExamQuestionsQuestion question,
+        ) async {
+          printLogs("正在获取答案...：$indexList, 15 选 10");
+          return await getArticleFillBlankAnswer(openai!, question);
+        },
+        getWritingAnswer: (
+          int index,
+          ItestExamQuestionsWriteQuestion question,
+        ) async {
+          printLogs("正在获取答案...：$index, ${question.title}");
+          return await getWritingAnswer(openai!, question);
+        },
+        audioToText: (audio) async {
+          printLogs("正在识别音频...：$audio");
+          return audioToText(openai!, audio, unipus.dio);
+        },
+        writingProgressCallback: (i, total) {
+          printLogs("正在输入答案...：$i/$total");
+        },
+        submit: ({
+          required Map<String, dynamic> answers,
+          required ItestConfirmExamData? confirmExamData,
+          required String? uik,
+          required String action,
+        }) async {
+          return unipus.submitUT(
+            ansData: answers,
+            sppid: dataId,
+            exerciseId: exerciseId,
+            action: action,
+          );
+        },
+        itestPlatformType: ItestPlatformType.uexercise,
+        logFunction: null,
+        notSleep: true,
+      );
+
+    final file1 = File("./questions-unittest/answer-$tutorialId-$leafPath.json");
+    if (!(await file1.parent.exists())) {
+        await file1.parent.create(recursive: true);
+      }
+    final answersJson = JsonEncoder.withIndent("  ").convert(answers);
+    await file1.writeAsString(answersJson);
+    printLogs("答案json已经写入文件：${file1.path}");
+
+    final submitResult = await unipus.submitFinalUT(
+        ansData: answers,
+        sppid: dataId,
+        exerciseId: exerciseId,
+      );
+    printLogs("submitResult：$submitResult");
+  } catch (e) {
+    print(e);
   }
 }
 
@@ -723,17 +891,17 @@ Future<void> processCourseLeaf(
 
     try {
       if (unipus.studyDurationTracker == null) {
-            await unipus.connectStudyDurationTracker(
-              leaf: currentLeaf,
-              tutorialId: tutorialId,
-              pageUrl: pageUrl,
-            );
-          } else {
-            unipus.studyDurationTracker!.sendStart(
-              newLeaf: currentLeaf,
-              newUrl: pageUrl,
-            );
-          }
+        await unipus.connectStudyDurationTracker(
+          leaf: currentLeaf,
+          tutorialId: tutorialId,
+          pageUrl: pageUrl,
+        );
+      } else {
+        unipus.studyDurationTracker!.sendStart(
+          newLeaf: currentLeaf,
+          newUrl: pageUrl,
+        );
+      }
     } catch (e) {
       print(e);
       rethrow;
@@ -758,7 +926,10 @@ Future<void> processCourseLeaf(
     print("【$currentLeaf】答案提交结果：$result");
 
     try {
-      final result2 = await unipus.postProgress(tutorialId: tutorialId, leaf: currentLeaf);
+      final result2 = await unipus.postProgress(
+        tutorialId: tutorialId,
+        leaf: currentLeaf,
+      );
       print("【$currentLeaf】进度提交结果：$result2");
     } catch (e) {
       print(e);

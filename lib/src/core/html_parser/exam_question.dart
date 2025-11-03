@@ -1,3 +1,55 @@
+/// U校园 iTest 考试题目 HTML 解析器
+///
+/// 本模块负责解析 iTest 考试页面的 HTML 内容，并将其转换为结构化的 JSON 数据。
+///
+/// ## 支持的题目类型（Section Types）
+///
+/// 本解析器支持以下 **5 种** 题目类型：
+///
+/// ### 1. `listening` - 听力题
+/// - **sectionType**: `sHear`
+/// - **特征**: 包含音频资源列表 (`.itest-hear-reslist`)
+/// - **示例**: 短对话、长对话、短文理解
+///
+/// ### 2. `read_article` - 阅读理解（含文章）
+/// - **sectionType**: `sNormal`
+/// - **特征**: 包含文章内容 (`.article`)
+/// - **示例**: 长篇阅读、段落匹配
+///
+/// ### 3. `choose` - 普通选择题
+/// - **sectionType**: `sNormal`
+/// - **特征**: 不含音频和文章
+/// - **示例**: 单项选择、多项选择
+///
+/// ### 4. `write` - 写作题
+/// - **sectionType**: `sNormal`
+/// - **特征**: 包含写作区域 (`.itest-write`)
+/// - **示例**: 短文写作、应用文写作
+///
+/// ### 5. `article_fill_blank` - 填空题
+/// - **sectionType**: `sHear` (复合式听写) 或 `sNormal` (15选10)
+/// - **子类型**:
+///   - `compound_dictation` - 复合式听写
+///   - `choose_10_from_15` - 15选10填空
+/// - **特征**: 包含填空输入框和选项列表
+/// - **示例**: 复合式听写、选词填空
+///
+/// ## 主要函数
+///
+/// - [parseExamQuestionsMap] - 主入口函数，解析整个HTML并返回所有section
+/// - [parseChoose] - 解析选择题（listening/read_article/choose）
+/// - [parseWrite] - 解析写作题（write）
+/// - [parseFillBlank] - 解析填空题（article_fill_blank）
+///
+/// ## 使用示例
+///
+/// ```dart
+/// final html = await loadExamHtml();
+/// final sections = parseExamQuestionsMap(html);
+/// final examQuestions = itestExamQuestionsListFormJson(sections);
+/// ```
+library;
+
 import 'dart:convert';
 
 import 'package:fuck_unipus/fuck_unipus.dart';
@@ -5,6 +57,39 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:pure_dart_extensions/pure_dart_extensions.dart';
 
+/// 解析 iTest 考试题目 HTML，返回结构化的 JSON 数据
+///
+/// 此函数是解析器的主入口，负责：
+/// 1. 解析 HTML 文档
+/// 2. 查找所有 `.itest-section` 元素
+/// 3. 根据 `sectiontype` 属性分类处理
+/// 4. 返回包含所有题目数据的 JSON 列表
+///
+/// ## 参数
+/// - [html] - iTest 考试页面的完整 HTML 内容
+///
+/// ## 返回
+/// 返回 `List<Map<String, dynamic>>`，每个 Map 代表一个 section，
+/// 结构符合 [ItestExamQuestions] 模型定义
+///
+/// ## Section 分类逻辑
+///
+/// ### sHear (听力类)
+/// - 如果 `part1` 为 "复合式听写" → `article_fill_blank` (compound_dictation)
+/// - 否则 → `listening`
+///
+/// ### sNormal (普通类)
+/// - 如果包含 `.itest-15xuan10` → `article_fill_blank` (choose_10_from_15)
+/// - 如果包含 `.itest-read` 或 `.itest-danxuan` → `read_article` 或 `choose`
+/// - 如果包含 `.itest-write` → `write`
+///
+/// ## 示例
+/// ```dart
+/// final html = '<div class="itest-section" sectiontype="sHear">...</div>';
+/// final sections = parseExamQuestionsMap(html);
+/// print(sections.length); // 输出: 1
+/// print(sections[0]['type']); // 输出: listening 或 article_fill_blank
+/// ```
 List<Map<String, dynamic>> parseExamQuestionsMap(String html) {
   final document = parse(html);
   final sections = document.querySelectorAll('.itest-section');
@@ -261,16 +346,42 @@ Map<String, dynamic> parseFillBlank(
     allOptions.addAll(group);
   }
 
-  final contentDiv = section.querySelector('input')!.parent!;
+  // final contentDiv = section.querySelector('input')!.parent!;
+  dom.Element contentDiv;
+  if (type == "compound_dictation"){
+    contentDiv = section.querySelector('.css-danxuan.row')!;
+  }else {
+    // choose_10_from_15
+    contentDiv = section.querySelector('.xxcontent')!;
+  }
+
+  List<dom.Node> flattenNodes(dom.Node root) {
+    List<dom.Node> result = [];
+
+    void traverse(dom.Node node) {
+      result.add(node);
+      for (var child in node.nodes) {
+        traverse(child);
+      }
+    }
+
+    traverse(root);
+    return result;
+  }
+
+  final allNodes = flattenNodes(contentDiv);
+
   // 创建一个结构化的 JSON 数据
   List<Map<String, dynamic>> textSections = [];
   List<dynamic> tempSections = [];
 
   // 解析 <div> 中的内容
-  for (var child in contentDiv.nodes) {
+  for (var child in allNodes) {
     if (child is dom.Text) {
       // 处理文本节点，保存文本内容
-      tempSections.add({'type': 'text', 'content': child.text.trim()});
+      if (child.text.isNotBlank) {
+        tempSections.add({'type': 'text', 'content': child.text.trim()});
+      }
     } else if (child is dom.Element && child.localName == 'input') {
       // 处理 <input> 元素
       tempSections.add({

@@ -9,6 +9,8 @@ import 'package:fuck_unipus/src/utils/random.dart';
 import 'package:html/parser.dart';
 import 'package:pure_dart_extensions/pure_dart_extensions.dart';
 
+enum ItestPlatformType { itestcloud, uexercise }
+
 class Itest extends BaseClient {
   final timestamp = DateTime.now().millisecondsSinceEpoch;
   late String loggerOpenId;
@@ -25,11 +27,7 @@ class Itest extends BaseClient {
     final itest = Itest._();
     itest.loggerOpenId = loggerOpenId ?? generateRandomMd5();
     print("loggerOpenId: ${itest.loggerOpenId}");
-    await itest._init(
-      cookieJar: cookieJar,
-      userAgent: userAgent,
-      dio: dio,
-    );
+    await itest._init(cookieJar: cookieJar, userAgent: userAgent, dio: dio);
     return itest;
   }
 
@@ -40,11 +38,7 @@ class Itest extends BaseClient {
     String? userAgent,
     Dio? dio,
   }) async {
-    await super.initDio(
-      cookieJar: cookieJar,
-      userAgent: userAgent,
-      dio: dio,
-    );
+    await super.initDio(cookieJar: cookieJar, userAgent: userAgent, dio: dio);
     this.dio.interceptors.add(UnipusDecryptInterceptor());
   }
 
@@ -168,10 +162,10 @@ class Itest extends BaseClient {
   }
 
   static Future<Map<String, dynamic>> buildAnswer({
-    required ItestConfirmExamData confirmExamData,
-    required String uik,
+    required ItestConfirmExamData? confirmExamData,
+    required String? uik,
     required List<ItestExamQuestions> sections,
-    ExamLogFunction? log,
+    required ExamLogFunction? logFunction,
     required ExamSubmitFunction submit,
     required Future<List<List<int>>> Function(
       List<int> indexList,
@@ -180,51 +174,66 @@ class Itest extends BaseClient {
     getChooseAnswer,
     required Future<List<List<String>>> Function(
       List<int> indexList,
-      ItestExamQuestionsChoose10From15Question question,
+      ItestExamQuestionsQuestion question,
     )
-    getChoose10From15Answer,
+    getArticleFillBlankAnswer,
     required Future<String> Function(
       int index,
       ItestExamQuestionsWriteQuestion question,
     )
     getWritingAnswer,
-    required Future<String> Function(String url) audioToText,
+    required Future<ItestExamQuestionsAudio> Function(ItestExamQuestionsAudio audio) audioToText,
     void Function(int index)? progressCallback,
     void Function(int index, int total)? writingProgressCallback,
     void Function(dynamic text)? logger,
     bool notSleep = false,
+    required ItestPlatformType itestPlatformType,
   }) async {
+
+    if (itestPlatformType == ItestPlatformType.itestcloud && (confirmExamData == null || uik == null || logFunction == null)) {
+      throw Exception("confirmExamData, uik, logFunction is required when itestPlatformType is itestcloud");
+    }
+    
     // throw Exception();
     final answers = <Map<String, dynamic>>[];
     final sectionList = <Map<String, dynamic>>[];
 
+    // 内部辅助函数
+    void addPlatformSpecificFields(Map<String, dynamic> answer, String? rl) {
+      if (itestPlatformType == ItestPlatformType.itestcloud) {
+        answer['rl'] = rl;
+        answer['role'] = "";
+      } else if (itestPlatformType == ItestPlatformType.uexercise) {
+        answer['f'] = "";
+        answer['vl'] = "";
+      }
+    }
+
     for (final section in sections) {
       sectionList.add({"sid": section.sectionId, "rnp": section.resNeedPlay});
-      if (section.questionGroup != null) {
+      if (["listening", "read_article", "choose"].contains(section.type)) {
         for (final group in section.questionGroup!) {
           final answer = {
-            "q": group.questions.first.id.toIntOrNull(), // qid
+            "q": group.id, // qid
             "d": group.questions.map((e) => <dynamic>[""]).toList(),
             "o": group.questions.map((e) => [e.optionsOrder]).toList(),
-            "role": "",
             "rnp": group.resNeedPlay,
-            "rl": group.rl,
           };
+          addPlatformSpecificFields(answer, group.rl);
           answers.add(answer);
         }
-      } else if (section.choose10From15Question != null) {
-        final q = section.choose10From15Question!;
+      } else if (section.type == "article_fill_blank") {
+        final q = section.question!;
         final inputs = q.content.where((e) => e.type == "input").toList();
         final answer = {
-          "q": inputs.first.id.toIntOrNull(), // qid
+          "q": inputs.first.qid, // qid
           "d": inputs.map((e) => <dynamic>[""]).toList(),
           "o": inputs.map((e) => [[]]).toList(),
-          "role": "",
           "rnp": q.resNeedPlay,
-          "rl": q.rl,
         };
+        addPlatformSpecificFields(answer, q.rl);
         answers.add(answer);
-      } else if (section.writeQuestion != null) {
+      } else if (section.type == "write") {
         final q = section.writeQuestion!;
         final answer = {
           "q": q.id.toIntOrNull(), // qid
@@ -234,10 +243,9 @@ class Itest extends BaseClient {
           "o": [
             [[]],
           ],
-          "role": "",
           "rnp": q.resNeedPlay,
-          "rl": q.rl,
         };
+        addPlatformSpecificFields(answer, q.rl);
         answers.add(answer);
       }
     }
@@ -245,13 +253,12 @@ class Itest extends BaseClient {
     final watch = Stopwatch();
     watch.start();
 
-    // 定义内部辅助函数
     Future<void> sleepRandomSecond(
       int i,
-      ItestConfirmExamData confirmExamData,
+      ItestConfirmExamData? confirmExamData,
       int sleepSeconds,
     ) async {
-      await log?.call(
+      await logFunction?.call(
         confirmExamData: confirmExamData,
         action: ExamLoggerAction.nextQuestionClick,
       );
@@ -262,7 +269,7 @@ class Itest extends BaseClient {
       final usageTime = watch.elapsed.inSeconds;
 
       final data = {"al": answers, "sl": sectionList, "ut": usageTime};
-      await log?.call(
+      await logFunction?.call(
         confirmExamData: confirmExamData,
         action: ExamLoggerAction.ansSnapSubmit,
         answers: data,
@@ -276,28 +283,27 @@ class Itest extends BaseClient {
     });
 
     for (final section in sections) {
-      if (section.questionGroup != null) {
+      if (["listening", "read_article", "choose"].contains(section.type)) {
         for (final (i, group) in section.questionGroup!.indexed) {
-          final qid = group.questions.first.id.toIntOrNull();
+          final qid = group.id;
 
           ItestExamQuestionsQuestionGroupItem newGroup = group;
 
-          if (group.audioUrls != null) {
-            final audioToTextResult = await Future.wait(
-              group.audioUrls!.map((url) async {
-                return await audioToText(url);
-              }).toList(),
-            );
+          if (group.audios != null) {
+            final audioToTextResult = <ItestExamQuestionsAudio>[];
+            for (final audio in group.audios!) {
+              audioToTextResult.add(await audioToText(audio));
+            }
 
             newGroup = group.copyWith(
-              audioToText: audioToTextResult,
+              audios: audioToTextResult,
               questions:
                   group.questions.indexed.map((e) {
-                    String? audioToText;
+                    ItestExamQuestionsAudio? audio;
                     if (audioToTextResult.length > 1) {
-                      audioToText = audioToTextResult[e.$1 + 1];
+                      audio = audioToTextResult[e.$1 + 1];
                     }
-                    return e.$2.copyWith(audioToText: audioToText);
+                    return e.$2.copyWith(audios: audio);
                   }).toList(),
             );
           }
@@ -310,8 +316,8 @@ class Itest extends BaseClient {
           List<int>? audioSleep;
           try {
             audioSleep =
-                newGroup.audioToText
-                    ?.map((e) => jsonDecode(e)['seconds'] as int? ?? 30)
+                newGroup.audios
+                    ?.map((e) => e.seconds ?? 30)
                     .toList();
           } catch (e) {
             logger?.call(e);
@@ -344,22 +350,49 @@ class Itest extends BaseClient {
             );
           }
         }
-      } else if (section.choose10From15Question != null) {
-        final q = section.choose10From15Question!;
+      } else if (section.type == "article_fill_blank") {
+        var q = section.question!;
+
+        if (q.audios != null){
+          final audios = <ItestExamQuestionsAudio>[];
+          for (final audio in q.audios!) {
+            audios.add(await audioToText(audio));
+          }
+          q = q.copyWith(audios: audios);
+        }
+
+        List<int>? audioSleep;
+        try {
+          audioSleep =
+              q.audios
+                  ?.map((e) => e.seconds ?? 30)
+                  .toList();
+        } catch (e) {
+          logger?.call(e);
+        }
+
         final indexList =
             q.content
                 .where((e) => e.type == "input")
-                .map((e) => e.index.toIntOrNull()!)
+                .map((e) => e.index!)
                 .toList();
         final qid =
-            q.content.firstWhere((e) => e.type == "input").id.toIntOrNull();
-        final d = await getChoose10From15Answer(indexList, q);
+            q.content.firstWhere((e) => e.type == "input").qid;
+        final d = await getArticleFillBlankAnswer(indexList, q);
 
         final qd = answers.firstWhere((a) => a['q'] == qid)['d'];
 
         final readTime = notSleep ? 0 : Random().nextIntInRange(30, 60);
-        logger?.call("正在阅读15选10文章：$readTime s");
+        logger?.call("正在阅读短文填空文章：$readTime s");
         await Future.delayed(Duration(seconds: readTime));
+
+        if(audioSleep != null) {
+          for (var readTime in audioSleep) {
+              readTime += Random().nextIntInRange(1, 3);
+              logger?.call("正在等待复合式听写音频时长：$readTime s");
+              await Future.delayed(Duration(seconds: notSleep ? 0 : readTime));
+          }
+        }
 
         for (final (i, index) in indexList.indexed) {
           progressCallback?.call(index);
@@ -367,7 +400,7 @@ class Itest extends BaseClient {
           final sleepTime = notSleep ? 0 : Random().nextIntInRange(10, 20);
           await sleepRandomSecond(index, confirmExamData, sleepTime);
         }
-      } else if (section.writeQuestion != null) {
+      } else if (section.type == "write") {
         final q = section.writeQuestion!;
         final index = q.index.toIntOrNull()!;
         progressCallback?.call(index);
@@ -402,7 +435,7 @@ class Itest extends BaseClient {
 
     final usageTime = watch.elapsed.inSeconds;
     final data = {"al": answers, "sl": sectionList, "ut": usageTime};
-    await log?.call(
+    await logFunction?.call(
       confirmExamData: confirmExamData,
       action: ExamLoggerAction.ansSnapSubmit,
       answers: data,
@@ -412,7 +445,7 @@ class Itest extends BaseClient {
   }
 
   /// uik: ItestExamQuestionsWrapData.uIK
-  Future<ItestExamSubmitResponse> submit({
+  Future<ItestExamSubmitResponse> submitFinal({
     required Map<String, dynamic> answers,
     required ItestConfirmExamData confirmExamData,
     required String uik,
@@ -423,7 +456,7 @@ class Itest extends BaseClient {
         action: ExamLoggerAction.ansSnapSubmit,
         answers: answers,
       );
-      final resp1 = await _submit(
+      final resp1 = await submit(
         answers: answers,
         confirmExamData: confirmExamData,
         uik: uik,
@@ -432,7 +465,7 @@ class Itest extends BaseClient {
     } catch (e) {
       print(e);
     }
-    final resp2 = await _submit(
+    final resp2 = await submit(
       answers: answers,
       confirmExamData: confirmExamData,
       uik: uik,
@@ -445,10 +478,10 @@ class Itest extends BaseClient {
     return resp2;
   }
 
-  Future<ItestExamSubmitResponse> _submit({
+  Future<ItestExamSubmitResponse> submit({
     required Map<String, dynamic> answers,
-    required ItestConfirmExamData confirmExamData,
-    required String uik,
+    required ItestConfirmExamData? confirmExamData,
+    required String? uik,
     required String action,
   }) async {
     final url = "itest-api/itest/s/answer/submit";
@@ -459,7 +492,7 @@ class Itest extends BaseClient {
     final form = {
       "ansData": jsonEncode(answers),
       "act": action,
-      "sppid": confirmExamData.sppid,
+      "sppid": confirmExamData!.sppid,
       "uik": uik,
       "clearUik": clearUik,
       "dataType": confirmExamData.dataType,
@@ -484,7 +517,7 @@ class Itest extends BaseClient {
 
   /// action: pre_ques_click, next_ques_click, exam_end, ans_snap_submit, use ExamLoggerAction
   Future<dynamic> log({
-    required ItestConfirmExamData confirmExamData,
+    required ItestConfirmExamData? confirmExamData,
     required String action,
     Map<String, dynamic>? answers,
   }) async {
@@ -508,7 +541,7 @@ class Itest extends BaseClient {
         throw Exception("Unknown action: $action");
       }
 
-      final dataType = confirmExamData.dataType.toIntOrNull();
+      final dataType = confirmExamData!.dataType.toIntOrNull();
       int examType = 1;
       // 5模考；6 班级测试  7 是测试 8是学校考试 9班级训练
       if (dataType == 6) {
@@ -613,18 +646,20 @@ class Itest extends BaseClient {
 }
 
 // 定义函数类型
-typedef ExamLogFunction = Future<dynamic> Function({
-  required ItestConfirmExamData confirmExamData,
-  required String action,
-  Map<String, dynamic>? answers,
-});
+typedef ExamLogFunction =
+    Future<dynamic> Function({
+      required ItestConfirmExamData? confirmExamData,
+      required String action,
+      Map<String, dynamic>? answers,
+    });
 
-typedef ExamSubmitFunction = Future<ItestExamSubmitResponse> Function({
-  required Map<String, dynamic> answers,
-  required ItestConfirmExamData confirmExamData,
-  required String uik,
-  required String action,
-});
+typedef ExamSubmitFunction =
+    Future<ItestExamSubmitResponse> Function({
+      required Map<String, dynamic> answers,
+      required ItestConfirmExamData? confirmExamData,
+      required String? uik,
+      required String action,
+    });
 
 class ExamLoggerAction {
   static const String preQuestionClick = 'pre_ques_click';

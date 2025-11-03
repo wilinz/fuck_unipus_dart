@@ -33,7 +33,7 @@ abstract class BaseClient {
     dio ??= Dio(BaseOptions(baseUrl: baseUrl));
     dio.options = dio.options.copyWith(
       headers: buildDefaultHeaders(userAgent),
-      validateStatus: (status) => status! < 500,
+      validateStatus: (status) => status != null,
       followRedirects: false,
     );
 

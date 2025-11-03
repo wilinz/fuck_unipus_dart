@@ -161,7 +161,7 @@ class Unipus extends BaseClient {
     final response = await dio.post(
       'https://ucontent.unipus.cn/course/api/v3/submit/$tutorialId/$leaf/',
       data: answer,
-      options: Options(responseType: ResponseType.plain)
+      options: Options(responseType: ResponseType.plain),
     );
 
     return jsonDecode(response.data);
@@ -183,7 +183,7 @@ class Unipus extends BaseClient {
   /// - [plf]: plf参数 (默认: 0)，平台类型标识：判断是否为UTalk平台环境，"&plf=" + (t.env.IS_UTALK ? 1 : 0)
   /// - [sf]: sf参数 (默认: 1)，开始时间校验标识：检查课程是否已到开放时间，"&sf=" + n.checkStartTime()
   /// - [sign]: 签名
-  Future<String> enterUnitTest({
+  Future<(Response, String)> enterUnitTest({
     required String exerciseId,
     required String tutorialId,
     required String leaf,
@@ -208,7 +208,8 @@ class Unipus extends BaseClient {
     final callbackUrl =
         'http://ucontent.unipus.cn/course/api/utscore/$tutorialId/$leaf/default/';
 
-    String sign = md5.convert(utf8.encode("$openId#$exerciseId#3#16fltrp!")).toString();
+    String sign =
+        md5.convert(utf8.encode("$openId#$exerciseId#3#16fltrp!")).toString();
 
     // 构建查询参数
     final queryParameters = <String, dynamic>{
@@ -225,6 +226,7 @@ class Unipus extends BaseClient {
       'sf': sf,
       'sign': sign,
       'exerciseType': exerciseType,
+      'alertFlag': 0, // 禁止弹窗确认是否从客户端切换过来
     };
 
     try {
@@ -244,7 +246,7 @@ class Unipus extends BaseClient {
       final match = sppidRegex.firstMatch(html);
 
       if (match != null && match.groupCount >= 1) {
-        return match.group(1)!;
+        return (response, match.group(1)!);
       }
 
       throw Exception('Failed to extract sppid from response');
@@ -269,6 +271,7 @@ class Unipus extends BaseClient {
         data: {'dataid': dataId},
         options: Options(
           contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+          responseType: ResponseType.plain
         ),
       );
 
@@ -290,20 +293,34 @@ class Unipus extends BaseClient {
   /// - [ansData]: 答案数据，包含答案列表(al)、section列表(sl)和使用时间(ut)
   /// - [sppid]: 从 enterUnitTest 或 loadUT 返回的 sppid
   /// - [exerciseId]: 练习ID
-  /// - [act]: 提交动作类型，'cache' 表示缓存，'save' 表示保存 (默认: 'cache')
+  /// - [action]: 提交动作类型，'cache' 表示缓存，'save' 表示保存 (默认: 'cache')
   /// - [plf]: 平台标识 (默认: 0)
   /// - [answerNumber]: 答案数量 (默认: 0)
   ///
   /// 返回:
   /// - 提交结果
-  Future<Map<String, dynamic>> submitUT({
+  Future<ItestExamSubmitResponse> submitUT({
     required Map<String, dynamic> ansData,
     required String sppid,
     required String exerciseId,
-    String act = 'cache',
+    required String action,
     int plf = 0,
-    int answerNumber = 0,
   }) async {
+    int answerNumber = 0;
+    // final answerList = (ansData['al'] as List).map((e)=>e as Map<String, dynamic>).toList();
+    final List<Map<String, dynamic>> answerList = ansData['al'];
+
+    for (final item in answerList) {
+      final dItem = item['d'] as List<List>;
+      for (final d in dItem) {
+        if (d.isNotEmpty && d.any((option) => option != "")) {
+          answerNumber++;
+        }
+      }
+    }
+
+    parse("answerNumber: $answerNumber");
+
     try {
       // 获取当前时间
       final now = DateTime.now();
@@ -316,7 +333,7 @@ class Unipus extends BaseClient {
 
       final formData = {
         'ansData': jsonEncode(ansData),
-        'act': act,
+        'act': action,
         'sppid': sppid,
         'plf': plf,
         'exerciseId': exerciseId,
@@ -324,6 +341,8 @@ class Unipus extends BaseClient {
         'answerNumber': answerNumber,
         '__t': t,
       };
+
+      print(formData);
 
       final response = await dio.post(
         'https://uexercise.unipus.cn/itest/s/clsanswer/submitUT',
@@ -337,10 +356,53 @@ class Unipus extends BaseClient {
         ),
       );
 
-      return response.data as Map<String, dynamic>;
+      return ItestExamSubmitResponse.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to submit unit test: $e');
     }
+  }
+
+  /// 最终提交单元测试答案
+  ///
+  /// 此方法会先尝试缓存提交，然后进行正式保存提交
+  ///
+  /// 参数:
+  /// - [ansData]: 答案数据，包含答案列表(al)、section列表(sl)和使用时间(ut)
+  /// - [sppid]: 从 enterUnitTest 或 loadUT 返回的 sppid
+  /// - [exerciseId]: 练习ID
+  /// - [plf]: 平台标识 (默认: 0)
+  ///
+  /// 返回:
+  /// - 最终保存的提交结果
+  Future<ItestExamSubmitResponse> submitFinalUT({
+    required Map<String, dynamic> ansData,
+    required String sppid,
+    required String exerciseId,
+    int plf = 0,
+  }) async {
+    try {
+      // 先尝试缓存提交
+      await submitUT(
+        ansData: ansData,
+        sppid: sppid,
+        exerciseId: exerciseId,
+        action: 'cache',
+        plf: plf,
+      );
+    } catch (e) {
+      print(e);
+    }
+
+    // 正式保存提交
+    final resp = await submitUT(
+      ansData: ansData,
+      sppid: sppid,
+      exerciseId: exerciseId,
+      action: 'save',
+      plf: plf,
+    );
+
+    return resp;
   }
 
   static Map<String, dynamic> genAnswerBySummary(Map<String, dynamic> summary) {
@@ -451,7 +513,7 @@ class Unipus extends BaseClient {
     final response = await dio.post(
       'https://ucontent.unipus.cn/api/mobile/user_group/$tutorialId/$leaf/progress/',
       data: payload,
-      options: Options(responseType: ResponseType.plain)
+      options: Options(responseType: ResponseType.plain),
     );
     return response.data;
   }
@@ -563,13 +625,11 @@ class Unipus extends BaseClient {
     final cookies = await cookieJar.loadForRequest(wsUri);
     final cookieHeader = cookies.map((c) => '${c.name}=${c.value}').join('; ');
 
-
     final tracker = StudyDurationTracker(
       websocketUrl: wsUri.toString(),
       leaf: leaf,
       tutorialId: tutorialId,
       url: pageUrl,
-      client: client,
       userAgent: userAgent,
       cookie: cookieHeader,
       onMessage: onMessage,
@@ -595,7 +655,6 @@ class Unipus extends BaseClient {
         "https://ucontent.unipus.cn/_pc_default/pc.html#/$tutorialId/courseware$leafPath/p_1";
     return url;
   }
-
 }
 
 /// 学习时长追踪 WebSocket 客户端
@@ -633,9 +692,6 @@ class StudyDurationTracker {
   /// 当前正在学习的页面 URL
   /// 格式: https://ucontent.unipus.cn/_pc_default/pc.html?...#/course-v1:Unipus+nhce_3_rw_1_sz+2020_09/courseware/u1/u1g1/u1g2/__main
   final String url;
-
-  /// 客户端标识符 (默认: "U校园pc")
-  final String client;
 
   /// HTTP User-Agent 头
   final String? userAgent;
@@ -706,6 +762,8 @@ class StudyDurationTracker {
   /// 从 url 中提取的第二个标签，通常是单元组标识符 (例如: "u1g1")
   late final String _tag2;
 
+  String? _tag3;
+
   /// Socket.IO 消息 ID 计数器，每次发送消息时递增
   int _messageId = 0;
 
@@ -729,7 +787,6 @@ class StudyDurationTracker {
     required this.leaf,
     required this.tutorialId,
     required this.url,
-    this.client = "U校园pc",
     this.userAgent,
     this.cookie,
     this.onMessage,
@@ -748,36 +805,27 @@ class StudyDurationTracker {
     _uuid = wsUri.queryParameters['uuid'] ?? '';
     _token = wsUri.queryParameters['token'] ?? '';
 
-    // 从 url 中提取 tag1 和 tag2
-    // URL 格式: https://ucontent.unipus.cn/_pc_default/pc.html?...#/course-v1:Unipus+nhce_3_rw_1_sz+2020_09/courseware/u1/u1g1/u1g2/__main
-    // 提取 courseware 后面的路径部分: /u1/u1g1/u1g2/__main
-    // tag1 = u1, tag2 = u1g1
-    final hashIndex = url.indexOf('#');
-    if (hashIndex != -1) {
-      final fragment = url.substring(hashIndex + 1);
-      // fragment 格式: /course-v1:Unipus+nhce_3_rw_1_sz+2020_09/courseware/u1/u1g1/u1g2/__main
-      final coursewareIndex = fragment.indexOf('/courseware/');
-      if (coursewareIndex != -1) {
-        final pathAfterCourseware = fragment.substring(
-          coursewareIndex + '/courseware/'.length,
-        );
-        // pathAfterCourseware: u1/u1g1/u1g2/__main
-        final pathParts = pathAfterCourseware.split('/');
-        if (pathParts.length >= 2) {
-          _tag1 = pathParts[0]; // u1
-          _tag2 = pathParts[1]; // u1g1
-        } else {
-          _tag1 = '-1';
-          _tag2 = '-1';
-        }
-      } else {
-        _tag1 = '-1';
-        _tag2 = '-1';
-      }
+    if (url.contains("uexercise.unipus.cn")) {
+      final uri = Uri.parse(url);
+      _tag1 = uri.queryParameters['exerciseId']!;
+      _tag2 = '-2';
+      _tag3 = uri.queryParameters['exerciseType']!;
     } else {
-      _tag1 = '-1';
-      _tag2 = '-1';
+      // 从 url 中提取 tag1 和 tag2
+      // URL 格式: https://ucontent.unipus.cn/_pc_default/pc.html?...#/course-v1:Unipus+nhce_3_rw_1_sz+2020_09/courseware/u1/u1g1/u1g2/__main
+      // 提取 courseware 后面的路径部分: /u1/u1g1/u1g2/__main
+      // tag1 = u1, tag2 = u1g1
+      final tags = _extractTagsFromUrl(url);
+      _tag1 = tags.$1;
+      _tag2 = tags.$2;
     }
+  }
+
+  String getClientFromUrl(String url) {
+    if (url.contains("uexercise.unipus.cn")) {
+      return "作业系统pc";
+    }
+    return "U校园pc";
   }
 
   /// 内部日志方法
@@ -858,7 +906,9 @@ class StudyDurationTracker {
       _pingInterval = data['pingInterval'] as int? ?? 25000;
       _pingTimeout = data['pingTimeout'] as int? ?? 20000;
 
-      _log('收到 Open 消息: sid=$_sessionId, pingInterval=$_pingInterval, pingTimeout=$_pingTimeout');
+      _log(
+        '收到 Open 消息: sid=$_sessionId, pingInterval=$_pingInterval, pingTimeout=$_pingTimeout',
+      );
 
       // 启动 ping 定时器
       _startPingTimer();
@@ -879,7 +929,9 @@ class StudyDurationTracker {
     } else if (messageStr.startsWith('43/userActivities,')) {
       // 服务器发送: 响应 start 事件
       // 样例: 43/userActivities,0[{"code":0,"msg":"ok","concurrent":1}]
-      final match = RegExp(r'43/userActivities,\d+([\s\S]+)').firstMatch(messageStr);
+      final match = RegExp(
+        r'43/userActivities,\d+([\s\S]+)',
+      ).firstMatch(messageStr);
       if (match == null) {
         _log('解析 Start 事件响应失败: 消息格式不匹配');
         return;
@@ -984,12 +1036,13 @@ class StudyDurationTracker {
 
     // 构建 start 事件数据
     final eventData = {
-      'client': client,
+      'client': getClientFromUrl(currentUrl),
       'module': currentModule,
       'moduleGroup': tutorialId,
       'url': currentUrl,
       'tag1': currentTag1,
       'tag2': currentTag2,
+      if (_tag3 != null) 'tag3': _tag3,
       'timer': DateTime.now().millisecondsSinceEpoch,
     };
 
@@ -1001,7 +1054,9 @@ class StudyDurationTracker {
         '42/userActivities,$_messageId["start",${jsonEncode(eventData)}]';
     _messageId++;
 
-    _log('发送 Start 事件: module=$currentModule, tag1=$currentTag1, tag2=$currentTag2, msg=$eventMsg');
+    _log(
+      '发送 Start 事件: module=$currentModule, tag1=$currentTag1, tag2=$currentTag2, msg=$eventMsg',
+    );
     _channel?.sink.add(eventMsg);
   }
 
@@ -1064,7 +1119,9 @@ class StudyDurationTracker {
     // 第1次: 1000ms, 第2次: 2000ms, 第3次: 4000ms, 第4次: 8000ms, 第5次: 16000ms
     final delay = baseReconnectDelay * (1 << (_reconnectAttempt - 1));
 
-    _log('准备重连 (尝试 $_reconnectAttempt/${maxReconnectAttempts > 0 ? maxReconnectAttempts : "∞"})，延迟 ${delay}ms');
+    _log(
+      '准备重连 (尝试 $_reconnectAttempt/${maxReconnectAttempts > 0 ? maxReconnectAttempts : "∞"})，延迟 ${delay}ms',
+    );
 
     // 通知开始重连
     onReconnecting?.call(_reconnectAttempt);

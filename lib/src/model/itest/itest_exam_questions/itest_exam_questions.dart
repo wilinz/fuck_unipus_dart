@@ -17,6 +17,37 @@ List<Map<String, dynamic>> itestExamQuestionsListToJson(
 @CopyWith()
 @generateProps
 @JsonSerializable(explicitToJson: true)
+class ItestExamQuestionsAudio with EquatableMixin {
+  ItestExamQuestionsAudio({
+    required this.url,
+    this.seconds,
+    this.audioToText,
+  });
+
+  @JsonKey(name: "url", defaultValue: "")
+  final String url;
+
+  @JsonKey(name: "seconds", defaultValue: -1)
+  final int? seconds;
+
+  @JsonKey(name: "audio_to_text", defaultValue: "")
+  final String? audioToText;
+
+  factory ItestExamQuestionsAudio.fromJson(Map<String, dynamic> json) =>
+      _$ItestExamQuestionsAudioFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ItestExamQuestionsAudioToJson(this);
+
+  factory ItestExamQuestionsAudio.emptyInstance() =>
+      ItestExamQuestionsAudio(url: "");
+
+  @override
+  List<Object?> get props => _$props;
+}
+
+@CopyWith()
+@generateProps
+@JsonSerializable(explicitToJson: true)
 class ItestExamQuestionsOptionsItem with EquatableMixin {
   ItestExamQuestionsOptionsItem({
     required this.value,
@@ -58,17 +89,16 @@ class ItestExamQuestionsOptionsItem with EquatableMixin {
 @JsonSerializable(explicitToJson: true)
 class ItestExamQuestionsQuestionsItem with EquatableMixin {
   ItestExamQuestionsQuestionsItem({
-    required this.id,
+    required this.qid,
     required this.index,
     required this.content,
-    this.audioUrl,
-    this.audioToText,
+    this.audios,
     required this.options,
     this.optionsOrder,
   });
 
-  @JsonKey(name: "id", defaultValue: "")
-  final String id;
+  @JsonKey(name: "qid", defaultValue: 0)
+  final int qid;
 
   @JsonKey(name: "index", defaultValue: 0)
   final int index;
@@ -76,11 +106,8 @@ class ItestExamQuestionsQuestionsItem with EquatableMixin {
   @JsonKey(name: "content", defaultValue: "")
   final String content;
 
-  @JsonKey(name: "audio_url")
-  final String? audioUrl;
-
-  @JsonKey(name: "audio_to_text")
-  final String? audioToText;
+  @JsonKey(name: "audios")
+  final ItestExamQuestionsAudio? audios;
 
   @JsonKey(name: "options", defaultValue: [])
   final List<ItestExamQuestionsOptionsItem> options;
@@ -96,7 +123,7 @@ class ItestExamQuestionsQuestionsItem with EquatableMixin {
 
   factory ItestExamQuestionsQuestionsItem.emptyInstance() =>
       ItestExamQuestionsQuestionsItem(
-        id: "",
+        qid: 0,
         index: 0,
         content: "",
         options: [],
@@ -111,13 +138,16 @@ class ItestExamQuestionsQuestionsItem with EquatableMixin {
 @JsonSerializable(explicitToJson: true)
 class ItestExamQuestionsQuestionGroupItem with EquatableMixin {
   ItestExamQuestionsQuestionGroupItem({
+    required this.id,
     this.article,
-    this.audioUrls,
-    this.audioToText,
+    this.audios,
     required this.questions,
     required this.resNeedPlay,
-    required this.rl,
+    this.rl,
   });
+
+  @JsonKey(name: "id", defaultValue: 0)
+  final int id;
 
   @JsonKey(name: "article")
   final String? article;
@@ -125,14 +155,11 @@ class ItestExamQuestionsQuestionGroupItem with EquatableMixin {
   @JsonKey(name: "res_need_play", defaultValue: "0")
   final String resNeedPlay;
 
-  @JsonKey(name: "rl", defaultValue: "-1")
-  final String rl;
+  @JsonKey(name: "rl")
+  final String? rl;
 
-  @JsonKey(name: "audio_urls", defaultValue: [])
-  final List<String>? audioUrls;
-
-  @JsonKey(name: "audio_to_text", defaultValue: [])
-  final List<String>? audioToText;
+  @JsonKey(name: "audios", defaultValue: [])
+  final List<ItestExamQuestionsAudio>? audios;
 
   @JsonKey(name: "questions", defaultValue: [])
   final List<ItestExamQuestionsQuestionsItem> questions;
@@ -146,9 +173,9 @@ class ItestExamQuestionsQuestionGroupItem with EquatableMixin {
 
   factory ItestExamQuestionsQuestionGroupItem.emptyInstance() =>
       ItestExamQuestionsQuestionGroupItem(
+        id: 0,
         questions: [],
         resNeedPlay: "0",
-        rl: "-1",
       );
 
   @override
@@ -162,7 +189,7 @@ class ItestExamQuestionsContentItem with EquatableMixin {
   ItestExamQuestionsContentItem({
     required this.type,
     this.content,
-    this.id,
+    this.qid,
     this.subIndex,
     this.subSubIndex,
     this.index,
@@ -176,17 +203,17 @@ class ItestExamQuestionsContentItem with EquatableMixin {
   @JsonKey(name: "content")
   final String? content;
 
-  @JsonKey(name: "id")
-  final String? id;
+  @JsonKey(name: "qid")
+  final int? qid;
 
   @JsonKey(name: "sub_index")
-  final String? subIndex;
+  final int? subIndex;
 
   @JsonKey(name: "sub_sub_index")
-  final String? subSubIndex;
+  final int? subSubIndex;
 
   @JsonKey(name: "index")
-  final String? index;
+  final int? index;
 
   @JsonKey(name: "placeholder")
   final String? placeholder;
@@ -209,8 +236,8 @@ class ItestExamQuestionsContentItem with EquatableMixin {
 @CopyWith()
 @generateProps
 @JsonSerializable(explicitToJson: true)
-class ItestExamQuestionsChoose10From15Option with EquatableMixin {
-  ItestExamQuestionsChoose10From15Option({
+class ItestExamQuestionsQuestionOption with EquatableMixin {
+  ItestExamQuestionsQuestionOption({
     required this.option,
     required this.word,
   });
@@ -221,56 +248,13 @@ class ItestExamQuestionsChoose10From15Option with EquatableMixin {
   @JsonKey(name: "word", defaultValue: "")
   final String word;
 
-  factory ItestExamQuestionsChoose10From15Option.fromJson(Map<String, dynamic> json) =>
-      _$ItestExamQuestionsChoose10From15OptionFromJson(json);
+  factory ItestExamQuestionsQuestionOption.fromJson(Map<String, dynamic> json) =>
+      _$ItestExamQuestionsQuestionOptionFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItestExamQuestionsChoose10From15OptionToJson(this);
+  Map<String, dynamic> toJson() => _$ItestExamQuestionsQuestionOptionToJson(this);
 
-  factory ItestExamQuestionsChoose10From15Option.emptyInstance() =>
-      ItestExamQuestionsChoose10From15Option(option: "", word: "");
-
-  @override
-  List<Object?> get props => _$props;
-
-}
-
-@CopyWith()
-@generateProps
-@JsonSerializable(explicitToJson: true)
-class ItestExamQuestionsChoose10From15Question with EquatableMixin {
-  ItestExamQuestionsChoose10From15Question({
-    required this.options,
-    required this.content,
-    required this.resNeedPlay,
-    required this.rl,
-  });
-
-  @JsonKey(name: "res_need_play", defaultValue: "0")
-  final String resNeedPlay;
-
-  @JsonKey(name: "rl", defaultValue: "-1")
-  final String rl;
-
-  @JsonKey(name: "options", defaultValue: [])
-  final List<ItestExamQuestionsChoose10From15Option> options;
-
-  @JsonKey(name: "content", defaultValue: [])
-  final List<ItestExamQuestionsContentItem> content;
-
-  factory ItestExamQuestionsChoose10From15Question.fromJson(
-    Map<String, dynamic> json,
-  ) => _$ItestExamQuestionsChoose10From15QuestionFromJson(json);
-
-  Map<String, dynamic> toJson() =>
-      _$ItestExamQuestionsChoose10From15QuestionToJson(this);
-
-  factory ItestExamQuestionsChoose10From15Question.emptyInstance() =>
-      ItestExamQuestionsChoose10From15Question(
-        options: [],
-        content: [],
-        resNeedPlay: "0",
-        rl: "-1",
-      );
+  factory ItestExamQuestionsQuestionOption.emptyInstance() =>
+      ItestExamQuestionsQuestionOption(option: "", word: "");
 
   @override
   List<Object?> get props => _$props;
@@ -335,18 +319,70 @@ class ItestExamQuestionsWriteQuestion with EquatableMixin {
 @CopyWith()
 @generateProps
 @JsonSerializable(explicitToJson: true)
+class ItestExamQuestionsQuestion with EquatableMixin {
+  ItestExamQuestionsQuestion({
+    required this.id,
+    this.type,
+    this.audios,
+    this.options,
+    required this.content,
+    this.resNeedPlay,
+    this.rl,
+  });
+
+  @JsonKey(name: "id", defaultValue: 0)
+  final int id;
+
+  @JsonKey(name: "type")
+  final String? type;
+
+  @JsonKey(name: "audios", defaultValue: [])
+  final List<ItestExamQuestionsAudio>? audios;
+
+  @JsonKey(name: "options", defaultValue: [])
+  final List<ItestExamQuestionsQuestionOption>? options;
+
+  @JsonKey(name: "content", defaultValue: [])
+  final List<ItestExamQuestionsContentItem> content;
+
+  @JsonKey(name: "res_need_play")
+  final String? resNeedPlay;
+
+  @JsonKey(name: "rl")
+  final String? rl;
+
+  factory ItestExamQuestionsQuestion.fromJson(Map<String, dynamic> json) =>
+      _$ItestExamQuestionsQuestionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ItestExamQuestionsQuestionToJson(this);
+
+  factory ItestExamQuestionsQuestion.emptyInstance() =>
+      ItestExamQuestionsQuestion(
+        id: 0,
+        content: [],
+      );
+
+  @override
+  List<Object?> get props => _$props;
+}
+
+@CopyWith()
+@generateProps
+@JsonSerializable(explicitToJson: true)
 class ItestExamQuestions with EquatableMixin {
   ItestExamQuestions({
     this.pageNumber,
     this.sectionKey,
     this.sectionId,
     required this.title,
+    this.subTitle,
     this.sectionType,
     required this.type,
     required this.resNeedPlay,
+    this.direction,
     this.questionGroup,
-    this.choose10From15Question,
     this.writeQuestion,
+    this.question,
   });
 
   @JsonKey(name: "page_number")
@@ -361,6 +397,9 @@ class ItestExamQuestions with EquatableMixin {
   @JsonKey(name: "title", defaultValue: "")
   final String title;
 
+  @JsonKey(name: "sub_title")
+  final String? subTitle;
+
   @JsonKey(name: "section_type")
   final String? sectionType;
 
@@ -370,14 +409,17 @@ class ItestExamQuestions with EquatableMixin {
   @JsonKey(name: "type", defaultValue: "")
   final String type;
 
+  @JsonKey(name: "direction")
+  final String? direction;
+
   @JsonKey(name: "question_group")
   final List<ItestExamQuestionsQuestionGroupItem>? questionGroup;
 
-  @JsonKey(name: "choose_10_from_15_question")
-  final ItestExamQuestionsChoose10From15Question? choose10From15Question;
-
   @JsonKey(name: "write_question")
   final ItestExamQuestionsWriteQuestion? writeQuestion;
+
+  @JsonKey(name: "question")
+  final ItestExamQuestionsQuestion? question;
 
   factory ItestExamQuestions.fromJson(Map<String, dynamic> json) =>
       _$ItestExamQuestionsFromJson(json);

@@ -124,7 +124,9 @@ Future<void> itestMain({
   }
 
   final examId = inputTrim("请输入 ksdId: ");
-  final judgeEntry = await itest.judgeEntry(examId: examId);
+  final exam = examList.rs.data.firstWhere((e)=>e.ksdId.toString() == examId);
+
+  final judgeEntry = await itest.judgeEntry(examId: examId, examTypeEnum: exam.examTypeEnum);
   printLogs(JsonEncoder.withIndent("  ").convert(judgeEntry));
   inputTrim("回车进入考试？");
   final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);

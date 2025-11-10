@@ -24,6 +24,8 @@ abstract class BaseClient {
 
   String get service;
 
+  bool get loginUrlWithSchoolId;
+
   Future<void> initDio({
     required CookieJar cookieJar,
     bool useProxy = false,
@@ -139,7 +141,10 @@ abstract class BaseClient {
     final response = await dio.get(
       service,
       // 修复登录问题
-      queryParameters: {'ticket': ticket},
+      queryParameters: {
+        if (loginUrlWithSchoolId) 'school_id': '',
+        'ticket': ticket,
+      },
     );
     return response.statusCode == 200;
   }

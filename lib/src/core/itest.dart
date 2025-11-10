@@ -644,6 +644,9 @@ class Itest extends BaseClient {
     final data = response.data;
     return data;
   }
+
+  @override
+  bool get loginUrlWithSchoolId => true;
 }
 
 // 定义函数类型

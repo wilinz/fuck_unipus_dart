@@ -655,6 +655,10 @@ class Unipus extends BaseClient {
         "https://ucontent.unipus.cn/_pc_default/pc.html#/$tutorialId/courseware$leafPath/p_1";
     return url;
   }
+
+  @override
+  bool get loginUrlWithSchoolId => false;
+
 }
 
 /// 学习时长追踪 WebSocket 客户端

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
@@ -54,7 +57,7 @@ abstract class BaseClient {
     if (!_kIsWeb) {
       dio.interceptors.addAll([
         CookieManager(cookieJar),
-        RefererInterceptor(),
+        RefererInterceptor(defaultReferer: baseUrl),
         RedirectInterceptor(() => dio!),
       ]);
     }

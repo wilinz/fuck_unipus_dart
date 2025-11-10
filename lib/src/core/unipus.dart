@@ -12,7 +12,7 @@ import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart';
 
 class Unipus extends BaseClient {
-  static const String unipusService = "https://u.unipus.cn/user/comm/login";
+  static const String unipusService = "https://u.unipus.cn/user/comm/login?school_id=";
   UnipusSessionInfo? sessionInfo;
   StudyDurationTracker? studyDurationTracker;
 

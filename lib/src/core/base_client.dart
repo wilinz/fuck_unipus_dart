@@ -138,7 +138,8 @@ abstract class BaseClient {
   Future<bool> loginWithTicket(String service, String ticket) async {
     final response = await dio.get(
       service,
-      queryParameters: {'school_id': '', 'ticket': ticket},
+      // 修复登录问题
+      queryParameters: {'ticket': ticket},
     );
     return response.statusCode == 200;
   }

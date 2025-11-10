@@ -3,59 +3,231 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:args/args.dart';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:example/config.dart';
 import 'package:example/utils/input.dart';
 import 'package:example/utils/random.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';
 
-void main() async {
-  // final chtml = File("/Users/wilinz/StudioProjects/fuck_itest/scratch/unipus/c_html1.html").readAsStringSync();
-  // final json = parseExamQuestionsMap(chtml);
-  // File("/Users/wilinz/StudioProjects/fuck_itest/scratch/unipus/c_html1.json5").writeAsStringSync(JsonEncoder.withIndent("  ").convert(json));
-  //
-  // final chtml1 = File("/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.html").readAsStringSync();
-  // final json1 = parseExamQuestionsMap(chtml1);
-  // File("/Users/wilinz/StudioProjects/fuck_itest/scratch/load_exam_chtml.json5").writeAsStringSync(JsonEncoder.withIndent("  ").convert(json1));
-  //
-  // return;
-  final cookieDir = "./cookies";
-  final username = inputTrim("请输入用户名：");
-  print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
+void main(List<String> arguments) async {
+  // 参数变量
+  bool showHelp = false;
+  bool interactive = false;
+  String configPath = './config.json5';
+  String initOutput = './config.json5';
 
-  // String? ua = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
+  // 创建解析器
+  final parser = ArgParser();
 
-  String openId;
-  final openIdStorageFile = File("./openid-$username.txt");
-  final openIdStorageFileExists = await openIdStorageFile.exists();
+  parser.addFlag(
+    'help',
+    abbr: 'h',
+    negatable: false,
+    callback: (v) => showHelp = v,
+    help: '显示帮助信息',
+  );
 
-  final openIdStorage =
-      openIdStorageFileExists
-          ? (await openIdStorageFile.readAsString()).trim()
-          : "";
-  if (openIdStorage.length == 32) {
-    openId = openIdStorage;
-  } else {
-    openId = generateRandomMd5();
-    if (!openIdStorageFileExists) openIdStorageFile.create(recursive: true);
-    await openIdStorageFile.writeAsString(openId);
+  parser.addFlag(
+    'interactive',
+    abbr: 'i',
+    negatable: false,
+    callback: (v) => interactive = v,
+    help: '强制使用交互式模式',
+  );
+
+  parser.addOption(
+    'config',
+    abbr: 'c',
+    defaultsTo: './config.json5',
+    callback: (v) => configPath = v!,
+    help: '指定配置文件路径',
+  );
+
+  // Init 命令的子解析器
+  final initParser = ArgParser();
+  initParser.addOption(
+    'output',
+    abbr: 'o',
+    defaultsTo: './config.json5',
+    callback: (v) => initOutput = v!,
+    help: '配置文件输出路径',
+  );
+
+  parser.addCommand('init', initParser);
+
+  try {
+    final results = parser.parse(arguments);
+
+    // 显示帮助信息
+    if (showHelp) {
+      printHelp([parser, initParser]);
+      return;
+    }
+
+    // 处理 init 命令
+    if (results.command?.name == 'init') {
+      try {
+        await AppConfig.generateTemplateFile(initOutput);
+        print('✅ 配置文件模板已生成: $initOutput');
+        print('请编辑配置文件后重新运行程序');
+        return;
+      } catch (e) {
+        print('❌ 生成配置文件失败: $e');
+        exit(1);
+      }
+    }
+
+    // 强制交互式模式
+    if (interactive) {
+      await runInteractive();
+      return;
+    }
+
+    // 尝试加载配置文件
+    AppConfig? config;
+
+    if (await File(configPath).exists()) {
+      try {
+        config = await AppConfig.loadFromFile(configPath);
+        print('✅ 已加载配置文件: $configPath');
+      } catch (e) {
+        print('⚠️ 加载配置文件失败: $e');
+        print('将使用交互式模式');
+      }
+    } else {
+      if (configPath != './config.json5') {
+        // 用户显式指定了配置文件但不存在
+        print('❌ 配置文件不存在: $configPath');
+        exit(1);
+      }
+      print('💡 默认配置文件不存在: $configPath');
+      print('使用交互式模式，或运行 "dart run example init" 生成配置文件模板');
+    }
+
+    // 根据配置或交互式输入运行
+    if (config != null) {
+      await runWithConfig(config);
+    } else {
+      await runInteractive();
+    }
+  } on FormatException catch (e) {
+    print('❌ 参数解析错误: ${e.message}');
+    print('');
+    printHelp([parser]);
+    exit(1);
   }
+}
 
-  String? ua;
+void printHelp(List<ArgParser> parsers) {
+  print('fuck_unipus - iTest 和 Unipus 自动化工具\n');
+  print('使用方法: dart run example [选项] [命令]\n');
+  print(parsers.map((e) => e.usage).join("\n"));
+}
 
-  // itestMain(
-  //   cookieDir: cookieDir,
-  //   username: username,
-  //   loggerOpenId: openId,
-  //   userAgent: ua,
-  // );
+Future<void> runWithConfig(AppConfig config) async {
+  print('📝 运行平台: ${config.platform}');
+  print('👤 用户名: ${config.username}');
 
-  unipusMain(cookieDir: cookieDir, username: username);
+  final cookieDir = config.cookieDir;
+  final username = config.username;
+
+  if (config.platform == 'itest') {
+    // 处理 openId
+    String openId;
+    final configuredOpenId = config.itest?.loggerOpenId;
+    if (configuredOpenId != null && configuredOpenId.length == 32) {
+      openId = configuredOpenId;
+    } else {
+      final openIdStorageFile = File("./openid-$username.txt");
+      final openIdStorageFileExists = await openIdStorageFile.exists();
+
+      final openIdStorage =
+          openIdStorageFileExists
+              ? (await openIdStorageFile.readAsString()).trim()
+              : "";
+      if (openIdStorage.length == 32) {
+        openId = openIdStorage;
+      } else {
+        openId = generateRandomMd5();
+        if (!openIdStorageFileExists) openIdStorageFile.create(recursive: true);
+        await openIdStorageFile.writeAsString(openId);
+      }
+    }
+
+    await itestMain(
+      cookieDir: cookieDir,
+      username: username,
+      loggerOpenId: openId,
+      userAgent: config.userAgent,
+      password: config.password,
+      openAiConfig: config.openAi,
+      examId: config.itest?.examId,
+      autoSubmit: config.itest?.autoSubmit ?? false,
+    );
+  } else if (config.platform == 'unipus') {
+    await unipusMain(
+      cookieDir: cookieDir,
+      username: username,
+      password: config.password,
+      openAiConfig: config.openAi,
+      tutorialId: config.unipus?.tutorialId,
+    );
+  } else {
+    print('❌ 未知的运行平台: ${config.platform}');
+    print('支持的平台: itest, unipus');
+    exit(1);
+  }
+}
+
+Future<void> runInteractive() async {
+  final cookieDir = "./cookies";
+
+  // 选择平台
+  print("请选择运行平台：");
+  print("1. itest");
+  print("2. unipus");
+  final platformChoice = inputTrim("请输入选项 (1 或 2): ");
+  final platform = platformChoice == "2" ? "unipus" : "itest";
+
+  final username = inputTrim("请输入用户名：");
+
+  if (platform == "itest") {
+    print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
+
+    String openId;
+    final openIdStorageFile = File("./openid-$username.txt");
+    final openIdStorageFileExists = await openIdStorageFile.exists();
+
+    final openIdStorage =
+        openIdStorageFileExists
+            ? (await openIdStorageFile.readAsString()).trim()
+            : "";
+    if (openIdStorage.length == 32) {
+      openId = openIdStorage;
+    } else {
+      openId = generateRandomMd5();
+      if (!openIdStorageFileExists) openIdStorageFile.create(recursive: true);
+      await openIdStorageFile.writeAsString(openId);
+    }
+
+    String? ua;
+
+    await itestMain(
+      cookieDir: cookieDir,
+      username: username,
+      loggerOpenId: openId,
+      userAgent: ua,
+    );
+  } else {
+    await unipusMain(cookieDir: cookieDir, username: username);
+  }
 }
 
 Future<void> itestMain({
@@ -63,6 +235,10 @@ Future<void> itestMain({
   required String username,
   String? loggerOpenId,
   String? userAgent,
+  String? password,
+  OpenAiConfig? openAiConfig,
+  String? examId,
+  bool autoSubmit = false,
 }) async {
   final baseUrl = "https://itestcloud.unipus.cn/";
   // final baseUrl: "http://127.0.0.1:9001/"
@@ -95,10 +271,10 @@ Future<void> itestMain({
   );
   final isLogin = await itest.checkLoginAndSetupSession();
   if (!isLogin) {
-    final password = inputTrim("请输入密码：");
+    final pwd = password ?? inputTrim("请输入密码：");
     await itest.login(
       username: username,
-      password: password,
+      password: pwd,
       captchaHandler: (captchaResponse) async {
         throw "";
       },
@@ -122,15 +298,20 @@ Future<void> itestMain({
     printLogs("-" * 150);
   }
 
-  final examId = inputTrim("请输入 ksdId: ");
-  final exam = examList.rs.data.firstWhere((e)=>e.ksdId.toString() == examId);
+  final selectedExamId = examId ?? inputTrim("请输入 ksdId: ");
+  final exam = examList.rs.data.firstWhere(
+    (e) => e.ksdId.toString() == selectedExamId,
+  );
 
-  final judgeEntry = await itest.judgeEntry(examId: examId, examTypeEnum: exam.examTypeEnum);
+  final judgeEntry = await itest.judgeEntry(
+    examId: selectedExamId,
+    examTypeEnum: exam.examTypeEnum,
+  );
   printLogs(JsonEncoder.withIndent("  ").convert(judgeEntry));
-  inputTrim("回车进入考试？");
+  if (!autoSubmit) inputTrim("回车进入考试？");
   final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
   printLogs(confirmExam);
-  inputTrim("请确认考试信息，回车确认");
+  if (!autoSubmit) inputTrim("请确认考试信息，回车确认");
   final examInfo = await itest.examInfo(token: judgeEntry.data.token);
   printLogs("examInfo：$examInfo");
   final examPaperResourceInfo = await itest.examPaperResourceInfo(
@@ -157,18 +338,31 @@ Future<void> itestMain({
   await file.writeAsString(questionsJson);
   printLogs("题目json已经写入文件：${file.path}");
 
-  final key = inputTrim("请输入 openai api key: ");
-  var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
-  if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
+  OpenAiClient openai;
+  if (openAiConfig != null) {
+    printLogs("使用配置文件中的 OpenAI 配置");
+    final openaiDio = Dio();
+    openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
+    openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
+    openai = OpenAiClient(
+      apiKey: openAiConfig.apiKey,
+      baseUrl: openAiConfig.baseUrl,
+      dio: openaiDio,
+    );
+  } else {
+    final key = inputTrim("请输入 openai api key: ");
+    var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
+    if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
 
-  final openaiDio = Dio();
-  openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
-  openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
+    final openaiDio = Dio();
+    openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
+    openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
 
-  final openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: openaiDio);
+    openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: openaiDio);
+  }
   await testOpenai(openai);
 
-  inputTrim("回车开始自动答题");
+  if (!autoSubmit) inputTrim("回车开始自动答题");
   final answers = await Itest.buildAnswer(
     uik: questionsWarp.data.uIK.toString(),
     confirmExamData: confirmExam,
@@ -219,17 +413,27 @@ Future<void> itestMain({
   await file1.writeAsString(answersJson);
   printLogs("答案json已经写入文件：${file1.path}");
 
-  while (true) {
-    final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
-    if (ok == "ok") {
-      final submitResult = await itest.submitFinal(
-        answers: answers,
-        confirmExamData: confirmExam,
-        uik: questionsWarp.data.uIK.toString(),
-      );
-      printLogs("submitResult：$submitResult");
-    } else if (ok == "exit") {
-      break;
+  if (autoSubmit) {
+    printLogs("自动提交模式：正在提交答案...");
+    final submitResult = await itest.submitFinal(
+      answers: answers,
+      confirmExamData: confirmExam,
+      uik: questionsWarp.data.uIK.toString(),
+    );
+    printLogs("submitResult：$submitResult");
+  } else {
+    while (true) {
+      final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
+      if (ok == "ok") {
+        final submitResult = await itest.submitFinal(
+          answers: answers,
+          confirmExamData: confirmExam,
+          uik: questionsWarp.data.uIK.toString(),
+        );
+        printLogs("submitResult：$submitResult");
+      } else if (ok == "exit") {
+        break;
+      }
     }
   }
 }
@@ -513,6 +717,9 @@ Future<List<List<int>>> getChooseAnswer(
 Future<void> unipusMain({
   required String cookieDir,
   required String username,
+  String? password,
+  OpenAiConfig? openAiConfig,
+  String? tutorialId,
 }) async {
   final directory = join(cookieDir, username);
   if (!await Directory(directory).exists()) {
@@ -524,10 +731,10 @@ Future<void> unipusMain({
 
   final isLogin = await unipus.checkLoginAndSetupSession();
   if (!isLogin) {
-    final password = inputTrim("请输入密码：");
+    final pwd = password ?? inputTrim("请输入密码：");
     await unipus.login(
       username: username,
-      password: password,
+      password: pwd,
       captchaHandler: (captchaResponse) async {
         throw "";
       },
@@ -538,7 +745,7 @@ Future<void> unipusMain({
 
   final courses = await unipus.getCourses();
   printLogs("📚 课程信息如下：");
-  for (final class_ in courses) {
+  for (final class_ in courses.reversed) {
     printLogs("\n============================================================");
     printLogs("🔹 班级名称: ${class_.className}");
     printLogs("📆 时间范围: ${class_.dateRange}");
@@ -552,19 +759,19 @@ Future<void> unipusMain({
     printLogs("============================================================\n");
   }
 
-  final tutorialId = inputTrim("请输入 tutorial_id：");
+  final selectedTutorialId = tutorialId ?? inputTrim("请输入 tutorial_id：");
 
-  if (tutorialId.isEmpty) {
+  if (selectedTutorialId.isEmpty) {
     printLogs('Invalid tutorial_id');
     return;
   }
 
   final course = courses
       .expand((e) => e.courses)
-      .firstWhere((e) => e.tutorialId == tutorialId);
+      .firstWhere((e) => e.tutorialId == selectedTutorialId);
 
   // 获取课程进度
-  var courseProgress = await unipus.getCourseProgress(tutorialId);
+  var courseProgress = await unipus.getCourseProgress(selectedTutorialId);
 
   // 获取课程单元
   var courseProgressUnits =
@@ -573,14 +780,17 @@ Future<void> unipusMain({
   // 处理单元中的节点
   Map<String, dynamic> leafs = {};
   for (var unit in courseProgressUnits.keys) {
-    var unitProgress = await unipus.getCourseProgressLeaf(tutorialId, unit);
+    var unitProgress = await unipus.getCourseProgressLeaf(
+      selectedTutorialId,
+      unit,
+    );
     var leafsData = unitProgress['rt']['leafs'] as Map<String, dynamic>;
 
     leafs.addAll(leafsData);
   }
 
   // 获取课程详情
-  final (_, courseDetail) = await unipus.getCourseDetail(tutorialId);
+  final (_, courseDetail) = await unipus.getCourseDetail(selectedTutorialId);
   var units =
       List.from(
         courseDetail['units'],
@@ -588,16 +798,28 @@ Future<void> unipusMain({
 
   OpenAiClient? openai;
   if (jsonEncode(units).contains('exerciseId')) {
-    final key = inputTrim("请输入 openai api key: ");
-    var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
+    if (openAiConfig != null) {
+      printLogs("使用配置文件中的 OpenAI 配置");
+      final openaiDio = Dio();
+      openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
+      openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
+      openai = OpenAiClient(
+        apiKey: openAiConfig.apiKey,
+        baseUrl: openAiConfig.baseUrl,
+        dio: openaiDio,
+      );
+    } else {
+      final key = inputTrim("请输入 openai api key: ");
+      var baseurl = inputTrim("请输入 openai api base url，如果是官方可直接回车: ");
 
-    if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
+      if (baseurl.isEmpty) baseurl = OpenAiClient.defaultBaseUrl;
 
-    final openaiDio = Dio();
-    openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
-    openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
+      final openaiDio = Dio();
+      openaiDio.options = BaseOptions(validateStatus: (s) => s != null);
+      openaiDio.interceptors.add(RetryInterceptor(dio: openaiDio));
 
-    openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: openaiDio);
+      openai = OpenAiClient(apiKey: key, baseUrl: baseurl, dio: openaiDio);
+    }
     await testOpenai(openai);
   }
 
@@ -606,7 +828,7 @@ Future<void> unipusMain({
     units,
     [],
     unipus,
-    tutorialId,
+    selectedTutorialId,
     leafs,
     '',
     Directory('courses'),
@@ -707,6 +929,7 @@ Future<void> traversalCoursesInner(
 
     final String? summaryString = unit['summary'];
     final isUnitTest = summaryString?.contains('exerciseId') == true;
+    // 添加配置，允许是否根据pass进入学习
     if (!pass) {
       if (isUnitTest) {
         await processUnitTest(
@@ -768,26 +991,26 @@ Future<void> processUnitTest(
     final Map<String, dynamic> summary = jsonDecode(summaryString!);
     final String exerciseId = summary['exerciseId'];
     final (response, dataId) = await unipus.enterUnitTest(
-        exerciseId: exerciseId,
-        tutorialId: course.tutorialId!,
-        leaf: currentLeaf,
-      );
+      exerciseId: exerciseId,
+      tutorialId: course.tutorialId!,
+      leaf: currentLeaf,
+    );
 
     final pageUrl = response.rawUri.toString();
 
     print(pageUrl);
     if (unipus.studyDurationTracker == null) {
-        await unipus.connectStudyDurationTracker(
-          leaf: currentLeaf,
-          tutorialId: tutorialId,
-          pageUrl: pageUrl,
-        );
-      } else {
-        unipus.studyDurationTracker!.sendStart(
-          newLeaf: currentLeaf,
-          newUrl: pageUrl,
-        );
-      }
+      await unipus.connectStudyDurationTracker(
+        leaf: currentLeaf,
+        tutorialId: tutorialId,
+        pageUrl: pageUrl,
+      );
+    } else {
+      unipus.studyDurationTracker!.sendStart(
+        newLeaf: currentLeaf,
+        newUrl: pageUrl,
+      );
+    }
 
     final (questionsWarp, sections!) = await unipus.loadUT(dataId: dataId);
 
@@ -804,70 +1027,72 @@ Future<void> processUnitTest(
     printLogs("题目json已经写入文件：${file.path}");
 
     final answers = await Itest.buildAnswer(
-        uik: questionsWarp.data.uIK.toString(),
-        confirmExamData: null,
-        sections: sections,
-        getChooseAnswer: (
-          List<int> indexList,
-          ItestExamQuestionsQuestionGroupItem question,
-        ) async {
-          printLogs(
-            "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
-          );
-          return await getChooseAnswer(openai!, question);
-        },
-        getArticleFillBlankAnswer: (
-          List<int> indexList,
-          ItestExamQuestionsQuestion question,
-        ) async {
-          printLogs("正在获取答案...：$indexList");
-          return await getArticleFillBlankAnswer(openai!, question);
-        },
-        getWritingAnswer: (
-          int index,
-          ItestExamQuestionsWriteQuestion question,
-        ) async {
-          printLogs("正在获取答案...：$index, ${question.title}");
-          return await getWritingAnswer(openai!, question);
-        },
-        audioToText: (audio) async {
-          printLogs("正在识别音频...：$audio");
-          return audioToText(openai!, audio, unipus.dio);
-        },
-        writingProgressCallback: (i, total) {
-          printLogs("正在输入答案...：$i/$total");
-        },
-        submit: ({
-          required Map<String, dynamic> answers,
-          required ItestConfirmExamData? confirmExamData,
-          required String? uik,
-          required String action,
-        }) async {
-          return unipus.submitUT(
-            ansData: answers,
-            sppid: dataId,
-            exerciseId: exerciseId,
-            action: action,
-          );
-        },
-        itestPlatformType: ItestPlatformType.uexercise,
-        logFunction: null,
-        notSleep: true,
-      );
+      uik: questionsWarp.data.uIK.toString(),
+      confirmExamData: null,
+      sections: sections,
+      getChooseAnswer: (
+        List<int> indexList,
+        ItestExamQuestionsQuestionGroupItem question,
+      ) async {
+        printLogs(
+          "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
+        );
+        return await getChooseAnswer(openai!, question);
+      },
+      getArticleFillBlankAnswer: (
+        List<int> indexList,
+        ItestExamQuestionsQuestion question,
+      ) async {
+        printLogs("正在获取答案...：$indexList");
+        return await getArticleFillBlankAnswer(openai!, question);
+      },
+      getWritingAnswer: (
+        int index,
+        ItestExamQuestionsWriteQuestion question,
+      ) async {
+        printLogs("正在获取答案...：$index, ${question.title}");
+        return await getWritingAnswer(openai!, question);
+      },
+      audioToText: (audio) async {
+        printLogs("正在识别音频...：$audio");
+        return audioToText(openai!, audio, unipus.dio);
+      },
+      writingProgressCallback: (i, total) {
+        printLogs("正在输入答案...：$i/$total");
+      },
+      submit: ({
+        required Map<String, dynamic> answers,
+        required ItestConfirmExamData? confirmExamData,
+        required String? uik,
+        required String action,
+      }) async {
+        return unipus.submitUT(
+          ansData: answers,
+          sppid: dataId,
+          exerciseId: exerciseId,
+          action: action,
+        );
+      },
+      itestPlatformType: ItestPlatformType.uexercise,
+      logFunction: null,
+      notSleep: true,
+    );
 
-    final file1 = File("./questions-unittest/answer-$tutorialId-$leafPath.json");
+    final file1 = File(
+      "./questions-unittest/answer-$tutorialId-$leafPath.json",
+    );
     if (!(await file1.parent.exists())) {
-        await file1.parent.create(recursive: true);
-      }
+      await file1.parent.create(recursive: true);
+    }
     final answersJson = JsonEncoder.withIndent("  ").convert(answers);
     await file1.writeAsString(answersJson);
     printLogs("答案json已经写入文件：${file1.path}");
 
     final submitResult = await unipus.submitFinalUT(
-        ansData: answers,
-        sppid: dataId,
-        exerciseId: exerciseId,
-      );
+      ansData: answers,
+      sppid: dataId,
+      exerciseId: exerciseId,
+    );
     printLogs("submitResult：$submitResult");
   } catch (e) {
     print(e);

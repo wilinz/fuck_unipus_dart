@@ -85,7 +85,7 @@ Future<void> itestMain({
   if (!await Directory(directory).exists()) {
     await Directory(directory).create(recursive: true);
   }
-  final cookieJar = PersistCookieJar(storage: FileStorage());
+  final cookieJar = PersistCookieJar(storage: FileStorage(directory));
 
   final itest = await Itest.newInstance(
     cookieJar: cookieJar,
@@ -99,7 +99,6 @@ Future<void> itestMain({
     await itest.login(
       username: username,
       password: password,
-      service: Unipus.unipusService,
       captchaHandler: (captchaResponse) async {
         throw "";
       },
@@ -519,7 +518,7 @@ Future<void> unipusMain({
   if (!await Directory(directory).exists()) {
     await Directory(directory).create(recursive: true);
   }
-  final cookieJar = PersistCookieJar(storage: FileStorage());
+  final cookieJar = PersistCookieJar(storage: FileStorage(directory));
 
   final unipus = await Unipus.newInstance(cookieJar: cookieJar);
 
@@ -821,7 +820,7 @@ Future<void> processUnitTest(
           List<int> indexList,
           ItestExamQuestionsQuestion question,
         ) async {
-          printLogs("正在获取答案...：$indexList, 15 选 10");
+          printLogs("正在获取答案...：$indexList");
           return await getArticleFillBlankAnswer(openai!, question);
         },
         getWritingAnswer: (
@@ -910,7 +909,7 @@ Future<void> processCourseLeaf(
     }
 
     print("【$currentLeaf】正在学习");
-    await Future.delayed(Duration(seconds: Random().nextIntInRange(30, 60)));
+    await Future.delayed(Duration(seconds: Random().nextIntInRange(120, 150)));
 
     final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
     final summary = await unipus.getCourseSummary(tutorialId, currentLeaf);

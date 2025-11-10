@@ -930,7 +930,7 @@ Future<void> traversalCoursesInner(
     final String? summaryString = unit['summary'];
     final isUnitTest = summaryString?.contains('exerciseId') == true;
     // 添加配置，允许是否根据pass进入学习
-    if (!pass) {
+    if (required && !pass) {
       if (isUnitTest) {
         await processUnitTest(
           summaryString,
@@ -1075,7 +1075,7 @@ Future<void> processUnitTest(
       },
       itestPlatformType: ItestPlatformType.uexercise,
       logFunction: null,
-      notSleep: true,
+      notSleep: false,
     );
 
     final file1 = File(
@@ -1134,7 +1134,7 @@ Future<void> processCourseLeaf(
     }
 
     print("【$currentLeaf】正在学习");
-    await Future.delayed(Duration(seconds: Random().nextIntInRange(120, 150)));
+    await Future.delayed(Duration(seconds: Random().nextIntInRange(60, 90)));
 
     final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
     final summary = await unipus.getCourseSummary(tutorialId, currentLeaf);

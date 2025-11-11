@@ -1,7 +1,7 @@
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:html/parser.dart' as html;
 
-import '../utils/url.dart';
+import '../../utils/url.dart';
 
 List<UnipusClassBlock> parseCoursesToJson(String htmlContent) {
     var document = html.parse(htmlContent);

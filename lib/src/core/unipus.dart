@@ -10,6 +10,8 @@ import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:fuck_unipus/src/core/study_duration_tracker.dart';
 import 'package:html/parser.dart';
 
+import 'html_parser/unipus_class_block_parse.dart';
+
 class Unipus extends BaseClient {
   static const String unipusService = "https://u.unipus.cn/user/comm/login?school_id=";
   UnipusSessionInfo? sessionInfo;

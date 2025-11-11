@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-import '../core/decrypt.dart';
+import '../core/crypto/decrypt.dart';
 
 class UnipusDecryptInterceptor extends Interceptor {
 

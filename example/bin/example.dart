@@ -11,7 +11,6 @@ import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/config.dart';
 import 'package:example/utils/input.dart';
-import 'package:example/utils/random.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';

@@ -6,10 +6,10 @@ import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
-import 'package:fuck_unipus/src/core/encrypt.dart';
 
 import '../../fuck_unipus.dart';
 import '../http/referer_interceptor.dart';
+import 'crypto/encrypt.dart';
 
 const _kIsWeb =
     bool.hasEnvironment('dart.library.js_util')

@@ -4,25 +4,50 @@ import 'dart:convert';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:fuck_unipus/src/core/base_client.dart';
-import 'package:fuck_unipus/src/core/mobile_app_config.dart';
+import 'package:fuck_unipus/src/core/config/mobile_app_config.dart';
+import 'package:fuck_unipus/src/core/session/session_jar.dart';
 import 'package:fuck_unipus/src/model/unipus_mobile/mobile_sso_login_result/mobile_sso_login_result.dart';
 import 'package:fuck_unipus/src/model/unipus_mobile/mobile_login_result/mobile_login_result.dart';
 import 'package:fuck_unipus/src/model/unipus_mobile/mobile_course_class_list/mobile_course_class_list.dart';
+import 'package:fuck_unipus/src/model/unipus_mobile/mobile_session_info/mobile_session_info.dart';
 
 class UnipusMobile extends BaseClient {
   static const String unipusService = "https://ucamapi.unipus.cn";
 
-  UnipusMobileSessionInfo? sessionInfo;
+  UnipusMobileSessionInfo? _sessionInfo;
+  String? _currentUser;
 
   // Mobile app configuration
   late MobileAppConfig _appConfig;
 
+  // Session persistence
+  SessionJar? _sessionJar;
+
+  /// Get current session info
+  UnipusMobileSessionInfo? get sessionInfo => _sessionInfo;
+
+  /// Set session info and trigger auto-save
+  set sessionInfo(UnipusMobileSessionInfo? value) {
+    _sessionInfo = value;
+    _autoSaveSession();
+  }
+
+  /// Get current user identifier
+  String? get currentUser => _currentUser;
+
   static Future<UnipusMobile> newInstance({
     required CookieJar cookieJar,
     MobileAppConfig? appConfig,
+    SessionJar? sessionJar,
+    String? user,
   }) async {
     final mobile = UnipusMobile._();
-    await mobile._init(cookieJar: cookieJar, appConfig: appConfig);
+    await mobile._init(
+      cookieJar: cookieJar,
+      appConfig: appConfig,
+      sessionJar: sessionJar,
+      user: user,
+    );
     return mobile;
   }
 
@@ -31,8 +56,12 @@ class UnipusMobile extends BaseClient {
   Future<void> _init({
     required CookieJar cookieJar,
     MobileAppConfig? appConfig,
+    SessionJar? sessionJar,
+    String? user,
   }) async {
     _appConfig = appConfig ?? MobileAppConfig.defaultAndroid();
+    _sessionJar = sessionJar;
+    _currentUser = user;
 
     await super.initDio(cookieJar: cookieJar, userAgent: _appConfig.userAgent);
 
@@ -48,6 +77,18 @@ class UnipusMobile extends BaseClient {
     );
 
     dio.interceptors.add(mobileHeadersInterceptor);
+
+    // Try to restore session from storage if user is provided
+    if (_currentUser != null) {
+      await restoreSession();
+    }
+  }
+
+  /// Auto-save session when sessionInfo changes
+  void _autoSaveSession() {
+    if (_sessionInfo != null && _sessionJar != null && _currentUser != null) {
+      _sessionJar!.saveSession(_currentUser!, _sessionInfo!.toJson());
+    }
   }
 
   Map<String, String> _buildMobileHeaders() {
@@ -324,30 +365,47 @@ class UnipusMobile extends BaseClient {
       return false;
     }
   }
-}
 
-/// Mobile Session Information
-class UnipusMobileSessionInfo {
-  final String serviceTicket;
-  final String openidHash;
-  final MobileLoginResultUserInfo? userInfo;
+  /// Restore session from storage
+  ///
+  /// This method is automatically called during initialization if user is provided
+  /// Returns true if session was successfully restored
+  Future<bool> restoreSession() async {
+    if (_sessionJar == null || _currentUser == null) {
+      return false;
+    }
 
-  UnipusMobileSessionInfo({
-    required this.serviceTicket,
-    required this.openidHash,
-    required this.userInfo,
-  });
+    try {
+      final sessionJson = await _sessionJar!.loadSession(_currentUser!);
+      if (sessionJson != null) {
+        _sessionInfo = UnipusMobileSessionInfo.fromJson(sessionJson);
+        return true;
+      }
+    } catch (e) {
+      // Ignore restore errors
+    }
 
-  UnipusMobileSessionInfo copyWith({
-    String? serviceTicket,
-    String? openidHash,
-    MobileLoginResultUserInfo? userInfo,
-  }) {
-    return UnipusMobileSessionInfo(
-      serviceTicket: serviceTicket ?? this.serviceTicket,
-      openidHash: openidHash ?? this.openidHash,
-      userInfo: userInfo ?? this.userInfo,
-    );
+    return false;
   }
 
+  /// Clear session and remove from storage
+  Future<void> clearSession() async {
+    _sessionInfo = null;
+    if (_sessionJar != null && _currentUser != null) {
+      await _sessionJar!.deleteSession(_currentUser!);
+    }
+  }
+
+  /// Manually save current session
+  Future<void> saveSession() async {
+    _autoSaveSession();
+  }
+
+  /// Update the current user and restore session for the new user
+  ///
+  /// This is useful when switching between different user accounts
+  Future<bool> switchUser(String user) async {
+    _currentUser = user;
+    return await restoreSession();
+  }
 }

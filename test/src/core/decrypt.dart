@@ -1,4 +1,4 @@
-import 'package:fuck_unipus/src/core/decrypt.dart';
+import 'package:fuck_unipus/src/core/crypto/decrypt.dart';
 import 'package:test/test.dart';
 
 void main() {

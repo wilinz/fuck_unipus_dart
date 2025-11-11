@@ -23,6 +23,8 @@ dependencies:
   socks5_proxy:
     git:
       url: https://github.com/wilinz/socks_dart.git
+
+  pure_dart_extensions: ^3.0.1
   # path: ^1.8.0
 
 dev_dependencies:

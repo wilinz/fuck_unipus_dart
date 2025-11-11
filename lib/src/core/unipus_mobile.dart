@@ -22,10 +22,7 @@ class UnipusMobile extends BaseClient {
     MobileAppConfig? appConfig,
   }) async {
     final mobile = UnipusMobile._();
-    await mobile._init(
-      cookieJar: cookieJar,
-      appConfig: appConfig,
-    );
+    await mobile._init(cookieJar: cookieJar, appConfig: appConfig);
     return mobile;
   }
 
@@ -194,9 +191,7 @@ class UnipusMobile extends BaseClient {
     final response = await dio.post(
       'https://ucamapi.unipus.cn/api/account/unipus/login',
       data: jsonEncode({}),
-      options: Options(
-        headers: _buildMobileHeaders(),
-      ),
+      
     );
 
     final loginResult = MobileLoginResult.fromJson(response.data);
@@ -213,32 +208,25 @@ class UnipusMobile extends BaseClient {
     return loginResult;
   }
 
-  /// Complete login flow - SSO login followed by mobile login
-  ///
-  /// Combines ssoLogin and mobileLogin for convenience
-  Future<MobileLoginResult> loginMobile({
-    required String username,
-    required String password,
-    String? service,
-  }) async {
-    // Step 1: SSO Login
-    final ssoResult = await ssoLogin(
-      username: username,
-      password: password,
-      service: service,
-    );
+  Future<(Map<String, dynamic>, Map<String, dynamic>)> getCourseDetail(
+    String tutorialId,
+  ) async {
+    final url =
+        'http://ucontentapi.unipus.cn/course/api/course/$tutorialId/default/';
 
-    if (ssoResult.code != "0") {
-      throw Exception('SSO login failed: ${ssoResult.msg}');
+    try {
+      final response = await dio.get(url);
+
+      // 解析 JSON 数据
+      final data = response.data as Map<String, dynamic>;
+
+      // 获取 "course" 字段
+      final course = jsonDecode(data['course']) as Map<String, dynamic>;
+
+      return (data, course);
+    } catch (e) {
+      throw Exception('Failed to fetch course detail: $e');
     }
-
-    // Step 2: Mobile Login with service ticket
-    final mobileResult = await mobileLogin(
-      serviceTicket: ssoResult.rs.serviceTicket,
-      openidHash: ssoResult.rs.openidHash,
-    );
-
-    return mobileResult;
   }
 
   /// Get Course Class List
@@ -254,12 +242,49 @@ class UnipusMobile extends BaseClient {
     final response = await dio.post(
       'https://ucamapi.unipus.cn/api/stu/index',
       data: jsonEncode({}),
-      options: Options(
-        headers: _buildMobileHeaders(),
-      ),
     );
 
     return MobileCourseClassList.fromJson(response.data);
+  }
+
+  /// Submit Vocabulary Learning Result
+  ///
+  /// POST /api/common/newfuture/vocabulary/submit/{tutorialId}/{leaf}
+  ///
+  /// Submits vocabulary learning progress and score
+  ///
+  /// Parameters:
+  /// - [mobileTutorialId]: Tutorial ID (e.g., "1164")
+  /// - [leaf]: Leaf identifier (e.g., "u1g95")
+  /// - [detail]: Detail information (optional, default: "")
+  /// - [duration]: Learning duration in seconds (required)
+  /// - [score]: Learning score (required, typically between 0 and 1)
+  ///
+  /// Returns: Response data from the server
+  Future<Map<String, dynamic>> submitVocabulary({
+    required int mobileTutorialId,
+    required String leaf,
+    String detail = "",
+    required int duration,
+    required double score,
+  }) async {
+    if (sessionInfo == null) {
+      throw Exception('Not logged in. Please call loginMobile first.');
+    }
+
+    final payload = {
+      'detail': detail,
+      'duration': duration,
+      'score': score,
+    };
+
+    final response = await dio.post(
+      'https://ucamapi.unipus.cn/api/common/newfuture/vocabulary/submit/$mobileTutorialId/$leaf',
+      data: jsonEncode(payload),
+      options: Options(responseType: ResponseType.plain)
+    );
+
+    return jsonDecode(response.data);
   }
 
   void _updateSessionTicket(String serviceTicket, String openidHash) {
@@ -325,11 +350,4 @@ class UnipusMobileSessionInfo {
     );
   }
 
-  String? get openid => userInfo?.openid;
-  String? get token => userInfo?.token;
-  String? get username => userInfo?.username;
-  String? get nickname => userInfo?.nickname;
-  int? get uid => userInfo?.uid;
-  int? get schoolId => userInfo?.schoolId;
-  String? get schoolName => userInfo?.schoolName;
 }

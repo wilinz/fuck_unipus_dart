@@ -281,13 +281,15 @@ extension $ItestConfigCopyWith on ItestConfig {
 abstract class _$UnipusConfigCWProxy {
   UnipusConfig tutorialId(String? tutorialId);
 
+  UnipusConfig reviewMode(bool reviewMode);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `UnipusConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// UnipusConfig(...).copyWith(id: 12, name: "My name")
   /// ````
-  UnipusConfig call({String? tutorialId});
+  UnipusConfig call({String? tutorialId, bool reviewMode});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfUnipusConfig.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfUnipusConfig.copyWith.fieldName(...)`
@@ -300,19 +302,30 @@ class _$UnipusConfigCWProxyImpl implements _$UnipusConfigCWProxy {
   UnipusConfig tutorialId(String? tutorialId) => this(tutorialId: tutorialId);
 
   @override
+  UnipusConfig reviewMode(bool reviewMode) => this(reviewMode: reviewMode);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `UnipusConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// UnipusConfig(...).copyWith(id: 12, name: "My name")
   /// ````
-  UnipusConfig call({Object? tutorialId = const $CopyWithPlaceholder()}) {
+  UnipusConfig call({
+    Object? tutorialId = const $CopyWithPlaceholder(),
+    Object? reviewMode = const $CopyWithPlaceholder(),
+  }) {
     return UnipusConfig(
       tutorialId:
           tutorialId == const $CopyWithPlaceholder()
               ? _value.tutorialId
               // ignore: cast_nullable_to_non_nullable
               : tutorialId as String?,
+      reviewMode:
+          reviewMode == const $CopyWithPlaceholder()
+              ? _value.reviewMode
+              // ignore: cast_nullable_to_non_nullable
+              : reviewMode as bool,
     );
   }
 }
@@ -349,7 +362,7 @@ extension _$ItestConfigEquatableAnnotations on ItestConfig {
 }
 
 extension _$UnipusConfigEquatableAnnotations on UnipusConfig {
-  List<Object?> get _$props => [tutorialId];
+  List<Object?> get _$props => [tutorialId, reviewMode];
 }
 
 // **************************************************************************
@@ -413,8 +426,13 @@ Map<String, dynamic> _$ItestConfigToJson(ItestConfig instance) =>
       'auto_submit': instance.autoSubmit,
     };
 
-UnipusConfig _$UnipusConfigFromJson(Map<String, dynamic> json) =>
-    UnipusConfig(tutorialId: json['tutorial_id'] as String?);
+UnipusConfig _$UnipusConfigFromJson(Map<String, dynamic> json) => UnipusConfig(
+  tutorialId: json['tutorial_id'] as String?,
+  reviewMode: json['review_mode'] as bool? ?? false,
+);
 
 Map<String, dynamic> _$UnipusConfigToJson(UnipusConfig instance) =>
-    <String, dynamic>{'tutorial_id': instance.tutorialId};
+    <String, dynamic>{
+      'tutorial_id': instance.tutorialId,
+      'review_mode': instance.reviewMode,
+    };

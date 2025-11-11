@@ -15,6 +15,7 @@ import 'package:example/utils/random.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
 import 'package:path/path.dart';
+import 'package:pure_dart_extensions/pure_dart_extensions.dart';
 
 void main(List<String> arguments) async {
   // 参数变量
@@ -178,6 +179,7 @@ Future<void> runWithConfig(AppConfig config) async {
       password: config.password,
       openAiConfig: config.openAi,
       tutorialId: config.unipus?.tutorialId,
+      reviewMode: config.unipus?.reviewMode ?? false,
     );
   } else {
     print('❌ 未知的运行平台: ${config.platform}');
@@ -720,6 +722,7 @@ Future<void> unipusMain({
   String? password,
   OpenAiConfig? openAiConfig,
   String? tutorialId,
+  bool reviewMode = false,
 }) async {
   final directory = join(cookieDir, username);
   if (!await Directory(directory).exists()) {
@@ -727,6 +730,8 @@ Future<void> unipusMain({
   }
   final cookieJar = PersistCookieJar(storage: FileStorage(directory));
 
+  // ===== 初始化 PC 端客户端 =====
+  printLogs("🖥️  正在初始化 Unipus PC 端客户端...");
   final unipus = await Unipus.newInstance(cookieJar: cookieJar);
 
   final isLogin = await unipus.checkLoginAndSetupSession();
@@ -740,8 +745,57 @@ Future<void> unipusMain({
       },
     );
   } else {
-    printLogs("已登录：${unipus.sessionInfo!.name}");
+    printLogs("✅ PC 端已登录：${unipus.sessionInfo!.name}");
   }
+
+  // ===== 初始化移动端客户端 =====
+  printLogs("\n📱 正在初始化 Unipus Mobile 客户端...");
+  final unipusMobile = await UnipusMobile.newInstance(
+    cookieJar: cookieJar,
+    appConfig: MobileAppConfig.defaultAndroid(),
+  );
+
+  final isMobileLogin = await unipusMobile.checkLoginAndSetupSession();
+  if (!isMobileLogin) {
+    final pwd = password ?? inputTrim("请输入密码（移动端）：");
+    await unipusMobile.login(
+      username: username,
+      password: pwd,
+      captchaHandler: (captchaResponse) async {
+        throw "";
+      },
+    );
+  } else {
+    printLogs("✅ 移动端已登录：${unipusMobile.sessionInfo?.userInfo?.username}");
+  }
+
+  // 显示移动端用户信息
+  if (unipusMobile.sessionInfo?.userInfo != null) {
+    final userInfo = unipusMobile.sessionInfo!.userInfo!;
+    printLogs("\n📱 移动端用户信息：");
+    printLogs("  👤 姓名: ${userInfo.realName}");
+    printLogs("  🏫 学校: ${userInfo.schoolName}");
+    printLogs("  🆔 学号: ${userInfo.numX}");
+    printLogs("  📅 年级: ${userInfo.grade}");
+  }
+
+  // 获取移动端课程列表
+
+    printLogs("\n📱 正在获取移动端课程列表...");
+    final mobileCourseList = await unipusMobile.getCourseClassList();
+    if (mobileCourseList.success) {
+      printLogs("✅ 移动端课程列表获取成功：");
+      for (final courseClass in mobileCourseList.rs.courseClassList) {
+        printLogs("  📚 ${courseClass.name}");
+        for (final tutorial in courseClass.tutorials) {
+          printLogs("    - ${tutorial.tutorialName} (ID: ${tutorial.realTutorialId})");
+        }
+      }
+    }
+
+  printLogs("\n${"=" * 60}");
+  printLogs("继续使用 PC 端进行课程操作...");
+  printLogs("${"=" * 60}\n");
 
   final courses = await unipus.getCourses();
   printLogs("📚 课程信息如下：");
@@ -765,6 +819,12 @@ Future<void> unipusMain({
     printLogs('Invalid tutorial_id');
     return;
   }
+
+  // 查找对应的 mobile tutorial
+  final selectedMobileTutorial = mobileCourseList.rs.courseClassList
+      .expand((e) => e.tutorials)
+      .firstWhere((e) => e.realTutorialId == selectedTutorialId);
+  final mobileTutorialId = selectedMobileTutorial.tutorialId;
 
   final course = courses
       .expand((e) => e.courses)
@@ -791,6 +851,13 @@ Future<void> unipusMain({
 
   // 获取课程详情
   final (_, courseDetail) = await unipus.getCourseDetail(selectedTutorialId);
+  // final (_, courseDetailMobile) = await unipusMobile.getCourseDetail(selectedTutorialId);
+
+  // var unitsMobile =
+  // List.from(
+  //   courseDetailMobile['units'],
+  // ).map((e) => e as Map<String, dynamic>).toList();
+
   var units =
       List.from(
         courseDetail['units'],
@@ -834,6 +901,9 @@ Future<void> unipusMain({
     Directory('courses'),
     course,
     openai,
+    unipusMobile,
+    mobileTutorialId,
+    reviewMode,
   );
 
   // // 输入节点 id
@@ -860,6 +930,9 @@ Future<void> traversalCoursesToFs(
   Directory rootDir,
   UnipusClassBlockCoursesItem course,
   OpenAiClient? openai,
+  UnipusMobile unipusMobile,
+  int mobileTutorialId,
+  bool reviewMode,
 ) async {
   await rootDir.create(recursive: true);
   await traversalCoursesInner(
@@ -873,6 +946,9 @@ Future<void> traversalCoursesToFs(
     '',
     course,
     openai,
+    unipusMobile,
+    mobileTutorialId,
+    reviewMode,
   );
 }
 
@@ -887,6 +963,9 @@ Future<void> traversalCoursesInner(
   String leafPath,
   UnipusClassBlockCoursesItem course,
   OpenAiClient? openai,
+  UnipusMobile unipusMobile,
+  int mobileTutorialId,
+  bool reviewMode,
 ) async {
   for (var i = 0; i < units.length; i++) {
     final unit = units[i];
@@ -929,9 +1008,23 @@ Future<void> traversalCoursesInner(
 
     final String? summaryString = unit['summary'];
     final isUnitTest = summaryString?.contains('exerciseId') == true;
+
+    final isVocabularyTest = unit['linkType'] == "vocabulary_area";
+
     // 添加配置，允许是否根据pass进入学习
-    if (required && !pass) {
-      if (isUnitTest) {
+    // reviewMode = true: 复习模式，忽略pass条件
+    // reviewMode = false: 正常模式，只处理未通过的内容
+    if (required && (reviewMode || !pass)) {
+      if(isVocabularyTest) {
+          printLogs("Fucking 词汇测试");
+          final duration = Random().nextIntInRange(90, 180);
+          await Future.delayed(Duration(seconds: duration));
+          final submitResult = await unipusMobile.submitVocabulary(mobileTutorialId: mobileTutorialId,
+              leaf: currentLeaf,
+              duration: duration,
+              score: 1);
+          printLogs("词汇测试提交结果：$submitResult");
+      } else if (isUnitTest) {
         await processUnitTest(
           summaryString,
           unipus,
@@ -969,6 +1062,9 @@ Future<void> traversalCoursesInner(
         currentLeafPath,
         course,
         openai,
+        unipusMobile,
+        mobileTutorialId,
+        reviewMode,
       );
     }
   }
@@ -1149,7 +1245,7 @@ Future<void> processCourseLeaf(
       leaf: currentLeaf,
       answer: answer,
     );
-    print("【$currentLeaf】答案提交结果：$result");
+    print("【$currentLeaf】答案提交");
 
     try {
       final result2 = await unipus.postProgress(

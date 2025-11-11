@@ -98,6 +98,8 @@ class AppConfig with EquatableMixin {
       'unipus': {
         // 课程 tutorial_id (可选，不填则在运行时输入)
         'tutorial_id': null,
+        // 复习模式: true 时忽略 pass 条件，允许重新学习已通过的内容
+        'review_mode': false,
       },
     };
 
@@ -198,10 +200,14 @@ class ItestConfig with EquatableMixin {
 class UnipusConfig with EquatableMixin {
   UnipusConfig({
     this.tutorialId,
+    this.reviewMode = false,
   });
 
   @JsonKey(name: 'tutorial_id')
   final String? tutorialId;
+
+  @JsonKey(name: 'review_mode', defaultValue: false)
+  final bool reviewMode;
 
   factory UnipusConfig.fromJson(Map<String, dynamic> json) =>
       _$UnipusConfigFromJson(json);

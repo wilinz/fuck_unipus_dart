@@ -1,0 +1,41 @@
+//POST /sso/4.0/sso/login HTTP/1.1
+//Content-Type: text/plain;charset=utf-8
+//Content-Length: 124
+//Host: sso.unipus.cn
+//Connection: Keep-Alive
+//Accept-Encoding: gzip
+//User-Agent: okhttp/3.14.9
+//
+//{"username":"13800138000","password":"Password123","service":"https:\/\/ucamapi.unipus.cn","captchaCode":"","encodeCaptha":""}
+
+{
+  "code": "0",
+  "msg": "操作成功",
+  "rs": {
+    "grantingTicket": "TGT-123456-abcdefghijklmnopqrst-sso-api-1",
+    "serviceTicket": "ST-654321-zyxwvutsrqponmlkjihg-sso-api-1",
+    "tgtExpiredTime": 1762855968400,
+    "role": null,
+    "openid": "abc123def456789012345678901234567890",
+    "nickname": null,
+    "fullname": null,
+    "username": null,
+    "mobile": null,
+    "email": null,
+    "perms": null,
+    "isSsoLogin": "0",
+    "isCompleted": null,
+    "openidHash": "Abc1234567890DEfghIJKLmnopQRSTuvwxyz123456=",
+    "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6InVuaXB1cy1zc28ifQ.eyJqdGkiOiJhYmMxMjM0NTY3ODkwREVmZ2hJSktMIiwiaWF0IjoxNzYyODQ4NzY4LCJleHAiOjE3NjMwMjE1NjgsIm5iZiI6MTc2Mjg0ODcwOCwiaXNzIjoiaHR0cHM6Ly9zc28udW5pcHVzLmNuIiwiYXVkIjoiY24udW5pcHVzLnNzby5qd3QiLCJzdWIiOiIxMDAwMDAwIiwib3BlbklkIjoiYWJjMTIzZGVmNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwIiwidXNlcm5hbWUiOiIxMzgwMDEzODAwMCIsIm5pY2tuYW1lIjoiMjAyMTEyMzQ1NiIsInBob25lIjoiMTM4MDAxMzgwMDAiLCJ0aW1lc3RhbXAiOjE3NjI4NDg3NjgsImtleSI6InVuaXB1cy1zc28ifQ.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "rt": "ABCD1234EFGH5678IJKL9012MNOP3456QRST7890UVWX1234YZAB5678CDEF9012GHIJ3456KLMN7890OPQR1234STUV5678",
+    "createTime": null,
+    "status": 0,
+    "source": null,
+    "links": [
+      {
+        "rel": "self",
+        "href": "http://sso.unipus.cn/sso/4.0/sso/login"
+      }
+    ]
+  }
+}

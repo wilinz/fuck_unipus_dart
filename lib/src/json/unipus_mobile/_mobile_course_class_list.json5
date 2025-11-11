@@ -1,0 +1,102 @@
+//POST /api/stu/index HTTP/1.1
+//User-Agent: ucampus-student android13 300130 22021211RC
+//uni-ticket: ST-654321-zyxwvutsrqponmlkjihg-sso-api-1
+//uni-openid-hash: Abc1234567890DEfghIJKLmnopQRSTuvwxyz123456=
+//uni-device-token: abc123def456789012a
+//uni-device-id:
+//uni-udid:
+//uni-os: android
+//uni-os-ver: android13
+//uni-model: 22021211RC
+//uni-app-ver: 1.0
+//uni-app-prod: ucampus-student
+//uni-js-ver-models: ucontent uex expm
+//uni-js-ver: 209547 209601 280
+//uni-client-ver: 300130
+//appId: 5
+//Content-Type: text/plain;charset=utf-8
+//Content-Length: 2
+//Host: ucamapi.unipus.cn
+//Connection: Keep-Alive
+//Accept-Encoding: gzip
+//
+//{}
+
+{
+  "news": {
+    "d": false,
+    "n": {
+      "sch": false,
+      "cls": false,
+      "sys": true
+    },
+    "i": false,
+    "e": false
+  },
+  "currentTime": 1762848768872,
+  "success": true,
+  "code": 0,
+  "msg": "操作成功",
+  "rs": {
+    "courseClassList": [
+      {
+        "classId": 100001,
+        "className": "2021001",
+        "automaticGeneration": 0,
+        "curriculaId": 200001,
+        "curriculaName": "2025级大学英语1",
+        "name": "2025级大学英语12021001",
+        "semester": "2025.09.01-2026.01.31",
+        "tutorials": [
+          {
+            "tutorialId": 1001,
+            "realTutorialId": "course-v1:Unipus+sample_course_1+20210901",
+            "tutorialName": "示例大学英语 综合教程1",
+            "pic": "https://ucontent.cdn.unipus.cn/edx/course-v1:Unipus+sample_course_1+20201131/resource/image/sample_image_1.jpg",
+            "tutorialType": "pc,mobile",
+            "tutorialVersion": "10001",
+            "kind": 0,
+            "updateTime": 1724912689000,
+            "courseVersion": "2",
+            "teacherId": -1,
+            "activation": 1,
+            "status": 1,
+            "tutorialDetail": "https://ucontent.unipus.cn/courses/course-v1:Unipus+sample_course_1+20210901/about",
+            "courseSeries": "sample",
+            "seriesTemplate": "",
+            "coverImageUrl": "https://ucontent.cdn.unipus.cn/edx/course-v1:Unipus+sample_course_1+20201131/resource/image/sample_cover_1.png"
+          }
+        ]
+      },
+      {
+        "classId": 100001,
+        "className": "2021001",
+        "automaticGeneration": 0,
+        "curriculaId": 200001,
+        "curriculaName": "2025级大学英语1",
+        "name": "2025级大学英语12021001",
+        "semester": "2025.09.01-2026.01.31",
+        "tutorials": [
+          {
+            "tutorialId": 1002,
+            "realTutorialId": "course-v1:Unipus+sample_course_2+202109",
+            "tutorialName": "示例大学英语 视听说教程1",
+            "pic": "https://ucontent.cdn.unipus.cn/edx/course-v1:Unipus+sample_course_2+202109/resource/image/sample_image_2.jpg",
+            "tutorialType": "pc,mobile",
+            "tutorialVersion": "10002",
+            "kind": 0,
+            "updateTime": 1724912689000,
+            "courseVersion": "2",
+            "teacherId": -1,
+            "activation": 2,
+            "status": 1,
+            "tutorialDetail": "https://ucontent.unipus.cn/courses/course-v1:Unipus+sample_course_2+202109/about",
+            "courseSeries": "sample",
+            "seriesTemplate": "",
+            "coverImageUrl": "https://ucontent.cdn.unipus.cn/edx/course-v1:Unipus+sample_course_2+202109/resource/image/sample_cover_2.jpg"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+//POST /api/account/unipus/login HTTP/1.1
+//User-Agent: ucampus-student android13 300130 22021211RC
+//uni-ticket: ST-654321-zyxwvutsrqponmlkjihg-sso-api-1
+//uni-openid-hash: Abc1234567890DEfghIJKLmnopQRSTuvwxyz123456=
+//uni-device-token: abc123def456789012a
+//uni-device-id:
+//uni-udid:
+//uni-os: android
+//uni-os-ver: android13
+//uni-model: 22021211RC
+//uni-app-ver: 1.0
+//uni-app-prod: ucampus-student
+//uni-js-ver-models: ucontent uex expm
+//uni-js-ver: 209547 209601 280
+//uni-client-ver: 300130
+//appId: 5
+//Content-Type: text/plain;charset=utf-8
+//Content-Length: 2
+//Host: ucamapi.unipus.cn
+//Connection: Keep-Alive
+//Accept-Encoding: gzip
+//
+//{}
+
+{
+  "news": {
+    "d": false,
+    "n": {
+      "sch": false,
+      "cls": false,
+      "sys": true
+    },
+    "i": false,
+    "e": false
+  },
+  "currentTime": 1762848768529,
+  "success": true,
+  "code": 0,
+  "msg": "操作成功",
+  "rs": {
+    "user_info": {
+      "openid": "abc123def456789012345678901234567890",
+      "username": "13800138000",
+      "nickname": "2021123456",
+      "mobile": "13800138000",
+      "uid": 12345678,
+      "gender": 0,
+      "schoolId": 10001,
+      "schoolName": "示例大学",
+      "grade": "2025",
+      "num": "2021123456",
+      "name": "张三",
+      "realName": "张三",
+      "useMode": 0,
+      "role": 1,
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJzY2hJZCI6IjEwMDAxIiwiYXVkIjoiZWR4LnVuaXB1cy5jbiIsIm9wZW5JZCI6ImFiYzEyM2RlZjQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MCIsIm5pY2tOYW1lIjoiMjAyMTEyMzQ1NiIsImlzcyI6ImFiY2RlZmdoaWprbG1ub3BxcnN0dSIsImV4cCI6MTc3MTQ4ODc2OCwiaWF0IjoxNzYyODQ4NzY4fQ.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR",
+      "ssxSystem": "ssx-gy",
+      "gyUid": 11111111,
+      "zjUid": 22222222
+    }
+  }
+}

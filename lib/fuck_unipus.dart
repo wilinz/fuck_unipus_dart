@@ -11,7 +11,7 @@ export 'src/core/html_parser/exam_blocking_html.dart';
 export 'src/core/html_parser/exam_question.dart';
 export 'src/core/html_parser/unipus_class_block_parse.dart';
 export 'src/core/itest.dart';
-export 'src/core/session/persist_session_jar.dart';
+export 'src/core/session/platform_session_jar.dart';
 export 'src/core/session/session_jar.dart';
 export 'src/core/study_duration_tracker.dart';
 export 'src/core/unipus.dart';

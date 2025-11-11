@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import '../websocket/websocket_connect.dart';
 
 /// WebSocket 学习时长追踪器
 ///
@@ -75,7 +76,7 @@ class StudyDurationTracker {
   final int baseReconnectDelay;
 
   /// 用于通信的 WebSocket 通道
-  IOWebSocketChannel? _channel;
+  WebSocketChannel? _channel;
 
   /// 用于发送定期 ping 消息的计时器
   Timer? _pingTimer;
@@ -204,8 +205,8 @@ class StudyDurationTracker {
       _log('WebSocket URL: ${wsUrl.toString()}');
       _log('Headers: ${headers.keys.join(", ")}');
 
-      // 使用 IOWebSocketChannel.connect 来设置 headers
-      _channel = IOWebSocketChannel.connect(wsUrl, headers: headers);
+      // 使用跨平台的 WebSocket 连接函数
+      _channel = createWebSocketConnection(wsUrl, headers: headers);
 
       // 监听消息
       _channel!.stream.listen(

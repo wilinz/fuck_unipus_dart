@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 
 import '../../fuck_unipus.dart';
+import '../http/proxy/setup_http_proxy.dart';
 import '../http/referer_interceptor.dart';
 import 'crypto/encrypt.dart';
 
@@ -32,6 +30,8 @@ abstract class BaseClient {
   Future<void> initDio({
     required CookieJar cookieJar,
     bool useProxy = false,
+    String? proxyUrl,
+    bool allowBadCertificate = false,
     String? userAgent,
     Dio? dio,
   }) async {
@@ -44,15 +44,14 @@ abstract class BaseClient {
 
     this.cookieJar = cookieJar;
 
-    // (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-    //   final client = HttpClient();
-    //   client.findProxy = (uri) {
-    //     return "PROXY 127.0.0.1:9000";
-    //   };
-    //   client.badCertificateCallback =
-    //       (X509Certificate cert, String host, int port) => true;
-    //   return client;
-    // };
+    // 配置 HTTP 代理（仅在非 Web 平台有效）
+    if (useProxy && proxyUrl != null) {
+      configureHttpProxy(
+        dio,
+        proxyUrl: proxyUrl,
+        allowBadCertificate: allowBadCertificate,
+      );
+    }
 
     if (!_kIsWeb) {
       dio.interceptors.addAll([

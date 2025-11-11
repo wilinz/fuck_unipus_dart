@@ -135,7 +135,6 @@ class MobileAppConfig {
       'uni-js-ver': jsVer,
       'uni-client-ver': clientVer,
       'appId': appId,
-      'Content-Type': 'text/plain;charset=utf-8',
     };
   }
 }

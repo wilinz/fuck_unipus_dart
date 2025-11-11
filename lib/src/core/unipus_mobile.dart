@@ -11,6 +11,8 @@ import 'package:fuck_unipus/src/model/unipus_mobile/mobile_login_result/mobile_l
 import 'package:fuck_unipus/src/model/unipus_mobile/mobile_course_class_list/mobile_course_class_list.dart';
 import 'package:fuck_unipus/src/model/unipus_mobile/mobile_session_info/mobile_session_info.dart';
 
+import '../../fuck_unipus.dart';
+
 class UnipusMobile extends BaseClient {
   static const String unipusService = "https://ucamapi.unipus.cn";
 
@@ -171,6 +173,14 @@ class UnipusMobile extends BaseClient {
     } catch (e) {
       throw Exception('Login failed: $e');
     }
+  }
+
+  @override
+  Future<CaptchaResponse> getCaptcha() async {
+    final response = await dio.post(
+      'https://sso.unipus.cn/sso/4.0/sso/image_captcha',
+    );
+    return CaptchaResponse.fromJson(response.data);
   }
 
   /// SSO Login - Mobile version

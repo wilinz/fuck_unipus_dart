@@ -277,7 +277,14 @@ Future<void> itestMain({
       username: username,
       password: pwd,
       captchaHandler: (captchaResponse) async {
-        throw "";
+        printLogs("\n" + "=" * 60);
+        printLogs("🔐 需要输入验证码");
+        printLogs("=" * 60);
+        printLogs("📸 验证码图片 Data URL：");
+        printLogs("data:image/png;base64,${captchaResponse.rs.image}");
+        printLogs("\n💡 请复制上面的 Data URL 到浏览器地址栏中查看验证码图片");
+        printLogs("=" * 60 + "\n");
+        return inputTrim("请输入验证码：");
       },
     );
   } else {
@@ -728,6 +735,7 @@ Future<void> unipusMain({
     await Directory(directory).create(recursive: true);
   }
   final cookieJar = PersistCookieJar(storage: FileStorage(directory));
+  final sessionJar = PersistSessionJar(storagePath: directory);
 
   // ===== 初始化 PC 端客户端 =====
   printLogs("🖥️  正在初始化 Unipus PC 端客户端...");
@@ -740,7 +748,14 @@ Future<void> unipusMain({
       username: username,
       password: pwd,
       captchaHandler: (captchaResponse) async {
-        throw "";
+        printLogs("\n" + "=" * 60);
+        printLogs("🔐 需要输入验证码（PC 端）");
+        printLogs("=" * 60);
+        printLogs("📸 验证码图片 Data URL：");
+        printLogs("data:image/png;base64,${captchaResponse.rs.image}");
+        printLogs("\n💡 请复制上面的 Data URL 到浏览器地址栏中查看验证码图片");
+        printLogs("=" * 60 + "\n");
+        return inputTrim("请输入验证码：");
       },
     );
   } else {
@@ -752,6 +767,8 @@ Future<void> unipusMain({
   final unipusMobile = await UnipusMobile.newInstance(
     cookieJar: cookieJar,
     appConfig: MobileAppConfig.defaultAndroid(),
+    sessionJar: sessionJar,
+    user: username,
   );
 
   final isMobileLogin = await unipusMobile.checkLoginAndSetupSession();
@@ -761,7 +778,14 @@ Future<void> unipusMain({
       username: username,
       password: pwd,
       captchaHandler: (captchaResponse) async {
-        throw "";
+        printLogs("\n" + "=" * 60);
+        printLogs("🔐 需要输入验证码（移动端）");
+        printLogs("=" * 60);
+        printLogs("📸 验证码图片 Data URL：");
+        printLogs("data:image/png;base64,${captchaResponse.rs.image}");
+        printLogs("\n💡 请复制上面的 Data URL 到浏览器地址栏中查看验证码图片");
+        printLogs("=" * 60 + "\n");
+        return inputTrim("请输入验证码：");
       },
     );
   } else {

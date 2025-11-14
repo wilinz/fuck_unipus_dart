@@ -292,6 +292,8 @@ Future<void> itestMain({
   }
 
   final examList = await itest.getExamList();
+
+  // 详细信息输出
   for (final exam in examList.rs.data) {
     printLogs(exam.ksName);
     printLogs("ksd id: ${exam.ksdId}");
@@ -306,46 +308,93 @@ Future<void> itestMain({
     printLogs("-" * 150);
   }
 
-  final selectedExamId = examId ?? inputTrim("请输入 ksdId: ");
-  final exam = examList.rs.data.firstWhere(
-    (e) => e.ksdId.toString() == selectedExamId,
-  );
-
-  final judgeEntry = await itest.judgeEntry(
-    examId: selectedExamId,
-    examTypeEnum: exam.examTypeEnum,
-  );
-  printLogs(JsonEncoder.withIndent("  ").convert(judgeEntry));
-  if (!autoSubmit) inputTrim("回车进入考试？");
-  final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
-  printLogs(confirmExam);
-  if (!autoSubmit) inputTrim("请确认考试信息，回车确认");
-  final examInfo = await itest.examInfo(token: judgeEntry.data.token);
-  printLogs("examInfo：$examInfo");
-  final examPaperResourceInfo = await itest.examPaperResourceInfo(
-    token: judgeEntry.data.token,
-  );
-  printLogs("examPaperResourceInfo：$examPaperResourceInfo");
-  final examWait = await itest.examWait(token: judgeEntry.data.token);
-  printLogs("examWait：$examWait");
-
-  await itest.getAnswerSheets(token: judgeEntry.data.token);
-
-  final (questionsWarp, sections!) = await itest.getExamQuestions(
-    confirmExamData: confirmExam,
-  );
-  printLogs("questionsWarp：$questionsWarp");
-  final questionsJson = JsonEncoder.withIndent("  ").convert(sections);
-
-  final file = File(
-    "./questions/questions-${confirmExam.examName.replaceAll(" ", "-")}.json",
-  );
-  if (!(await file.parent.exists())) {
-    await file.parent.create(recursive: true);
+  // 友好的考试列表输出
+  printLogs("\n${"=" * 80}");
+  printLogs("📝 可用的考试列表：");
+  printLogs("=" * 80);
+  for (var i = 0; i < examList.rs.data.length; i++) {
+    final exam = examList.rs.data[i];
+    printLogs("${i + 1}. ${exam.ksName} (ksdId: ${exam.ksdId})");
   }
-  await file.writeAsString(questionsJson);
-  printLogs("题目json已经写入文件：${file.path}");
+  printLogs("=" * 80 + "\n");
 
+  // 获取要处理的考试索引列表
+  List<int> selectedIndexes;
+  if (examId != null) {
+    // 从配置文件读取 ksdId，转换为索引
+    final configExamIds =
+        examId
+            .split(',')
+            .map((id) => id.trim())
+            .where((id) => id.isNotEmpty)
+            .toList();
+    selectedIndexes = [];
+    for (final ksdId in configExamIds) {
+      final index = examList.rs.data.indexWhere(
+        (e) => e.ksdId.toString() == ksdId,
+      );
+      if (index != -1) {
+        selectedIndexes.add(index);
+      }
+    }
+    if (selectedIndexes.isEmpty) {
+      printLogs("❌ 配置文件中的 ksdId 无效");
+      return;
+    }
+  } else {
+    // 交互式输入索引
+    final input = inputTrim("请输入要处理的考试序号 (多个序号用逗号分隔，例如: 1,3,5): ");
+    final indexStrings =
+        input
+            .split(',')
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty)
+            .toList();
+
+    selectedIndexes = [];
+    for (final indexStr in indexStrings) {
+      try {
+        final index = int.parse(indexStr) - 1; // 转换为 0-based index
+        if (index >= 0 && index < examList.rs.data.length) {
+          selectedIndexes.add(index);
+        } else {
+          printLogs("⚠️ 序号 $indexStr 超出范围，已忽略");
+        }
+      } catch (e) {
+        printLogs("⚠️ 无效的序号: $indexStr，已忽略");
+      }
+    }
+  }
+
+  if (selectedIndexes.isEmpty) {
+    printLogs("❌ 未选择任何有效的考试");
+    return;
+  }
+
+  // 显示选中的考试列表并让用户确认
+  printLogs("\n${"=" * 80}");
+  printLogs("📋 您选择了以下 ${selectedIndexes.length} 个考试：");
+  printLogs("=" * 80);
+  for (var i = 0; i < selectedIndexes.length; i++) {
+    final exam = examList.rs.data[selectedIndexes[i]];
+    printLogs("${i + 1}. ${exam.ksName} (ksdId: ${exam.ksdId})");
+  }
+  printLogs("=" * 80 + "\n");
+
+  // 用户确认
+  final confirm = inputTrim("确认处理以上考试？(yes/y 确认, 其他键取消): ");
+  if (confirm.toLowerCase() != "yes" && confirm.toLowerCase() != "y") {
+    printLogs("❌ 已取消操作");
+    return;
+  }
+
+  // 获取选中考试的 ksdId 列表
+  final selectedExamIds =
+      selectedIndexes
+          .map((index) => examList.rs.data[index].ksdId.toString())
+          .toList();
+
+  // OpenAI 客户端只需初始化一次
   OpenAiClient openai;
   if (openAiConfig != null) {
     printLogs("使用配置文件中的 OpenAI 配置");
@@ -370,80 +419,149 @@ Future<void> itestMain({
   }
   await testOpenai(openai);
 
-  if (!autoSubmit) inputTrim("回车开始自动答题");
-  final answers = await Itest.buildAnswer(
-    uik: questionsWarp.data.uIK.toString(),
-    confirmExamData: confirmExam,
-    sections: sections,
-    getChooseAnswer: (
-      List<int> indexList,
-      ItestExamQuestionsQuestionGroupItem question,
-    ) async {
-      printLogs(
-        "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
-      );
-      return await getChooseAnswer(openai, question);
-    },
-
-    getArticleFillBlankAnswer: (
-      List<int> indexList,
-      ItestExamQuestionsQuestion question,
-    ) async {
-      printLogs("正在获取答案...：$indexList, 15 选 10");
-      return await getArticleFillBlankAnswer(openai, question);
-    },
-    getWritingAnswer: (
-      int index,
-      ItestExamQuestionsWriteQuestion question,
-    ) async {
-      printLogs("正在获取答案...：$index, ${question.title}");
-      return await getWritingAnswer(openai, question);
-    },
-    audioToText: (audio) async {
-      printLogs("正在识别音频...：${audio.toString()}");
-      return audioToText(openai, audio, itest.dio);
-    },
-    writingProgressCallback: (i, total) {
-      printLogs("正在输入答案...：$i/$total");
-    },
-    submit: itest.submit,
-    itestPlatformType: ItestPlatformType.itestcloud,
-    logFunction: itest.log,
-  );
-
-  final file1 = File(
-    "./questions/answer-${confirmExam.examName.replaceAll(" ", "-")}.json",
-  );
-  if (!(await file1.parent.exists())) {
-    await file1.parent.create(recursive: true);
-  }
-  final answersJson = JsonEncoder.withIndent("  ").convert(answers);
-  await file1.writeAsString(answersJson);
-  printLogs("答案json已经写入文件：${file1.path}");
-
-  if (autoSubmit) {
-    printLogs("自动提交模式：正在提交答案...");
-    final submitResult = await itest.submitFinal(
-      answers: answers,
-      confirmExamData: confirmExam,
-      uik: questionsWarp.data.uIK.toString(),
+  // 循环处理每个考试
+  for (var i = 0; i < selectedExamIds.length; i++) {
+    final selectedExamId = selectedExamIds[i];
+    printLogs("\n${"=" * 80}");
+    printLogs(
+      "📝 开始处理第 ${i + 1}/${selectedExamIds.length} 个考试 (ksdId: $selectedExamId)",
     );
-    printLogs("submitResult：$submitResult");
-  } else {
-    while (true) {
-      final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
-      if (ok == "ok") {
-        final submitResult = await itest.submitFinal(
-          answers: answers,
-          confirmExamData: confirmExam,
-          uik: questionsWarp.data.uIK.toString(),
+    printLogs("=" * 80);
+
+    // 查找对应的考试
+    final examResults =
+        examList.rs.data
+            .where((e) => e.ksdId.toString() == selectedExamId)
+            .toList();
+
+    if (examResults.isEmpty) {
+      printLogs("❌ 找不到 ksdId 为 $selectedExamId 的考试，跳过");
+      continue;
+    }
+
+    final exam = examResults.first;
+
+    printLogs("✅ 找到考试: ${exam.ksName}");
+
+    final judgeEntry = await itest.judgeEntry(
+      examId: selectedExamId,
+      examTypeEnum: exam.examTypeEnum,
+    );
+    printLogs(JsonEncoder.withIndent("  ").convert(judgeEntry));
+    if (!autoSubmit) inputTrim("回车进入考试？");
+    final confirmExam = await itest.confirmExam(token: judgeEntry.data.token);
+    printLogs(confirmExam);
+    if (!autoSubmit) inputTrim("请确认考试信息，回车确认");
+    final examInfo = await itest.examInfo(token: judgeEntry.data.token);
+    printLogs("examInfo：$examInfo");
+    final examPaperResourceInfo = await itest.examPaperResourceInfo(
+      token: judgeEntry.data.token,
+    );
+    printLogs("examPaperResourceInfo：$examPaperResourceInfo");
+    final examWait = await itest.examWait(token: judgeEntry.data.token);
+    printLogs("examWait：$examWait");
+
+    await itest.getAnswerSheets(token: judgeEntry.data.token);
+
+    final (questionsWarp, sections!) = await itest.getExamQuestions(
+      confirmExamData: confirmExam,
+    );
+    printLogs("questionsWarp：$questionsWarp");
+    final questionsJson = JsonEncoder.withIndent("  ").convert(sections);
+
+    final file = File(
+      "./questions/questions-${confirmExam.examName.replaceAll(" ", "-")}.json",
+    );
+    if (!(await file.parent.exists())) {
+      await file.parent.create(recursive: true);
+    }
+    await file.writeAsString(questionsJson);
+    printLogs("题目json已经写入文件：${file.path}");
+
+    if (!autoSubmit) inputTrim("回车开始自动答题");
+    final answers = await Itest.buildAnswer(
+      uik: questionsWarp.data.uIK.toString(),
+      confirmExamData: confirmExam,
+      sections: sections,
+      getChooseAnswer: (
+        List<int> indexList,
+        ItestExamQuestionsQuestionGroupItem question,
+      ) async {
+        printLogs(
+          "正在获取答案...：$indexList, ${jsonEncode(question.copyWith(questions: []))}",
         );
-        printLogs("submitResult：$submitResult");
-      } else if (ok == "exit") {
-        break;
+        return await getChooseAnswer(openai, question);
+      },
+
+      getArticleFillBlankAnswer: (
+        List<int> indexList,
+        ItestExamQuestionsQuestion question,
+      ) async {
+        printLogs("正在获取答案...：$indexList, 15 选 10");
+        return await getArticleFillBlankAnswer(openai, question);
+      },
+      getWritingAnswer: (
+        int index,
+        ItestExamQuestionsWriteQuestion question,
+      ) async {
+        printLogs("正在获取答案...：$index, ${question.title}");
+        return await getWritingAnswer(openai, question);
+      },
+      audioToText: (audio) async {
+        printLogs("正在识别音频...：${audio.toString()}");
+        return audioToText(openai, audio, itest.dio);
+      },
+      writingProgressCallback: (i, total) {
+        printLogs("正在输入答案...：$i/$total");
+      },
+      submit: itest.submit,
+      itestPlatformType: ItestPlatformType.itestcloud,
+      logFunction: itest.log,
+    );
+
+    final file1 = File(
+      "./questions/answer-${confirmExam.examName.replaceAll(" ", "-")}.json",
+    );
+    if (!(await file1.parent.exists())) {
+      await file1.parent.create(recursive: true);
+    }
+    final answersJson = JsonEncoder.withIndent("  ").convert(answers);
+    await file1.writeAsString(answersJson);
+    printLogs("答案json已经写入文件：${file1.path}");
+
+    if (autoSubmit) {
+      printLogs("自动提交模式：正在提交答案...");
+      final submitResult = await itest.submitFinal(
+        answers: answers,
+        confirmExamData: confirmExam,
+        uik: questionsWarp.data.uIK.toString(),
+      );
+      printLogs("submitResult：$submitResult");
+    } else {
+      while (true) {
+        final ok = inputTrim("确认交卷请输入 ok ，不提交直接退出请输入 exit ");
+        if (ok == "ok") {
+          final submitResult = await itest.submitFinal(
+            answers: answers,
+            confirmExamData: confirmExam,
+            uik: questionsWarp.data.uIK.toString(),
+          );
+          printLogs("submitResult：$submitResult");
+          break;
+        } else if (ok == "exit") {
+          break;
+        }
       }
     }
+
+    printLogs(
+      "\n✅ 考试 ${i + 1}/${selectedExamIds.length} (ksdId: $selectedExamId) 处理完成",
+    );
   }
+
+  printLogs("\n${"=" * 80}");
+  printLogs("🎉 所有考试处理完成！");
+  printLogs("=" * 80);
 }
 
 Future<void> printLogs(s) async {
@@ -804,17 +922,19 @@ Future<void> unipusMain({
 
   // 获取移动端课程列表
 
-    printLogs("\n📱 正在获取移动端课程列表...");
-    final mobileCourseList = await unipusMobile.getCourseClassList();
-    if (mobileCourseList.success) {
-      printLogs("✅ 移动端课程列表获取成功：");
-      for (final courseClass in mobileCourseList.rs.courseClassList) {
-        printLogs("  📚 ${courseClass.name}");
-        for (final tutorial in courseClass.tutorials) {
-          printLogs("    - ${tutorial.tutorialName} (ID: ${tutorial.realTutorialId})");
-        }
+  printLogs("\n📱 正在获取移动端课程列表...");
+  final mobileCourseList = await unipusMobile.getCourseClassList();
+  if (mobileCourseList.success) {
+    printLogs("✅ 移动端课程列表获取成功：");
+    for (final courseClass in mobileCourseList.rs.courseClassList) {
+      printLogs("  📚 ${courseClass.name}");
+      for (final tutorial in courseClass.tutorials) {
+        printLogs(
+          "    - ${tutorial.tutorialName} (ID: ${tutorial.realTutorialId})",
+        );
       }
     }
+  }
 
   printLogs("\n${"=" * 60}");
   printLogs("继续使用 PC 端进行课程操作...");
@@ -1038,15 +1158,17 @@ Future<void> traversalCoursesInner(
     // reviewMode = true: 复习模式，忽略pass条件
     // reviewMode = false: 正常模式，只处理未通过的内容
     if (required && (reviewMode || !pass)) {
-      if(isVocabularyTest) {
-          printLogs("Fucking 词汇测试");
-          final duration = Random().nextIntInRange(90, 180);
-          await Future.delayed(Duration(seconds: duration));
-          final submitResult = await unipusMobile.submitVocabulary(mobileTutorialId: mobileTutorialId,
-              leaf: currentLeaf,
-              duration: duration,
-              score: 1);
-          printLogs("词汇测试提交结果：$submitResult");
+      if (isVocabularyTest) {
+        printLogs("Fucking 词汇测试");
+        final duration = Random().nextIntInRange(90, 180);
+        await Future.delayed(Duration(seconds: duration));
+        final submitResult = await unipusMobile.submitVocabulary(
+          mobileTutorialId: mobileTutorialId,
+          leaf: currentLeaf,
+          duration: duration,
+          score: 1,
+        );
+        printLogs("词汇测试提交结果：$submitResult");
       } else if (isUnitTest) {
         await processUnitTest(
           summaryString,
@@ -1253,7 +1375,7 @@ Future<void> processCourseLeaf(
     }
 
     print("【$currentLeaf】正在学习");
-    await Future.delayed(Duration(seconds: Random().nextIntInRange(60, 90)));
+    await Future.delayed(Duration(seconds: Random().nextIntInRange(90, 120)));
 
     final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
     final summary = await unipus.getCourseSummary(tutorialId, currentLeaf);

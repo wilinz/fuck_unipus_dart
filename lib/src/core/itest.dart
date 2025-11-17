@@ -237,7 +237,7 @@ class Itest extends BaseClient {
       } else if (section.type == "write") {
         final q = section.writeQuestion!;
         final answer = {
-          "q": q.id.toIntOrNull(), // qid
+          "q": q.id, // qid
           "d": [
             <dynamic>[""],
           ],
@@ -403,10 +403,10 @@ class Itest extends BaseClient {
         }
       } else if (section.type == "write") {
         final q = section.writeQuestion!;
-        final index = q.index.toIntOrNull()!;
+        final index = q.index;
         progressCallback?.call(index);
         final d = await getWritingAnswer(index, q);
-        final qd = answers.firstWhere((a) => a['q'] == q.id.toIntOrNull())['d'];
+        final qd = answers.firstWhere((a) => a['q'].toString() == q.id.toString())['d'];
 
         final codeUnits = d.codeUnits;
         for (final (i, char) in codeUnits.indexed) {

@@ -629,11 +629,11 @@ abstract class _$ItestExamQuestionsWriteQuestionCWProxy {
 
   ItestExamQuestionsWriteQuestion content(String content);
 
-  ItestExamQuestionsWriteQuestion id(String id);
+  ItestExamQuestionsWriteQuestion id(int id);
 
-  ItestExamQuestionsWriteQuestion subIndex(String subIndex);
+  ItestExamQuestionsWriteQuestion subIndex(int subIndex);
 
-  ItestExamQuestionsWriteQuestion index(String index);
+  ItestExamQuestionsWriteQuestion index(int index);
 
   ItestExamQuestionsWriteQuestion resNeedPlay(String resNeedPlay);
 
@@ -648,9 +648,9 @@ abstract class _$ItestExamQuestionsWriteQuestionCWProxy {
   ItestExamQuestionsWriteQuestion call({
     String title,
     String content,
-    String id,
-    String subIndex,
-    String index,
+    int id,
+    int subIndex,
+    int index,
     String resNeedPlay,
     String rl,
   });
@@ -671,14 +671,14 @@ class _$ItestExamQuestionsWriteQuestionCWProxyImpl
       this(content: content);
 
   @override
-  ItestExamQuestionsWriteQuestion id(String id) => this(id: id);
+  ItestExamQuestionsWriteQuestion id(int id) => this(id: id);
 
   @override
-  ItestExamQuestionsWriteQuestion subIndex(String subIndex) =>
+  ItestExamQuestionsWriteQuestion subIndex(int subIndex) =>
       this(subIndex: subIndex);
 
   @override
-  ItestExamQuestionsWriteQuestion index(String index) => this(index: index);
+  ItestExamQuestionsWriteQuestion index(int index) => this(index: index);
 
   @override
   ItestExamQuestionsWriteQuestion resNeedPlay(String resNeedPlay) =>
@@ -718,17 +718,17 @@ class _$ItestExamQuestionsWriteQuestionCWProxyImpl
           id == const $CopyWithPlaceholder()
               ? _value.id
               // ignore: cast_nullable_to_non_nullable
-              : id as String,
+              : id as int,
       subIndex:
           subIndex == const $CopyWithPlaceholder()
               ? _value.subIndex
               // ignore: cast_nullable_to_non_nullable
-              : subIndex as String,
+              : subIndex as int,
       index:
           index == const $CopyWithPlaceholder()
               ? _value.index
               // ignore: cast_nullable_to_non_nullable
-              : index as String,
+              : index as int,
       resNeedPlay:
           resNeedPlay == const $CopyWithPlaceholder()
               ? _value.resNeedPlay
@@ -1337,9 +1337,9 @@ ItestExamQuestionsWriteQuestion _$ItestExamQuestionsWriteQuestionFromJson(
 ) => ItestExamQuestionsWriteQuestion(
   title: json['title'] as String? ?? '',
   content: json['content'] as String? ?? '',
-  id: json['id'] as String? ?? '',
-  subIndex: json['sub_index'] as String? ?? '',
-  index: json['index'] as String? ?? '',
+  id: (json['id'] as num?)?.toInt() ?? 0,
+  subIndex: (json['sub_index'] as num?)?.toInt() ?? 0,
+  index: (json['index'] as num?)?.toInt() ?? 0,
   resNeedPlay: json['res_need_play'] as String? ?? '0',
   rl: json['rl'] as String? ?? '-1',
 );

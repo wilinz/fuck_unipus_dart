@@ -286,14 +286,14 @@ class ItestExamQuestionsWriteQuestion with EquatableMixin {
   @JsonKey(name: "content", defaultValue: "")
   final String content;
 
-  @JsonKey(name: "id", defaultValue: "")
-  final String id;
+  @JsonKey(name: "id", defaultValue: 0)
+  final int id;
 
-  @JsonKey(name: "sub_index", defaultValue: "")
-  final String subIndex;
+  @JsonKey(name: "sub_index", defaultValue: 0)
+  final int subIndex;
 
-  @JsonKey(name: "index", defaultValue: "")
-  final String index;
+  @JsonKey(name: "index", defaultValue: 0)
+  final int index;
 
   factory ItestExamQuestionsWriteQuestion.fromJson(Map<String, dynamic> json) =>
       _$ItestExamQuestionsWriteQuestionFromJson(json);
@@ -305,9 +305,9 @@ class ItestExamQuestionsWriteQuestion with EquatableMixin {
       ItestExamQuestionsWriteQuestion(
         title: "",
         content: "",
-        id: "",
-        subIndex: "",
-        index: "",
+        id: 0,
+        subIndex: 0,
+        index: 0,
         resNeedPlay: "0",
         rl: "-1",
       );

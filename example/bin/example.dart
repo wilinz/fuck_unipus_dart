@@ -1150,7 +1150,8 @@ Future<void> traversalCoursesInner(
     await thisPath.create();
 
     final String? summaryString = unit['summary'];
-    final isUnitTest = summaryString?.contains('exerciseId') == true;
+    final Map<String, dynamic>? summary = summaryString != null ? jsonDecode(summaryString) : null;
+    final isUnitTest = summaryString?.contains('exerciseId') == true && summary?['type'] == 'ut';
 
     final isVocabularyTest = unit['linkType'] == "vocabulary_area";
 

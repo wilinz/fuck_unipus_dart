@@ -1378,20 +1378,24 @@ Future<void> processCourseLeaf(
     print("【$currentLeaf】正在学习");
     await Future.delayed(Duration(seconds: Random().nextIntInRange(90, 120)));
 
-    final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
-    final summary = await unipus.getCourseSummary(tutorialId, currentLeaf);
-    final questions = await unipus.getCourseLeafQuestions(
-      tutorialId,
-      currentLeaf,
-    );
+    // final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
+    // final questions = await unipus.getCourseLeafQuestions(
+    //   tutorialId,
+    //   currentLeaf,
+    // );
 
-    final answer = Unipus.genAnswerBySummary(summary);
-    final result = await unipus.submitAnswer(
-      tutorialId: course.tutorialId!,
-      leaf: currentLeaf,
-      answer: answer,
-    );
-    print("【$currentLeaf】答案提交");
+    try {
+      final summary = await unipus.getCourseSummary(tutorialId, currentLeaf);
+      final answer = Unipus.genAnswerBySummary(summary);
+      final result = await unipus.submitAnswer(
+        tutorialId: course.tutorialId!,
+        leaf: currentLeaf,
+        answer: answer,
+      );
+      print("【$currentLeaf】答案提交");
+    } catch (e) {
+      print(e);
+    }
 
     try {
       final result2 = await unipus.postProgress(
@@ -1400,17 +1404,17 @@ Future<void> processCourseLeaf(
       );
       print("【$currentLeaf】进度提交结果：$result2");
     } catch (e) {
-      print(e);
+      print("【$currentLeaf】进度提交结果：$e");
     }
 
-    final contentPretty = JsonEncoder.withIndent('  ').convert(content);
-    final questionsPretty = JsonEncoder.withIndent('  ').convert(questions);
-    final summaryPretty = JsonEncoder.withIndent('  ').convert(summary);
+    // final contentPretty = JsonEncoder.withIndent('  ').convert(content);
+    // final questionsPretty = JsonEncoder.withIndent('  ').convert(questions);
+    // final summaryPretty = JsonEncoder.withIndent('  ').convert(summary);
 
     final paths = [
-      ('content.json5', contentPretty),
-      ('questions.json5', questionsPretty),
-      ('summary.json5', summaryPretty),
+      // ('content.json5', contentPretty),
+      // ('questions.json5', questionsPretty),
+      // ('summary.json5', summaryPretty),
     ];
 
     for (var path in paths) {
@@ -1423,8 +1427,8 @@ Future<void> processCourseLeaf(
       );
       await filePath.writeAsString(path.$2);
     }
-  } catch (e) {
-    printLogs("Error processing leaf [$currentLeaf]: $e");
+  } catch (e, st) {
+    printLogs("Error processing leaf [$currentLeaf]: $e, $st");
   }
 }
 

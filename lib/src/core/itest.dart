@@ -16,18 +16,21 @@ class Itest extends BaseClient {
   late String loggerOpenId;
 
   String get itestsService =>
-      "https://itestcloud.unipus.cn/utest/itest/login?_rp=/itest?x=$timestamp";
+      "https://itestcloud.unipus.cn/utest/itest/login?_rp=/itest/s/exam";
 
   static Future<Itest> newInstance({
     required CookieJar cookieJar,
     String? loggerOpenId,
     String? userAgent,
+    bool useProxy = false,
+    String? proxyUrl,
+    bool allowBadCertificate = false,
     Dio? dio,
   }) async {
     final itest = Itest._();
     itest.loggerOpenId = loggerOpenId ?? generateRandomMd5();
     print("loggerOpenId: ${itest.loggerOpenId}");
-    await itest._init(cookieJar: cookieJar, userAgent: userAgent, dio: dio);
+    await itest._init(cookieJar: cookieJar, userAgent: userAgent, dio: dio, useProxy: useProxy, proxyUrl: proxyUrl, allowBadCertificate: allowBadCertificate);
     return itest;
   }
 
@@ -36,9 +39,12 @@ class Itest extends BaseClient {
   Future<void> _init({
     required CookieJar cookieJar,
     String? userAgent,
+    bool useProxy = false,
+    String? proxyUrl,
+    bool allowBadCertificate = false,
     Dio? dio,
   }) async {
-    await super.initDio(cookieJar: cookieJar, userAgent: userAgent, dio: dio);
+    await super.initDio(cookieJar: cookieJar, userAgent: userAgent, dio: dio, useProxy: useProxy, proxyUrl: proxyUrl, allowBadCertificate: allowBadCertificate);
     this.dio.interceptors.add(UnipusDecryptInterceptor());
   }
 
@@ -646,7 +652,7 @@ class Itest extends BaseClient {
   }
 
   @override
-  bool get loginUrlWithSchoolId => true;
+  bool get loginUrlWithSchoolId => false;
 }
 
 // 定义函数类型

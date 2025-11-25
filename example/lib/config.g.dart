@@ -283,13 +283,22 @@ abstract class _$UnipusConfigCWProxy {
 
   UnipusConfig reviewMode(bool reviewMode);
 
+  UnipusConfig studyDurationMin(int studyDurationMin);
+
+  UnipusConfig studyDurationMax(int studyDurationMax);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `UnipusConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// UnipusConfig(...).copyWith(id: 12, name: "My name")
   /// ````
-  UnipusConfig call({String? tutorialId, bool reviewMode});
+  UnipusConfig call({
+    String? tutorialId,
+    bool reviewMode,
+    int studyDurationMin,
+    int studyDurationMax,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfUnipusConfig.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfUnipusConfig.copyWith.fieldName(...)`
@@ -305,6 +314,14 @@ class _$UnipusConfigCWProxyImpl implements _$UnipusConfigCWProxy {
   UnipusConfig reviewMode(bool reviewMode) => this(reviewMode: reviewMode);
 
   @override
+  UnipusConfig studyDurationMin(int studyDurationMin) =>
+      this(studyDurationMin: studyDurationMin);
+
+  @override
+  UnipusConfig studyDurationMax(int studyDurationMax) =>
+      this(studyDurationMax: studyDurationMax);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `UnipusConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -314,6 +331,8 @@ class _$UnipusConfigCWProxyImpl implements _$UnipusConfigCWProxy {
   UnipusConfig call({
     Object? tutorialId = const $CopyWithPlaceholder(),
     Object? reviewMode = const $CopyWithPlaceholder(),
+    Object? studyDurationMin = const $CopyWithPlaceholder(),
+    Object? studyDurationMax = const $CopyWithPlaceholder(),
   }) {
     return UnipusConfig(
       tutorialId:
@@ -326,6 +345,16 @@ class _$UnipusConfigCWProxyImpl implements _$UnipusConfigCWProxy {
               ? _value.reviewMode
               // ignore: cast_nullable_to_non_nullable
               : reviewMode as bool,
+      studyDurationMin:
+          studyDurationMin == const $CopyWithPlaceholder()
+              ? _value.studyDurationMin
+              // ignore: cast_nullable_to_non_nullable
+              : studyDurationMin as int,
+      studyDurationMax:
+          studyDurationMax == const $CopyWithPlaceholder()
+              ? _value.studyDurationMax
+              // ignore: cast_nullable_to_non_nullable
+              : studyDurationMax as int,
     );
   }
 }
@@ -362,7 +391,12 @@ extension _$ItestConfigEquatableAnnotations on ItestConfig {
 }
 
 extension _$UnipusConfigEquatableAnnotations on UnipusConfig {
-  List<Object?> get _$props => [tutorialId, reviewMode];
+  List<Object?> get _$props => [
+    tutorialId,
+    reviewMode,
+    studyDurationMin,
+    studyDurationMax,
+  ];
 }
 
 // **************************************************************************
@@ -429,10 +463,14 @@ Map<String, dynamic> _$ItestConfigToJson(ItestConfig instance) =>
 UnipusConfig _$UnipusConfigFromJson(Map<String, dynamic> json) => UnipusConfig(
   tutorialId: json['tutorial_id'] as String?,
   reviewMode: json['review_mode'] as bool? ?? false,
+  studyDurationMin: (json['study_duration_min'] as num?)?.toInt() ?? 90,
+  studyDurationMax: (json['study_duration_max'] as num?)?.toInt() ?? 120,
 );
 
 Map<String, dynamic> _$UnipusConfigToJson(UnipusConfig instance) =>
     <String, dynamic>{
       'tutorial_id': instance.tutorialId,
       'review_mode': instance.reviewMode,
+      'study_duration_min': instance.studyDurationMin,
+      'study_duration_max': instance.studyDurationMax,
     };

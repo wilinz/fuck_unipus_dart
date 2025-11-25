@@ -179,6 +179,8 @@ Future<void> runWithConfig(AppConfig config) async {
       openAiConfig: config.openAi,
       tutorialId: config.unipus?.tutorialId,
       reviewMode: config.unipus?.reviewMode ?? false,
+      studyDurationMin: config.unipus?.studyDurationMin ?? 90,
+      studyDurationMax: config.unipus?.studyDurationMax ?? 120,
     );
   } else {
     print('❌ 未知的运行平台: ${config.platform}');
@@ -268,6 +270,9 @@ Future<void> itestMain({
     cookieJar: cookieJar,
     loggerOpenId: loggerOpenId,
     userAgent: userAgent,
+    useProxy: false,
+    proxyUrl: "http://127.0.0.1:9000",
+    allowBadCertificate: false,
     dio: itestDio,
   );
   final isLogin = await itest.checkLoginAndSetupSession();
@@ -847,7 +852,11 @@ Future<void> unipusMain({
   OpenAiConfig? openAiConfig,
   String? tutorialId,
   bool reviewMode = false,
+  int studyDurationMin = 90,
+  int studyDurationMax = 120,
 }) async {
+  print(studyDurationMin);
+  print(studyDurationMax);
   final directory = join(cookieDir, username);
   if (!await Directory(directory).exists()) {
     await Directory(directory).create(recursive: true);
@@ -880,62 +889,6 @@ Future<void> unipusMain({
     printLogs("✅ PC 端已登录：${unipus.sessionInfo!.name}");
   }
 
-  // ===== 初始化移动端客户端 =====
-  printLogs("\n📱 正在初始化 Unipus Mobile 客户端...");
-  final unipusMobile = await UnipusMobile.newInstance(
-    cookieJar: cookieJar,
-    appConfig: MobileAppConfig.defaultAndroid(),
-    sessionJar: sessionJar,
-    user: username,
-  );
-
-  final isMobileLogin = await unipusMobile.checkLoginAndSetupSession();
-  if (!isMobileLogin) {
-    final pwd = password ?? inputTrim("请输入密码（移动端）：");
-    await unipusMobile.login(
-      username: username,
-      password: pwd,
-      captchaHandler: (captchaResponse) async {
-        printLogs("\n" + "=" * 60);
-        printLogs("🔐 需要输入验证码（移动端）");
-        printLogs("=" * 60);
-        printLogs("📸 验证码图片 Data URL：");
-        printLogs("data:image/png;base64,${captchaResponse.rs.image}");
-        printLogs("\n💡 请复制上面的 Data URL 到浏览器地址栏中查看验证码图片");
-        printLogs("=" * 60 + "\n");
-        return inputTrim("请输入验证码：");
-      },
-    );
-  } else {
-    printLogs("✅ 移动端已登录：${unipusMobile.sessionInfo?.userInfo?.username}");
-  }
-
-  // 显示移动端用户信息
-  if (unipusMobile.sessionInfo?.userInfo != null) {
-    final userInfo = unipusMobile.sessionInfo!.userInfo!;
-    printLogs("\n📱 移动端用户信息：");
-    printLogs("  👤 姓名: ${userInfo.realName}");
-    printLogs("  🏫 学校: ${userInfo.schoolName}");
-    printLogs("  🆔 学号: ${userInfo.numX}");
-    printLogs("  📅 年级: ${userInfo.grade}");
-  }
-
-  // 获取移动端课程列表
-
-  printLogs("\n📱 正在获取移动端课程列表...");
-  final mobileCourseList = await unipusMobile.getCourseClassList();
-  if (mobileCourseList.success) {
-    printLogs("✅ 移动端课程列表获取成功：");
-    for (final courseClass in mobileCourseList.rs.courseClassList) {
-      printLogs("  📚 ${courseClass.name}");
-      for (final tutorial in courseClass.tutorials) {
-        printLogs(
-          "    - ${tutorial.tutorialName} (ID: ${tutorial.realTutorialId})",
-        );
-      }
-    }
-  }
-
   printLogs("\n${"=" * 60}");
   printLogs("继续使用 PC 端进行课程操作...");
   printLogs("${"=" * 60}\n");
@@ -963,15 +916,84 @@ Future<void> unipusMain({
     return;
   }
 
-  // 查找对应的 mobile tutorial
-  final selectedMobileTutorial = mobileCourseList.rs.courseClassList
-      .expand((e) => e.tutorials)
-      .firstWhere((e) => e.realTutorialId == selectedTutorialId);
-  final mobileTutorialId = selectedMobileTutorial.tutorialId;
-
   final course = courses
       .expand((e) => e.courses)
       .firstWhere((e) => e.tutorialId == selectedTutorialId);
+
+  // ===== 创建移动端客户端懒加载函数 =====
+  UnipusMobile? cachedUnipusMobileInstance;
+  int? cachedMobileTutorialId;
+
+  Future<(UnipusMobile, int)> getUnipusMobile() async {
+    if (cachedUnipusMobileInstance != null && cachedMobileTutorialId != null) {
+      return (cachedUnipusMobileInstance!, cachedMobileTutorialId!);
+    }
+
+    printLogs("\n📱 正在初始化 Unipus Mobile 客户端...");
+    final unipusMobile = await UnipusMobile.newInstance(
+      cookieJar: cookieJar,
+      appConfig: MobileAppConfig.defaultAndroid(),
+      sessionJar: sessionJar,
+      user: username,
+    );
+
+    final isMobileLogin = await unipusMobile.checkLoginAndSetupSession();
+    if (!isMobileLogin) {
+      final pwd = password ?? inputTrim("请输入密码（移动端）：");
+      await unipusMobile.login(
+        username: username,
+        password: pwd,
+        captchaHandler: (captchaResponse) async {
+          printLogs("\n${"=" * 60}");
+          printLogs("🔐 需要输入验证码（移动端）");
+          printLogs("${"=" * 60}");
+          printLogs("📸 验证码图片 Data URL：");
+          printLogs("data:image/png;base64,${captchaResponse.rs.image}");
+          printLogs("\n💡 请复制上面的 Data URL 到浏览器地址栏中查看验证码图片");
+          printLogs("${"=" * 60}\n");
+          return inputTrim("请输入验证码：");
+        },
+      );
+    } else {
+      printLogs("✅ 移动端已登录：${unipusMobile.sessionInfo?.userInfo?.username}");
+    }
+
+    // 显示移动端用户信息
+    if (unipusMobile.sessionInfo?.userInfo != null) {
+      final userInfo = unipusMobile.sessionInfo!.userInfo!;
+      printLogs("\n📱 移动端用户信息：");
+      printLogs("  👤 姓名: ${userInfo.realName}");
+      printLogs("  🏫 学校: ${userInfo.schoolName}");
+      printLogs("  🆔 学号: ${userInfo.numX}");
+      printLogs("  📅 年级: ${userInfo.grade}");
+    }
+
+    // 获取移动端课程列表
+    printLogs("\n📱 正在获取移动端课程列表...");
+    final mobileCourseList = await unipusMobile.getCourseClassList();
+    if (mobileCourseList.success) {
+      printLogs("✅ 移动端课程列表获取成功：");
+      for (final courseClass in mobileCourseList.rs.courseClassList) {
+        printLogs("  📚 ${courseClass.name}");
+        for (final tutorial in courseClass.tutorials) {
+          printLogs(
+            "    - ${tutorial.tutorialName} (ID: ${tutorial.realTutorialId})",
+          );
+        }
+      }
+    }
+
+    // 查找对应的 mobile tutorial
+    final selectedMobileTutorial = mobileCourseList.rs.courseClassList
+        .expand((e) => e.tutorials)
+        .firstWhere((e) => e.realTutorialId == selectedTutorialId);
+    final mobileTutorialId = selectedMobileTutorial.tutorialId;
+
+    cachedUnipusMobileInstance = unipusMobile;
+    cachedMobileTutorialId = mobileTutorialId;
+
+    return (unipusMobile, mobileTutorialId);
+  }
 
   // 获取课程进度
   var courseProgress = await unipus.getCourseProgress(selectedTutorialId);
@@ -1044,9 +1066,10 @@ Future<void> unipusMain({
     Directory('courses'),
     course,
     openai,
-    unipusMobile,
-    mobileTutorialId,
+    getUnipusMobile,
     reviewMode,
+    studyDurationMin,
+    studyDurationMax,
   );
 
   // // 输入节点 id
@@ -1073,9 +1096,10 @@ Future<void> traversalCoursesToFs(
   Directory rootDir,
   UnipusClassBlockCoursesItem course,
   OpenAiClient? openai,
-  UnipusMobile unipusMobile,
-  int mobileTutorialId,
+  Future<(UnipusMobile, int)> Function() getUnipusMobile,
   bool reviewMode,
+  int studyDurationMin,
+  int studyDurationMax,
 ) async {
   await rootDir.create(recursive: true);
   await traversalCoursesInner(
@@ -1089,9 +1113,10 @@ Future<void> traversalCoursesToFs(
     '',
     course,
     openai,
-    unipusMobile,
-    mobileTutorialId,
+    getUnipusMobile,
     reviewMode,
+    studyDurationMin,
+    studyDurationMax,
   );
 }
 
@@ -1106,9 +1131,10 @@ Future<void> traversalCoursesInner(
   String leafPath,
   UnipusClassBlockCoursesItem course,
   OpenAiClient? openai,
-  UnipusMobile unipusMobile,
-  int mobileTutorialId,
+  Future<(UnipusMobile, int)> Function() getUnipusMobile,
   bool reviewMode,
+  int studyDurationMin,
+  int studyDurationMax,
 ) async {
   for (var i = 0; i < units.length; i++) {
     final unit = units[i];
@@ -1160,16 +1186,25 @@ Future<void> traversalCoursesInner(
     // reviewMode = false: 正常模式，只处理未通过的内容
     if (required && (reviewMode || !pass)) {
       if (isVocabularyTest) {
-        printLogs("Fucking 词汇测试");
-        final duration = Random().nextIntInRange(90, 180);
-        await Future.delayed(Duration(seconds: duration));
-        final submitResult = await unipusMobile.submitVocabulary(
-          mobileTutorialId: mobileTutorialId,
-          leaf: currentLeaf,
-          duration: duration,
-          score: 1,
-        );
-        printLogs("词汇测试提交结果：$submitResult");
+        // 复习模式下跳过词汇测试
+        if (reviewMode) {
+          printLogs("⏭️  复习模式：跳过词汇测试");
+        } else {
+          printLogs("Fucking 词汇测试");
+          final duration = Random().nextIntInRange(studyDurationMin, studyDurationMax);
+          await Future.delayed(Duration(seconds: duration));
+
+          // 懒加载 unipusMobile
+          final (unipusMobile, mobileTutorialId) = await getUnipusMobile();
+
+          final submitResult = await unipusMobile.submitVocabulary(
+            mobileTutorialId: mobileTutorialId,
+            leaf: currentLeaf,
+            duration: duration,
+            score: 1,
+          );
+          printLogs("词汇测试提交结果：$submitResult");
+        }
       } else if (isUnitTest) {
         await processUnitTest(
           summaryString,
@@ -1190,6 +1225,8 @@ Future<void> traversalCoursesInner(
           branch,
           currentLeafPath,
           course,
+          studyDurationMin,
+          studyDurationMax,
         );
       }
     }
@@ -1208,9 +1245,10 @@ Future<void> traversalCoursesInner(
         currentLeafPath,
         course,
         openai,
-        unipusMobile,
-        mobileTutorialId,
+        getUnipusMobile,
         reviewMode,
+        studyDurationMin,
+        studyDurationMax,
       );
     }
   }
@@ -1350,6 +1388,8 @@ Future<void> processCourseLeaf(
   String branch,
   String leafPath,
   UnipusClassBlockCoursesItem course,
+  int studyDurationMin,
+  int studyDurationMax,
 ) async {
   try {
     final pageUrl = Unipus.buildStudyPageUrl(
@@ -1376,7 +1416,7 @@ Future<void> processCourseLeaf(
     }
 
     print("【$currentLeaf】正在学习");
-    await Future.delayed(Duration(seconds: Random().nextIntInRange(90, 120)));
+    await Future.delayed(Duration(seconds: Random().nextIntInRange(studyDurationMin, studyDurationMax)));
 
     // final content = await unipus.getCourseLeafContent(tutorialId, currentLeaf);
     // final questions = await unipus.getCourseLeafQuestions(

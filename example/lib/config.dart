@@ -100,6 +100,10 @@ class AppConfig with EquatableMixin {
         'tutorial_id': null,
         // 复习模式: true 时忽略 pass 条件，允许重新学习已通过的内容
         'review_mode': false,
+        // 学习时长最小值（秒）
+        'study_duration_min': 90,
+        // 学习时长最大值（秒）
+        'study_duration_max': 120,
       },
     };
 
@@ -201,6 +205,8 @@ class UnipusConfig with EquatableMixin {
   UnipusConfig({
     this.tutorialId,
     this.reviewMode = false,
+    this.studyDurationMin = 90,
+    this.studyDurationMax = 120,
   });
 
   @JsonKey(name: 'tutorial_id')
@@ -208,6 +214,12 @@ class UnipusConfig with EquatableMixin {
 
   @JsonKey(name: 'review_mode', defaultValue: false)
   final bool reviewMode;
+
+  @JsonKey(name: 'study_duration_min', defaultValue: 90)
+  final int studyDurationMin;
+
+  @JsonKey(name: 'study_duration_max', defaultValue: 120)
+  final int studyDurationMax;
 
   factory UnipusConfig.fromJson(Map<String, dynamic> json) =>
       _$UnipusConfigFromJson(json);

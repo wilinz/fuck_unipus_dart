@@ -1,3 +1,5 @@
+import 'dart:math';
+
 /// Mobile App Configuration
 ///
 /// Encapsulates all mobile app-specific headers and device information.
@@ -89,6 +91,85 @@ class MobileAppConfig {
     );
   }
 
+  /// Create a random mobile app configuration
+  ///
+  /// Generates device identifiers and model info so each user can have a stable
+  /// mobile fingerprint persisted across runs.
+  factory MobileAppConfig.random({bool ios = false}) {
+    final random = Random();
+
+    String randomHex(int length) {
+      const chars = '0123456789abcdef';
+      return List.generate(length, (_) => chars[random.nextInt(chars.length)])
+          .join();
+    }
+
+    String randomDigits(int length) {
+      const digits = '0123456789';
+      return List.generate(length, (_) => digits[random.nextInt(digits.length)])
+          .join();
+    }
+
+    String randomUpper(int length) {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      return List.generate(length, (_) => letters[random.nextInt(letters.length)])
+          .join();
+    }
+
+    String randomAndroidModel() {
+      final brand = [
+        'samsung',
+        'xiaomi',
+        'redmi',
+        'oppo',
+        'vivo',
+        'oneplus',
+        'huawei',
+      ][random.nextInt(7)];
+
+      switch (brand) {
+        case 'samsung':
+          // Example: SM-S918B
+          return "SM-${randomUpper(1)}${randomDigits(3)}${randomUpper(1)}";
+        case 'xiaomi':
+          // Example: M2012K11AC
+          return "M2${randomDigits(3)}${randomUpper(1)}${randomDigits(2)}${randomUpper(1)}${randomUpper(1)}";
+        case 'redmi':
+          // Example: 22021211RC
+          return "22${randomDigits(7)}${randomUpper(1)}${randomUpper(1)}";
+        case 'oppo':
+          // Example: CPH2401
+          return "CPH${randomDigits(4)}";
+        case 'vivo':
+          // Example: V2149A
+          return "V${randomDigits(4)}${randomUpper(1)}";
+        case 'oneplus':
+          // Example: NE2210
+          return "NE${randomDigits(4)}";
+        case 'huawei':
+          // Example: PAR-LX9
+          return "${randomUpper(3)}-${randomUpper(1)}${randomUpper(1)}${randomDigits(1)}";
+        default:
+          return "SM-${randomUpper(1)}${randomDigits(3)}${randomUpper(1)}";
+      }
+    }
+
+    String randomIOSModel() {
+      final family = random.nextInt(4) + 13; // 13-16
+      final variant = random.nextInt(4) + 1; // 1-4
+      return "iPhone$family,$variant";
+    }
+
+    return MobileAppConfig(
+      deviceToken: randomHex(64),
+      deviceId: randomHex(32),
+      udid: randomHex(32),
+      os: ios ? "ios" : "android",
+      osVer: ios ? "ios${random.nextInt(4) + 14}" : "android${random.nextInt(5) + 10}",
+      model: ios ? randomIOSModel() : randomAndroidModel(),
+    );
+  }
+
   /// Copy with method for updating specific fields
   MobileAppConfig copyWith({
     String? deviceToken,
@@ -137,4 +218,36 @@ class MobileAppConfig {
       'appId': appId,
     };
   }
+
+  factory MobileAppConfig.fromJson(Map<String, dynamic> json) {
+    return MobileAppConfig(
+      deviceToken: json['deviceToken'] as String? ?? "",
+      deviceId: json['deviceId'] as String? ?? "",
+      udid: json['udid'] as String? ?? "",
+      os: json['os'] as String? ?? "android",
+      osVer: json['osVer'] as String? ?? "android13",
+      model: json['model'] as String? ?? "22021211RC",
+      appVer: json['appVer'] as String? ?? "1.0",
+      appProd: json['appProd'] as String? ?? "ucampus-student",
+      jsVerModels: json['jsVerModels'] as String? ?? "ucontent uex expm",
+      jsVer: json['jsVer'] as String? ?? "209547 209601 280",
+      clientVer: json['clientVer'] as String? ?? "300130",
+      appId: json['appId'] as String? ?? "5",
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'deviceToken': deviceToken,
+        'deviceId': deviceId,
+        'udid': udid,
+        'os': os,
+        'osVer': osVer,
+        'model': model,
+        'appVer': appVer,
+        'appProd': appProd,
+        'jsVerModels': jsVerModels,
+        'jsVer': jsVer,
+        'clientVer': clientVer,
+        'appId': appId,
+      };
 }

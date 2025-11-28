@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_redirect_interceptor/dio_redirect_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:example/config.dart';
+import 'package:example/user_persistent_store.dart';
 import 'package:example/utils/input.dart';
 import 'package:fuck_unipus/fuck_unipus.dart';
 import 'package:openai_dart_dio/openai_dart_dio.dart';
@@ -22,6 +23,7 @@ void main(List<String> arguments) async {
   bool interactive = false;
   String configPath = './config.json5';
   String initOutput = './config.json5';
+  final userStore = UserPersistentStore();
 
   // 创建解析器
   final parser = ArgParser();
@@ -86,7 +88,7 @@ void main(List<String> arguments) async {
 
     // 强制交互式模式
     if (interactive) {
-      await runInteractive();
+      await runInteractive(userStore);
       return;
     }
 
@@ -113,9 +115,9 @@ void main(List<String> arguments) async {
 
     // 根据配置或交互式输入运行
     if (config != null) {
-      await runWithConfig(config);
+      await runWithConfig(config, userStore);
     } else {
-      await runInteractive();
+      await runInteractive(userStore);
     }
   } on FormatException catch (e) {
     print('❌ 参数解析错误: ${e.message}');
@@ -131,7 +133,54 @@ void printHelp(List<ArgParser> parsers) {
   print(parsers.map((e) => e.usage).join("\n"));
 }
 
-Future<void> runWithConfig(AppConfig config) async {
+Future<String> resolveLoggerOpenId({
+  required String username,
+  required UserPersistentStore userStore,
+  String? configuredOpenId,
+}) async {
+  if (configuredOpenId != null && configuredOpenId.length == 32) {
+    await userStore.saveLoggerOpenId(username, configuredOpenId);
+    return configuredOpenId;
+  }
+
+  final stored = await userStore.loadLoggerOpenId(username);
+  if (stored != null && stored.length == 32) {
+    return stored;
+  }
+
+  final legacyFile = File("./openid-$username.txt");
+  if (await legacyFile.exists()) {
+    final legacy = (await legacyFile.readAsString()).trim();
+    if (legacy.length == 32) {
+      await userStore.saveLoggerOpenId(username, legacy);
+      return legacy;
+    }
+  }
+
+  final openId = generateRandomMd5();
+  await userStore.saveLoggerOpenId(username, openId);
+  return openId;
+}
+
+Future<MobileAppConfig> resolveMobileAppConfig({
+  required String username,
+  required UserPersistentStore userStore,
+  bool ios = false,
+}) async {
+  final stored = await userStore.loadMobileAppConfig(username);
+  if (stored != null) {
+    return stored;
+  }
+
+  final generated = MobileAppConfig.random(ios: ios);
+  await userStore.saveMobileAppConfig(username, generated);
+  return generated;
+}
+
+Future<void> runWithConfig(
+  AppConfig config,
+  UserPersistentStore userStore,
+) async {
   print('📝 运行平台: ${config.platform}');
   print('👤 用户名: ${config.username}');
 
@@ -139,27 +188,11 @@ Future<void> runWithConfig(AppConfig config) async {
   final username = config.username;
 
   if (config.platform == 'itest') {
-    // 处理 openId
-    String openId;
-    final configuredOpenId = config.itest?.loggerOpenId;
-    if (configuredOpenId != null && configuredOpenId.length == 32) {
-      openId = configuredOpenId;
-    } else {
-      final openIdStorageFile = File("./openid-$username.txt");
-      final openIdStorageFileExists = await openIdStorageFile.exists();
-
-      final openIdStorage =
-          openIdStorageFileExists
-              ? (await openIdStorageFile.readAsString()).trim()
-              : "";
-      if (openIdStorage.length == 32) {
-        openId = openIdStorage;
-      } else {
-        openId = generateRandomMd5();
-        if (!openIdStorageFileExists) openIdStorageFile.create(recursive: true);
-        await openIdStorageFile.writeAsString(openId);
-      }
-    }
+    final openId = await resolveLoggerOpenId(
+      username: username,
+      userStore: userStore,
+      configuredOpenId: config.itest?.loggerOpenId,
+    );
 
     await itestMain(
       cookieDir: cookieDir,
@@ -181,6 +214,7 @@ Future<void> runWithConfig(AppConfig config) async {
       reviewMode: config.unipus?.reviewMode ?? false,
       studyDurationMin: config.unipus?.studyDurationMin ?? 90,
       studyDurationMax: config.unipus?.studyDurationMax ?? 120,
+      userStore: userStore,
     );
   } else {
     print('❌ 未知的运行平台: ${config.platform}');
@@ -189,7 +223,7 @@ Future<void> runWithConfig(AppConfig config) async {
   }
 }
 
-Future<void> runInteractive() async {
+Future<void> runInteractive(UserPersistentStore userStore) async {
   final cookieDir = "./cookies";
 
   // 选择平台
@@ -202,23 +236,10 @@ Future<void> runInteractive() async {
   final username = inputTrim("请输入用户名：");
 
   if (platform == "itest") {
-    print("如需输入上次浏览器 openid 请修改 example/bin/example.dart");
-
-    String openId;
-    final openIdStorageFile = File("./openid-$username.txt");
-    final openIdStorageFileExists = await openIdStorageFile.exists();
-
-    final openIdStorage =
-        openIdStorageFileExists
-            ? (await openIdStorageFile.readAsString()).trim()
-            : "";
-    if (openIdStorage.length == 32) {
-      openId = openIdStorage;
-    } else {
-      openId = generateRandomMd5();
-      if (!openIdStorageFileExists) openIdStorageFile.create(recursive: true);
-      await openIdStorageFile.writeAsString(openId);
-    }
+    final openId = await resolveLoggerOpenId(
+      username: username,
+      userStore: userStore,
+    );
 
     String? ua;
 
@@ -229,7 +250,11 @@ Future<void> runInteractive() async {
       userAgent: ua,
     );
   } else {
-    await unipusMain(cookieDir: cookieDir, username: username);
+    await unipusMain(
+      cookieDir: cookieDir,
+      username: username,
+      userStore: userStore,
+    );
   }
 }
 
@@ -854,6 +879,7 @@ Future<void> unipusMain({
   bool reviewMode = false,
   int studyDurationMin = 90,
   int studyDurationMax = 120,
+  required UserPersistentStore userStore,
 }) async {
   print(studyDurationMin);
   print(studyDurationMax);
@@ -929,10 +955,15 @@ Future<void> unipusMain({
       return (cachedUnipusMobileInstance!, cachedMobileTutorialId!);
     }
 
+    final mobileAppConfig = await resolveMobileAppConfig(
+      username: username,
+      userStore: userStore,
+    );
+
     printLogs("\n📱 正在初始化 Unipus Mobile 客户端...");
     final unipusMobile = await UnipusMobile.newInstance(
       cookieJar: cookieJar,
-      appConfig: MobileAppConfig.defaultAndroid(),
+      appConfig: mobileAppConfig,
       sessionJar: sessionJar,
       user: username,
     );

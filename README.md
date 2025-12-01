@@ -26,7 +26,7 @@ dart run example/bin/example.dart -c config.json5
 ```
 
 config.json5
-```
+```json5
 {
   platform: 'unipus',
   username: 'your_username',

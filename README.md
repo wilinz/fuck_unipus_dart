@@ -13,7 +13,7 @@
 
 申请 `OpenAi` api key，推荐 [https://next.ohmygpt.com/apis](https://next.ohmygpt.com/apis) ，纯好用，非广告，`ohmygpt` 官方看到了可以给我打钱。
 
-dart 环境建议使用 choco/brew/apt 安装 [fvm](https://fvm.app/documentation/getting-started) 后，再用 fvm 安装 flutter/dart sdk
+dart 环境建议使用 choco/brew/apt 安装 [fvm](https://fvm.app/documentation/getting-started/installation) 后，再用 fvm 安装 flutter/dart sdk
 
 ``````dart
 git clone https://github.com/wilinz/fuck_unipus_dart

@@ -22,7 +22,34 @@ git clone https://github.com/wilinz/fuck_unipus_dart
 ## Usage
 
 ```dart
-dart run example/bin/example.dart
+dart run example/bin/example.dart -c config.json5
+```
+
+config.json5
+```
+{
+  platform: 'unipus',
+  username: 'your_username',
+  password: 'pwd',
+  cookie_dir: './cookies',
+  user_agent: null, // 可留空
+  open_ai: {
+    api_key: 'your_openai_api_key', // u校园没有单元测试的话不用，itest 必须
+    base_url: 'https://api.openai.com',
+    model: 'gpt-5-mini',
+  },
+  itest: {
+    logger_open_id: null,
+    exam_id: null,
+    auto_submit: false,
+  },
+  unipus: {
+    tutorial_id: null, // 可以留空，写了的话就可以不用手动选择课程
+    review_mode: false, // 复习模式，第一遍学完后刷时长的时候开启
+    study_duration_min: 90, // second/unit
+    study_duration_max: 120,
+  },
+}
 ```
 
 ## Dev information

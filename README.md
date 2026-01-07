@@ -35,8 +35,11 @@ config.json5
   user_agent: null, // 可留空
   open_ai: {
     api_key: 'your_openai_api_key', // u校园没有单元测试的话不用，itest 必须
+    // api_key: null, // 不设置
     base_url: 'https://api.openai.com',
+    // base_url: null, // 不设置
     model: 'gpt-5-mini',
+    // model: null, // 不设置
   },
   itest: {
     logger_open_id: null,
